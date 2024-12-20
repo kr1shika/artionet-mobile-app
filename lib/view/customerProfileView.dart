@@ -24,13 +24,13 @@ class Customerprofileview extends StatelessWidget {
                       ),
                     ),
                     const Text(
-                      "meow",
+                      "@kr1shika",
                       style: TextStyle(
                         fontFamily: 'IM_FELL_Great_Primer',
-                        fontSize: 27,
+                        fontSize: 26,
                       ),
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 8),
                     const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

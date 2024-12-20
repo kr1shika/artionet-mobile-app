@@ -85,12 +85,13 @@ class HomeScreen extends StatelessWidget {
         child: Stack(
           children: [
             const SizedBox(height: 10),
-            const Center(
+            Center(
               child: Text(
                 "Artionet",
                 style: TextStyle(
                   fontFamily: 'IM_Fell_DW_Pica_SC',
-                  fontSize: 33,
+                  fontSize:
+                      MediaQuery.of(context).size.width > 600 ? 44.0 : 33.0,
                   color: Colors.black,
                 ),
                 textAlign: TextAlign.center,
@@ -108,18 +109,36 @@ class HomeScreen extends StatelessWidget {
                       children: [
                         Column(
                           children: [
-                            Image.asset(
-                              'assets/images/hel.png',
-                              height: 120,
-                              width: 170,
-                              fit: BoxFit.cover,
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            LayoutBuilder(
+                              builder: (context, constraints) {
+                                final screenWidth =
+                                    MediaQuery.of(context).size.width;
+
+                                final imageHeight =
+                                    screenWidth > 600 ? 170.0 : 120.0;
+                                final imageWidth =
+                                    screenWidth > 600 ? 300.0 : 170.0;
+
+                                return Image.asset(
+                                  'assets/images/hel.png',
+                                  height: imageHeight,
+                                  width: imageWidth,
+                                  fit: BoxFit.cover,
+                                );
+                              },
                             ),
                             const SizedBox(height: 8),
-                            const Text(
+                            Text(
                               '"Deities of Nepal II", 2024',
                               style: TextStyle(
                                 fontFamily: 'IM_Fell_DW_Pica',
-                                fontSize: 11,
+                                fontSize:
+                                    MediaQuery.of(context).size.width > 600
+                                        ? 15.0
+                                        : 11.0,
                                 color: Colors.black,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -127,21 +146,40 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(width: 20),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width > 600
+                              ? 50.0
+                              : 20.0,
+                        ),
                         Column(
                           children: [
-                            Image.asset(
-                              'assets/images/helen.png',
-                              height: 120,
-                              width: 170,
-                              fit: BoxFit.cover,
+                            LayoutBuilder(
+                              builder: (context, constraints) {
+                                final screenWidth =
+                                    MediaQuery.of(context).size.width;
+
+                                final imageHeight =
+                                    screenWidth > 600 ? 170.0 : 120.0;
+                                final imageWidth =
+                                    screenWidth > 600 ? 300.0 : 170.0;
+
+                                return Image.asset(
+                                  'assets/images/helen.png',
+                                  height: imageHeight,
+                                  width: imageWidth,
+                                  fit: BoxFit.cover,
+                                );
+                              },
                             ),
                             const SizedBox(height: 8),
-                            const Text(
+                            Text(
                               '"Deities of Nepal II", 2024',
                               style: TextStyle(
                                 fontFamily: 'IM_Fell_DW_Pica',
-                                fontSize: 11,
+                                fontSize:
+                                    MediaQuery.of(context).size.width > 600
+                                        ? 15.0
+                                        : 11.0,
                                 color: Colors.black,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -158,16 +196,21 @@ class HomeScreen extends StatelessWidget {
             Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 30.0, vertical: 215),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 30.0,
+                    vertical:
+                        MediaQuery.of(context).size.width > 600 ? 272.0 : 215.0,
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
+                      Text(
                         'Discover artworks, artists, art news, and ongoing exhibitions with Artionet.',
                         style: TextStyle(
                           fontFamily: 'IM_Fell_Great_Primer',
-                          fontSize: 18,
+                          fontSize: MediaQuery.of(context).size.width > 600
+                              ? 25.0
+                              : 18.0,
                           color: Colors.black,
                         ),
                         textAlign: TextAlign.center,
@@ -175,8 +218,8 @@ class HomeScreen extends StatelessWidget {
                       const SizedBox(height: 15),
                       Image.asset(
                         'assets/images/crest_2.png',
-                        height: 27,
-                        width: 300,
+                        height: 28,
+                        width: 302,
                         fit: BoxFit.cover,
                       ),
                       const SizedBox(height: 20),
@@ -192,11 +235,13 @@ class HomeScreen extends StatelessWidget {
                           fillColor: const Color(0xFFFFFFF7),
                         ),
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'IM_FELL_English_SC',
-                          fontSize: 17,
+                          fontSize: MediaQuery.of(context).size.width > 600
+                              ? 20.0
+                              : 17.0,
                           fontWeight: FontWeight.w600,
-                          color: Color.fromARGB(255, 158, 157, 157),
+                          color: const Color.fromARGB(255, 158, 157, 157),
                         ),
                       ),
                       const SizedBox(height: 27),
@@ -204,32 +249,43 @@ class HomeScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                              border:
-                                  Border.all(color: Colors.black38, width: 1),
-                              borderRadius: BorderRadius.circular(1),
-                            ),
-                            child: Column(
-                              children: [
-                                Image.asset(
-                                  'assets/images/ham.jpg',
-                                  height: 170,
-                                  width: 150,
-                                  fit: BoxFit.cover,
-                                ),
-                                const SizedBox(height: 8),
-                                const Text(
-                                  '"Artwork 1", 2024',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontStyle: FontStyle.italic,
+                              padding: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.black38, width: 1),
+                                borderRadius: BorderRadius.circular(1),
+                              ),
+                              child: Column(
+                                children: [
+                                  LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      final screenWidth =
+                                          MediaQuery.of(context).size.width;
+
+                                      final imageWidth =
+                                          screenWidth > 600 ? 230.0 : 150.0;
+                                      final imageHeight =
+                                          screenWidth > 600 ? 240.0 : 170.0;
+
+                                      return Image.asset(
+                                        'assets/images/ham.jpg',
+                                        height: imageHeight,
+                                        width: imageWidth,
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
                                   ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ),
+                                  const SizedBox(height: 10),
+                                  const Text(
+                                    '"Artwork 1", 2024',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              )),
                           const SizedBox(width: 18),
                           Container(
                             padding: const EdgeInsets.all(5),
@@ -240,11 +296,23 @@ class HomeScreen extends StatelessWidget {
                             ),
                             child: Column(
                               children: [
-                                Image.asset(
-                                  'assets/images/art1.png',
-                                  height: 170,
-                                  width: 150,
-                                  fit: BoxFit.cover,
+                                LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    final screenWidth =
+                                        MediaQuery.of(context).size.width;
+
+                                    final imageHeight =
+                                        screenWidth > 600 ? 240.0 : 170.0;
+                                    final imageWidth =
+                                        screenWidth > 600 ? 230.0 : 150.0;
+
+                                    return Image.asset(
+                                      'assets/images/art1.png',
+                                      height: imageHeight,
+                                      width: imageWidth,
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
                                 ),
                                 const SizedBox(height: 8),
                                 const Text(
@@ -261,11 +329,13 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      const Text(
+                      Text(
                         "view more",
                         style: TextStyle(
                           fontFamily: 'IM_Fell_DW_Pica_SC',
-                          fontSize: 17,
+                          fontSize: MediaQuery.of(context).size.width > 600
+                              ? 22.0
+                              : 17.0,
                           color: Colors.black,
                         ),
                       ),
@@ -278,17 +348,23 @@ class HomeScreen extends StatelessWidget {
                       const SizedBox(height: 10),
                       Column(
                         children: [
-                          const Text(
+                          Text(
                             "On going Events",
                             style: TextStyle(
                               fontFamily: 'IM_FELL_English_SC',
-                              fontSize: 20,
+                              fontSize: MediaQuery.of(context).size.width > 600
+                                  ? 27.0
+                                  : 20.0,
                               color: Colors.black,
                             ),
                           ),
                           const SizedBox(height: 10),
                           Container(
-                            padding: const EdgeInsets.all(8),
+                            padding: EdgeInsets.all(
+                              MediaQuery.of(context).size.width > 600
+                                  ? 16.0
+                                  : 8.0,
+                            ),
                             decoration: BoxDecoration(
                               border:
                                   Border.all(color: Colors.black38, width: 1),
@@ -296,11 +372,23 @@ class HomeScreen extends StatelessWidget {
                             ),
                             child: Column(
                               children: [
-                                Image.asset(
-                                  'assets/images/dali.jpg',
-                                  height: 180,
-                                  width: 320,
-                                  fit: BoxFit.cover,
+                                LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    final screenWidth =
+                                        MediaQuery.of(context).size.width;
+
+                                    final imageHeight =
+                                        screenWidth > 600 ? 340.0 : 180.0;
+                                    final imageWidth =
+                                        screenWidth > 600 ? 600.0 : 320.0;
+
+                                    return Image.asset(
+                                      'assets/images/dali.jpg',
+                                      height: imageHeight,
+                                      width: imageWidth,
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
                                 ),
                                 const SizedBox(height: 8),
                                 const Text(
