@@ -6,7 +6,6 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFF7),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Stack(
@@ -16,30 +15,29 @@ class LoginView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Logo
-                     const SizedBox(height: 130),
+                    const SizedBox(height: 130),
                     Image.asset(
                       'assets/images/logo.png',
-                      width:112,
-                      height:112,
-                    ),     const SizedBox(height: 5),
+                      width: 112,
+                      height: 112,
+                    ),
+                    const SizedBox(height: 5),
 
                     // Login Text
-                    Text(
+                    const Text(
                       "Login to Artionet",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'IM_Fell_DW_Pica_SC',
                         fontSize: 33,
-
-                        color: Colors.black, 
+                        color: Colors.black,
                       ),
                     ),
-                    Text(
+                    const Text(
                       "welcome back",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'IM_Fell_DW_Pica_SC',
                         fontSize: 22,
-
-                        color: Colors.black, 
+                        color: Colors.black,
                       ),
                     ),
                     const SizedBox(height: 23),
@@ -48,16 +46,17 @@ class LoginView extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 41.0),
                       child: TextFormField(
                         decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(vertical: 11.0, horizontal: 12.0),
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 11.0, horizontal: 12.0),
                           hintText: "Email/Phone Number",
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           filled: true,
-                          fillColor: Colors.white.withOpacity(0.8), 
+                          fillColor: Colors.white.withOpacity(0.8),
                         ),
                         style: const TextStyle(
-                          fontFamily:'IM_FELL_English_SC',
+                          fontFamily: 'IM_FELL_English_SC',
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                           color: Color.fromARGB(255, 61, 57, 57),
@@ -69,29 +68,27 @@ class LoginView extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 41.0),
                       child: TextFormField(
                         decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(vertical: 11.0, horizontal: 12.0),
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 11.0, horizontal: 12.0),
                           hintText: "Password",
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
-                            
                           ),
                           filled: true,
-                          fillColor: Colors.white.withOpacity(0.8), 
+                          fillColor: Colors.white.withOpacity(0.8),
                         ),
                         style: const TextStyle(
-                          fontFamily:'IM_FELL_English_SC',
+                          fontFamily: 'IM_FELL_English_SC',
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
-                          color: const Color.fromARGB(255, 27, 29, 30),
-                          
+                          color: Color.fromARGB(255, 27, 29, 30),
                         ),
                       ),
                     ),
                     const SizedBox(height: 32),
                     ElevatedButton(
                       onPressed: () {
-                      Navigator.pushNamed(context, '/home'); 
-
+                        Navigator.pushNamed(context, '/home');
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
@@ -102,38 +99,39 @@ class LoginView extends StatelessWidget {
                         foregroundColor: const Color(0xFFFFFFF7),
                         // textStyle: const TextStyle( fontFamily:'IM_Fell_DW_Pica_SC',),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8), 
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                       child: const Text(
                         'PROCEED',
-                        style: TextStyle(fontFamily:'IM_FELL_Great_Primer',fontSize: 18), 
+                        style: TextStyle(
+                            fontFamily: 'IM_FELL_Great_Primer', fontSize: 18),
                       ),
                     ),
                     const SizedBox(height: 6),
 
-                     ElevatedButton(
+                    ElevatedButton(
                       onPressed: () {
-                            Navigator.pushNamed(context, '/signup'); 
-                          },
+                        Navigator.pushNamed(context, '/signup');
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
                         shadowColor: Colors.transparent,
                         elevation: 0,
                         padding: EdgeInsets.zero,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0), side: BorderSide.none),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(0),
+                            side: BorderSide.none),
                       ),
-                      child: Text(
+                      child: const Text(
                         "Don,t have an account?",
                         style: TextStyle(
-                          fontFamily:'Inknut_Antiqua',
-                          color: Colors.black, 
+                          fontFamily: 'Inknut_Antiqua',
+                          color: Colors.black,
                           fontSize: 15,
-                          
                         ),
                       ),
                     ),
-                    
                   ],
                 ),
               ),
