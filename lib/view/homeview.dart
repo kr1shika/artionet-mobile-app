@@ -13,7 +13,6 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   int _selectedIndex = 0;
 
-  // List of screens for BottomNavigationBar
   final List<Widget> _pages = [
     const HomeScreen(),
     const SearchView(),
@@ -223,25 +222,30 @@ class HomeScreen extends StatelessWidget {
                         fit: BoxFit.cover,
                       ),
                       const SizedBox(height: 20),
-                      TextFormField(
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 9.0, horizontal: 20.0),
-                          hintText: "Search for artists/Arts ",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14.0),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width > 600
+                            ? 550.0
+                            : 400.0, 
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 9.0, horizontal: 20.0),
+                            hintText: "Search for artists/Arts ",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14.0),
+                            ),
+                            filled: true,
+                            fillColor: const Color(0xFFFFFFF7),
                           ),
-                          filled: true,
-                          fillColor: const Color(0xFFFFFFF7),
-                        ),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'IM_FELL_English_SC',
-                          fontSize: MediaQuery.of(context).size.width > 600
-                              ? 20.0
-                              : 17.0,
-                          fontWeight: FontWeight.w600,
-                          color: const Color.fromARGB(255, 158, 157, 157),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: 'IM_FELL_English_SC',
+                            fontSize: MediaQuery.of(context).size.width > 600
+                                ? 20.0
+                                : 17.0, 
+                            fontWeight: FontWeight.w600,
+                            color: const Color.fromARGB(255, 158, 157, 157),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 27),

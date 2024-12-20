@@ -45,44 +45,54 @@ class LoginView extends StatelessWidget {
                     // Input Fields
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 41.0),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 11.0, horizontal: 12.0),
-                          hintText: "Email/Phone Number",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width > 600
+                            ? 550.0
+                            : 400.0,
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 11.0, horizontal: 12.0),
+                            hintText: "Email/Phone Number",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white.withOpacity(0.8),
                           ),
-                          filled: true,
-                          fillColor: Colors.white.withOpacity(0.8),
-                        ),
-                        style: const TextStyle(
-                          fontFamily: 'IM_FELL_English_SC',
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: Color.fromARGB(255, 61, 57, 57),
+                          style: const TextStyle(
+                            fontFamily: 'IM_FELL_English_SC',
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Color.fromARGB(255, 61, 57, 57),
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 30),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 41.0),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 11.0, horizontal: 12.0),
-                          hintText: "Password",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width > 600
+                            ? 550.0
+                            : 400.0,
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 11.0, horizontal: 12.0),
+                            hintText: "Password",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white.withOpacity(0.8),
                           ),
-                          filled: true,
-                          fillColor: Colors.white.withOpacity(0.8),
-                        ),
-                        style: const TextStyle(
-                          fontFamily: 'IM_FELL_English_SC',
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: Color.fromARGB(255, 27, 29, 30),
+                          style: const TextStyle(
+                            fontFamily: 'IM_FELL_English_SC',
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Color.fromARGB(255, 27, 29, 30),
+                          ),
                         ),
                       ),
                     ),
