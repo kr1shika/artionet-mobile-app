@@ -6,6 +6,7 @@ ThemeData getApplicationTheme() {
       scaffoldBackgroundColor: const Color(0xFFFFFFF7),
 
       // fonts
+      fontFamily: 'IM_Fell_DW_Pica',
 
       // for buttons
       elevatedButtonTheme: ElevatedButtonThemeData(

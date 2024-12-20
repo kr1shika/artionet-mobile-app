@@ -5,12 +5,10 @@ class SearchView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Search"),
-      ),
-      body: const Center(
-        child: Text("Search Screen"),
+    return const Scaffold(
+      backgroundColor: Color(0xFFFFFFF7),
+      body: Center(
+        child: Text("Search Page"),
       ),
     );
   }

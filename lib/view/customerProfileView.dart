@@ -7,11 +7,10 @@ class Customerprofileview extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: DefaultTabController(
-        length: 2, // Number of tabs
+        length: 2,
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const SizedBox(height: 30),
               Center(
                 child: Column(
                   children: [
@@ -78,34 +77,33 @@ class Customerprofileview extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const Divider(
-                      thickness: 0.3,
-                      color: Colors.black,
-                      indent: 80,
-                      endIndent: 80,
-                    ),
-                    // TabBar for "Created" and "Saved"
+                    // const Divider(
+                    //   thickness: 0.3,
+                    //   color: Colors.black,
+                    //   indent: 80,
+                    //   endIndent: 80,
+                    // ),
+                    const SizedBox(height: 10),
+
                     const TabBar(
                       labelColor: Colors.black,
                       unselectedLabelColor: Colors.grey,
                       indicatorColor: Colors.black,
                       tabs: [
-                        Tab(text: "Created"),
+                        Tab(text: "Your Orders"),
                         Tab(text: "Saved"),
                       ],
                     ),
                   ],
                 ),
               ),
-              // TabBarView for the content of each tab
               const SizedBox(
-                height: 400, // Adjust height based on your content
+                height: 400,
                 child: TabBarView(
                   children: [
-                    // Content for "Created" tab
                     Center(
                       child: Text(
-                        "No posts created yet!",
+                        "No orders made yet!",
                         style: TextStyle(
                           fontFamily: 'IM_FELL_Great_Primer',
                           fontSize: 16,
@@ -113,7 +111,6 @@ class Customerprofileview extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // Content for "Saved" tab
                     Center(
                       child: Text(
                         "No saved posts yet!",
