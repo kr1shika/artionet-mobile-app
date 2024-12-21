@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tryproject/view/artists_view/about_view.dart';
+import 'package:tryproject/view/artists_view/artistProfileView.dart';
+import 'package:tryproject/view/artists_view/artist_login.dart';
 import 'package:tryproject/view/artists_view/artist_signup.dart';
 import 'package:tryproject/view/customerProfileView.dart';
 import 'package:tryproject/view/homeview.dart';
@@ -36,6 +38,8 @@ class MyApp extends StatelessWidget {
         '/search': (context) => const SearchView(),
         '/profile': (context) => const Customerprofileview(),
         '/notifications': (context) => const NotificationsView(),
+        '/artist_login': (context) => const ArtistLoginView(),
+        '/artist_profile': (context) => const Artistprofileview()
       },
     );
   }
