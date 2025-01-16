@@ -1,27 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tryproject/app/di/di.dart';
 import 'package:tryproject/features/auth/presentation/view/login_view.dart';
 import 'package:tryproject/features/auth/presentation/view_model/login/login_bloc.dart';
-import 'package:tryproject/features/home/presentation/view_model/home_state.dart';
 
-class HomeCubit extends Cubit<HomeState> {
-  HomeCubit() : super(HomeState.initial());
+class SplashCubit extends Cubit<void> {
+  SplashCubit(this._loginBloc) : super(null);
 
-  /// Method to handle tab changes
-  void onTabTapped(int index) {
-    emit(state.copyWith(selectedIndex: index));
-  }
+  final LoginBloc _loginBloc;
 
-  void logout(BuildContext context) {
-    // Wait for 2 seconds
-    Future.delayed(const Duration(seconds: 2), () async {
+  Future<void> init(BuildContext context) async {
+    await Future.delayed(const Duration(milliseconds: 4510), () async {
+      // Open Login page or Onboarding Screen
+
       if (context.mounted) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => BlocProvider.value(
-              value: getIt<LoginBloc>(),
+              value: _loginBloc,
               child: LoginView(),
             ),
           ),

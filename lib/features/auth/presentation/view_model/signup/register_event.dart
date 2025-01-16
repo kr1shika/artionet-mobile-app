@@ -27,3 +27,13 @@ class RegisterUser extends RegisterEvent {
     required this.password,
   });
 }
+
+class NavigateLoginScreenEvent extends RegisterEvent {
+  final BuildContext context;
+  final Widget destination;
+
+  const NavigateLoginScreenEvent({
+    required this.context,
+    required this.destination,
+  });
+}

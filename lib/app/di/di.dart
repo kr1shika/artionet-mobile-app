@@ -47,6 +47,7 @@ _initRegisterDependencies() {
   getIt.registerFactory<RegisterBloc>(
     () => RegisterBloc(
       registerUseCase: getIt(),
+      // LoginBloc: getIt<LoginBloc>(),
     ),
   );
 }

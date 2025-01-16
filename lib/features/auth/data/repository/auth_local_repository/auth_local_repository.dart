@@ -35,9 +35,13 @@ class AuthLocalRepository implements IAuthRepository {
   }
 
   @override
-  Future<Either<Failure, void>> registerUser(AuthEntity user) {
-    // TODO: implement registerUser
-    throw UnimplementedError();
+  Future<Either<Failure, void>> registerUser(AuthEntity user) async {
+    try {
+      await _authLocalDatasource.registerUser(user);
+      return const Right(null);
+    } catch (e) {
+      return Left(LocaldatabaseFailure(message: e.toString()));
+    }
   }
 
   @override

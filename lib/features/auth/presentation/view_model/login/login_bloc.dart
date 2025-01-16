@@ -53,7 +53,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       },
     );
 
-    on<LoginStudentEvent>(
+    on<LoginUserEvent>(
       (event, emit) async {
         emit(state.copyWith(isLoading: true));
         final result = await _loginUseCase(
@@ -62,7 +62,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             password: event.password,
           ),
         );
-
         result.fold(
           (failure) {
             emit(state.copyWith(isLoading: false, isSuccess: false));
@@ -74,13 +73,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           },
           (token) {
             emit(state.copyWith(isLoading: false, isSuccess: true));
+            // final prefs=await SharedPreferences.getInstance();
+            // await prefs.setString('email',user.email);
             add(
               NavigateHomeScreenEvent(
                 context: event.context,
                 destination: const HomeView(),
               ),
             );
-            //_homeCubit.setToken(token);
+            // _homeCubit.setToken(token);
           },
         );
       },

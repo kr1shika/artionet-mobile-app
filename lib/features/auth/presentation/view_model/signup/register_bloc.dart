@@ -3,7 +3,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:tryproject/core/common/snackbar/my_snackbar.dart';
 import 'package:tryproject/features/auth/domain/use_case/register_user_usecase.dart';
-
 part 'register_event.dart';
 part 'register_state.dart';
 
@@ -16,19 +15,10 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     required RegisterUseCase registerUseCase,
   })  : _registerUseCase = registerUseCase,
         super(RegisterState.initial()) {
-    on<LoadCoursesAndBatches>(_onLoadCoursesAndBatches);
+    // on<LoadCoursesAndBatches>(_onLoadCoursesAndBatches);
     on<RegisterUser>(_onRegisterEvent);
 
-    add(LoadCoursesAndBatches());
-  }
-
-  void _onLoadCoursesAndBatches(
-    LoadCoursesAndBatches event,
-    Emitter<RegisterState> emit,
-  ) {
-    emit(state.copyWith(isLoading: true));
-
-    emit(state.copyWith(isLoading: false, isSuccess: true));
+    // add(LoadCoursesAndBatches());
   }
 
   void _onRegisterEvent(
