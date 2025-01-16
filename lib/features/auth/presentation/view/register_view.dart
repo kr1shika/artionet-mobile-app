@@ -31,11 +31,11 @@ class _RegisterViewState extends State<RegisterView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Logo
-                    const SizedBox(height: 130),
+                    const SizedBox(height: 100),
                     Image.asset(
                       'assets/images/logo.png',
-                      width: 120,
-                      height: 120,
+                      width: 110,
+                      height: 110,
                     ),
                     const SizedBox(height: 5),
 
