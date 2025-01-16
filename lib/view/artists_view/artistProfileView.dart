@@ -24,6 +24,12 @@ class _ArtistprofileviewState extends State<Artistprofileview> {
             width: 412,
             fit: BoxFit.cover,
           ),
+          // const Padding(
+          //   padding: EdgeInsets.symmetric(horizontal: 200.0, vertical: 500),
+          //   child: Column(
+          //     children: [Text("data")],
+          //   ),
+          // )
         ],
       ),
     ),

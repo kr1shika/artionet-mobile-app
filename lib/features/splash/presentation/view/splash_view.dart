@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tryproject/features/splash/presentation/view_model/splash_cubit.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -11,9 +13,11 @@ class _SplashViewState extends State<SplashView> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 4510), () {
-      Navigator.pushReplacementNamed(context, '/OnboardFirst');
-    });
+    // uture.delayed(const Duration(milliseconds: 4510), () {
+    //   Navigator.pushReplacementNamed(context, '/OnboardFirst');
+    // });
+
+    context.read<SplashCubit>().init(context);
   }
 
   @override
