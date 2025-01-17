@@ -38,4 +38,3 @@ class LoginUserEvent extends LoginEvent {
     required this.password,
   });
 }
-

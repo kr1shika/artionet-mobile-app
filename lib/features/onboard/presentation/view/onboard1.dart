@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:tryproject/features/auth/presentation/view/register_view.dart';
+import 'package:tryproject/features/auth/presentation/view_model/signup/register_bloc.dart';
 import 'package:tryproject/features/onboard/presentation/view_model/onboard_cubit.dart';
 import 'package:tryproject/features/onboard/presentation/view_model/onboard_state.dart';
 
@@ -14,12 +16,14 @@ class OnboardScreens extends StatefulWidget {
 class _OnboardScreensState extends State<OnboardScreens> {
   late final PageController _pageController;
   late final OnboardCubit _onboardCubit;
+  late final RegisterBloc _registerBloc;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
     _onboardCubit = GetIt.I<OnboardCubit>();
+    _registerBloc = GetIt.I<RegisterBloc>();
   }
 
   @override
@@ -221,7 +225,15 @@ class _OnboardScreensState extends State<OnboardScreens> {
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
-                  _onboardCubit.skipOnboarding(context);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider.value(
+                        value: _registerBloc,
+                        child: const RegisterView(),
+                      ),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(

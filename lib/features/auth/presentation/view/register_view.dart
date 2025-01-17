@@ -213,11 +213,12 @@ class _RegisterViewState extends State<RegisterView> {
                           ElevatedButton(
                             key: const ValueKey('_loginBloc'),
                             onPressed: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => LoginView()),
-                              );
+                              context.read<RegisterBloc>().add(
+                                    NavigateScreenEvent(
+                                      destination: LoginView(),
+                                      context: context,
+                                    ),
+                                  );
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.transparent,

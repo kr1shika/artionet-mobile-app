@@ -31,9 +31,7 @@
 //   ArtworkEntity toEntity(){
 //     return ArtworkEntity(artworkName: artworkName, artworkId: artworkId);
 //   }
-  
 //   @override
 //   // TODO: implement props
 //   List<Object?> get props => [artworkId, artworkName];
-
 // }

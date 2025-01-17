@@ -166,12 +166,12 @@ class LoginView extends StatelessWidget {
                           ElevatedButton(
                             key: const ValueKey('registerButton'),
                             onPressed: () {
-                              context.read<LoginBloc>().add(
-                                    NavigateRegisterScreenEvent(
-                                      destination: const RegisterView(),
-                                      context: context,
-                                    ),
-                                  );
+                              // context.read<LoginBloc>().add(
+                              //       NavigateRegisterScreenEvent(
+                              //         destination: const RegisterView(),
+                              //         context: context,
+                              //       ),
+                              //     );
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.transparent,

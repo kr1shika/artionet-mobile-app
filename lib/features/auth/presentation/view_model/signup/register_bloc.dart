@@ -1,22 +1,44 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tryproject/core/common/snackbar/my_snackbar.dart';
 import 'package:tryproject/features/auth/domain/use_case/register_user_usecase.dart';
+import 'package:tryproject/features/auth/presentation/view_model/login/login_bloc.dart';
 
 part 'register_event.dart';
 part 'register_state.dart';
 
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   final RegisterUseCase _registerUseCase;
+  final LoginBloc _loginBloc;
 
   RegisterBloc({
+    required LoginBloc loginBloc,
     required RegisterUseCase registerUseCase,
   })  : _registerUseCase = registerUseCase,
+        _loginBloc = loginBloc,
         super(RegisterState.initial()) {
     on<RegisterUser>(_onRegisterEvent);
-  }
 
+    on<NavigateScreenEvent>(
+      (event, emit) {
+        Navigator.push(
+          event.context,
+          MaterialPageRoute(
+            builder: (context) => MultiBlocProvider(
+              providers: [
+                BlocProvider.value(value: _loginBloc),
+              ],
+              child: event.destination,
+            ),
+          ),
+        );
+      },
+    );
+
+
+  }
   void _onRegisterEvent(
     RegisterUser event,
     Emitter<RegisterState> emit,

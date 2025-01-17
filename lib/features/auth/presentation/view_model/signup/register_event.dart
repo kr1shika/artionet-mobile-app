@@ -7,6 +7,16 @@ sealed class RegisterEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class NavigateScreenEvent extends RegisterEvent {
+  final BuildContext context;
+  final Widget destination;
+
+  const NavigateScreenEvent({
+    required this.context,
+    required this.destination,
+  });
+}
+
 class LoadCoursesAndBatches extends RegisterEvent {}
 
 class RegisterUser extends RegisterEvent {

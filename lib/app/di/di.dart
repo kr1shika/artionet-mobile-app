@@ -96,6 +96,7 @@
 //   );
 // }
 
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:tryproject/core/network/hive_service.dart';
 import 'package:tryproject/features/auth/data/data_source/local_data_source/auth_local_datasource.dart';
@@ -105,6 +106,7 @@ import 'package:tryproject/features/auth/domain/use_case/register_user_usecase.d
 import 'package:tryproject/features/auth/presentation/view_model/login/login_bloc.dart';
 import 'package:tryproject/features/auth/presentation/view_model/signup/register_bloc.dart';
 import 'package:tryproject/features/home/presentation/view_model/home_cubit.dart';
+import 'package:tryproject/features/onboard/presentation/view_model/onboard_cubit.dart';
 import 'package:tryproject/features/splash/presentation/view_model/splash_cubit.dart';
 
 final getIt = GetIt.instance;
@@ -118,6 +120,7 @@ Future<void> initDependencies() async {
   await _initLoginDependencies();
 
   await _initSplashScreenDependencies();
+  await _initOnboardDependencies();
 }
 
 _initHiveService() {
@@ -144,7 +147,7 @@ _initRegisterDependencies() {
 
   getIt.registerFactory<RegisterBloc>(
     () => RegisterBloc(
-      registerUseCase: getIt(),
+      registerUseCase: getIt(), loginBloc: getIt<LoginBloc>(),
       // LoginBloc: getIt<LoginBloc>(),
     ),
   );
@@ -165,7 +168,7 @@ _initLoginDependencies() async {
 
   getIt.registerFactory<LoginBloc>(
     () => LoginBloc(
-      registerBloc: getIt<RegisterBloc>(),
+      // registerBloc: getIt<RegisterBloc>(),
       homeCubit: getIt<HomeCubit>(),
       loginUseCase: getIt<LoginUseCase>(),
     ),
@@ -174,6 +177,19 @@ _initLoginDependencies() async {
 
 _initSplashScreenDependencies() async {
   getIt.registerFactory<SplashCubit>(
-    () => SplashCubit(getIt<LoginBloc>()),
+    () => SplashCubit(getIt<OnboardCubit>()),
+  );
+}
+
+_initOnboardDependencies() async {
+  // Register PageController
+  getIt.registerFactory<PageController>(() => PageController());
+
+  // Register OnboardCubit
+  getIt.registerFactory<OnboardCubit>(
+    () => OnboardCubit(
+      getIt<PageController>(), // Inject PageController
+      getIt<RegisterBloc>(), // Inject LoginBloc
+    ),
   );
 }
