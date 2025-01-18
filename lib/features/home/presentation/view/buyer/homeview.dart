@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tryproject/core/common/snackbar/my_snackbar.dart';
-import 'package:tryproject/features/home/presentation/view/customerProfileView.dart';
-import 'package:tryproject/features/home/presentation/view/dashboard_view.dart';
-import 'package:tryproject/features/home/presentation/view/notification_view.dart';
-import 'package:tryproject/features/home/presentation/view/search_view.dart';
+import 'package:tryproject/features/home/presentation/view/buyer/pages/customerProfileView.dart';
+import 'package:tryproject/features/home/presentation/view/buyer/pages/dashboard_view.dart';
+import 'package:tryproject/features/home/presentation/view/buyer/pages/notification_view.dart';
+import 'package:tryproject/features/home/presentation/view/buyer/pages/search_view.dart';
 import 'package:tryproject/features/home/presentation/view_model/home_cubit.dart';
 import 'package:tryproject/features/home/presentation/view_model/home_state.dart';
 

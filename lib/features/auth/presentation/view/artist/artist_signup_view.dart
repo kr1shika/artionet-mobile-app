@@ -44,7 +44,7 @@ class ArtistSignupView extends StatelessWidget {
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 12.0),
-                                hintText: "First name",
+                                hintText: "Full Name",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
@@ -68,7 +68,7 @@ class ArtistSignupView extends StatelessWidget {
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 12.0),
-                                hintText: "Last name",
+                                hintText: "Artist Name [Optional]",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
@@ -117,7 +117,7 @@ class ArtistSignupView extends StatelessWidget {
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 10.0, horizontal: 12.0),
-                          hintText: "Identification card [file]",
+                          hintText: "Phone Number",
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
