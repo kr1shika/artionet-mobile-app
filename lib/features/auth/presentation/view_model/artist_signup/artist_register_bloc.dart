@@ -43,12 +43,12 @@ class ArtistRegisterBloc
   ) async {
     emit(state.copyWith(isLoading: true));
     final result = await _registerUseCase.call(RegisterUserParams(
-      full_name: event.full_name,
-      contact_no: event.contact_no,
-      email: event.email,
-      role: event.role,
-      password: event.password,
-    ));
+        full_name: event.full_name,
+        contact_no: event.contact_no,
+        email: event.email,
+        role: event.role,
+        password: event.password,
+        artistname: event.artistname));
 
     result.fold(
       (l) => emit(state.copyWith(isLoading: false, isSuccess: false)),

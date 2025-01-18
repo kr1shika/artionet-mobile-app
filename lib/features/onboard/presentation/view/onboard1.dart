@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:tryproject/features/auth/presentation/view/buyers/register_view.dart';
 import 'package:tryproject/features/auth/presentation/view_model/signup/register_bloc.dart';
+import 'package:tryproject/features/onboard/presentation/view/artist_onboard.dart';
+import 'package:tryproject/features/onboard/presentation/view_model/buyer_onboard/artist_onboard_cubit.dart';
 import 'package:tryproject/features/onboard/presentation/view_model/buyer_onboard/onboard_cubit.dart';
 import 'package:tryproject/features/onboard/presentation/view_model/buyer_onboard/onboard_state.dart';
 
@@ -17,6 +19,7 @@ class _OnboardScreensState extends State<OnboardScreens> {
   late final PageController _pageController;
   late final OnboardCubit _onboardCubit;
   late final RegisterBloc _registerBloc;
+  late final OnboardingCubit _artistOnoardcubit;
 
   @override
   void initState() {
@@ -24,6 +27,7 @@ class _OnboardScreensState extends State<OnboardScreens> {
     _pageController = PageController();
     _onboardCubit = GetIt.I<OnboardCubit>();
     _registerBloc = GetIt.I<RegisterBloc>();
+    _artistOnoardcubit = GetIt.I<OnboardingCubit>();
   }
 
   @override
@@ -254,7 +258,15 @@ class _OnboardScreensState extends State<OnboardScreens> {
               const SizedBox(height: 25),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, '/artistonboard');
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider.value(
+                        value: _artistOnoardcubit,
+                        child: const OnboardingScreen_Artist(),
+                      ),
+                    ),
+                  );
                 },
                 child: const Padding(
                   padding: EdgeInsets.symmetric(
