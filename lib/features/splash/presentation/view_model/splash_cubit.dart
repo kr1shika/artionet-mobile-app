@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tryproject/features/onboard/presentation/view/onboard1.dart';
-import 'package:tryproject/features/onboard/presentation/view_model/onboard_cubit.dart';
+import 'package:tryproject/features/onboard/presentation/view_model/buyer_onboard/onboard_cubit.dart';
 
 class SplashCubit extends Cubit<void> {
   SplashCubit(this._loginBloc) : super(null);

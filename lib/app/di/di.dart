@@ -106,7 +106,7 @@ import 'package:tryproject/features/auth/domain/use_case/register_user_usecase.d
 import 'package:tryproject/features/auth/presentation/view_model/login/login_bloc.dart';
 import 'package:tryproject/features/auth/presentation/view_model/signup/register_bloc.dart';
 import 'package:tryproject/features/home/presentation/view_model/home_cubit.dart';
-import 'package:tryproject/features/onboard/presentation/view_model/onboard_cubit.dart';
+import 'package:tryproject/features/onboard/presentation/view_model/buyer_onboard/onboard_cubit.dart';
 import 'package:tryproject/features/splash/presentation/view_model/splash_cubit.dart';
 
 final getIt = GetIt.instance;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tryproject/app/di/di.dart';
-import 'package:tryproject/features/auth/presentation/view/login_view.dart';
+import 'package:tryproject/features/auth/presentation/view/buyers/login_view.dart';
 import 'package:tryproject/features/auth/presentation/view_model/login/login_bloc.dart';
 import 'package:tryproject/features/home/presentation/view_model/home_state.dart';
 

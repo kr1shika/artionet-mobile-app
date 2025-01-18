@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tryproject/core/common/snackbar/my_snackbar.dart';
 import 'package:tryproject/features/auth/domain/use_case/login_usecase.dart';
+import 'package:tryproject/features/home/presentation/view/homeview.dart';
 import 'package:tryproject/features/home/presentation/view_model/home_cubit.dart';
-import 'package:tryproject/view/homeview.dart';
+// import 'package:tryproject/view/homeview.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';

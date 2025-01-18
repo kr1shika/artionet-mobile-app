@@ -12,19 +12,19 @@ class _OnboardingScreenState extends State<OnboardingScreen_Artist> {
   int _currentPage = 0;
 
   final List<Widget> _pages = [
-    OnboardingPage(
+    const OnboardingPage(
       imagePath: 'assets/images/logo.png',
       title: "Artionet for artists",
       description:
           "With Artionet you can set up your artist page to share your story and art journey.",
     ),
-    OnboardingPage(
+    const OnboardingPage(
       imagePath: 'assets/images/flower.png',
       title: null,
       description:
           "Upload your creations with titles, descriptions, and prices to build your online portfolio.",
     ),
-    OnboardingPage(
+    const OnboardingPage(
       imagePath: 'assets/images/deer.png',
       title: null,
       description:
@@ -69,7 +69,7 @@ class _OnboardingScreenState extends State<OnboardingScreen_Artist> {
               child: GestureDetector(
                 onTap: _skipToLastPage,
                 child: const Text(
-                  "Skip",            
+                  "Skip",
                   style: TextStyle(
                     fontFamily: 'IM_FELL_DW_Pica',
                     fontSize: 16,
@@ -121,9 +121,8 @@ class _OnboardingScreenState extends State<OnboardingScreen_Artist> {
                     height: 8,
                     width: _currentPage == index ? 16 : 8,
                     decoration: BoxDecoration(
-                      color: _currentPage == index
-                          ? Colors.black
-                          : Colors.black54,
+                      color:
+                          _currentPage == index ? Colors.black : Colors.black54,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   );
@@ -143,6 +142,7 @@ class OnboardingPage extends StatelessWidget {
   final String description;
 
   const OnboardingPage({
+    super.key,
     required this.imagePath,
     this.title,
     required this.description,

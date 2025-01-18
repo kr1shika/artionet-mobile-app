@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tryproject/features/auth/presentation/view/login_view.dart';
+import 'package:tryproject/features/auth/presentation/view/buyers/login_view.dart';
 import 'package:tryproject/features/auth/presentation/view_model/signup/register_bloc.dart';
 
 class RegisterView extends StatefulWidget {
