@@ -1,13 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
+import 'package:tryproject/features/auth/presentation/view/buyers/register_view.dart';
 import 'package:tryproject/features/auth/presentation/view_model/login/login_bloc.dart';
+import 'package:tryproject/features/auth/presentation/view_model/signup/register_bloc.dart';
 
-class LoginView extends StatelessWidget {
-  LoginView({super.key});
+class LoginView extends StatefulWidget {
+  const LoginView({super.key});
 
+  @override
+  _LoginViewState createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  late final RegisterBloc _registerBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _registerBloc = GetIt.I<RegisterBloc>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -165,12 +180,15 @@ class LoginView extends StatelessWidget {
                           ElevatedButton(
                             key: const ValueKey('registerButton'),
                             onPressed: () {
-                              // context.read<LoginBloc>().add(
-                              //       NavigateRegisterScreenEvent(
-                              //         destination: const RegisterView(),
-                              //         context: context,
-                              //       ),
-                              //     );
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BlocProvider.value(
+                                    value: _registerBloc,
+                                    child: const RegisterView(),
+                                  ),
+                                ),
+                              );
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.transparent,
