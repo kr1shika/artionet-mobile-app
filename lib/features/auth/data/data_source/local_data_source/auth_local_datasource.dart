@@ -11,7 +11,6 @@ class AuthLocalDatasource implements IAuthDataSource {
 
   @override
   Future<AuthEntity> getCurrentUser() {
-    // TODO: implement getCurrentUser
     return Future.value(const AuthEntity(
       userId: "1",
       full_name: "",

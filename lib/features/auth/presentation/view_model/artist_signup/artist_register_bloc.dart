@@ -1,4 +1,3 @@
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,19 +5,20 @@ import 'package:tryproject/core/common/snackbar/my_snackbar.dart';
 import 'package:tryproject/features/auth/domain/use_case/register_user_usecase.dart';
 import 'package:tryproject/features/auth/presentation/view_model/login/login_bloc.dart';
 
-part 'register_event.dart';
-part 'register_state.dart';
+part 'artist_register_event.dart';
+part 'artist_register_state.dart';
 
-class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
+class ArtistRegisterBloc
+    extends Bloc<ArtistRegisterEvent, ArtistRegisterState> {
   final RegisterUseCase _registerUseCase;
   final LoginBloc _loginBloc;
 
-  RegisterBloc({
+  ArtistRegisterBloc({
     required LoginBloc loginBloc,
     required RegisterUseCase registerUseCase,
   })  : _registerUseCase = registerUseCase,
         _loginBloc = loginBloc,
-        super(RegisterState.initial()) {
+        super(ArtistRegisterState.initial()) {
     on<RegisterUser>(_onRegisterEvent);
 
     on<NavigateScreenEvent>(
@@ -36,21 +36,19 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         );
       },
     );
-
-
   }
   void _onRegisterEvent(
     RegisterUser event,
-    Emitter<RegisterState> emit,
+    Emitter<ArtistRegisterState> emit,
   ) async {
     emit(state.copyWith(isLoading: true));
     final result = await _registerUseCase.call(RegisterUserParams(
-      full_name: event.full_name,
-      contact_no: event.contact_no,
-      email: event.email,
-      role: event.role,
-      password: event.password,
-    ));
+        full_name: event.full_name,
+        contact_no: event.contact_no,
+        email: event.email,
+        role: event.role,
+        password: event.password,
+        artistname: event.artistname));
 
     result.fold(
       (l) => emit(state.copyWith(isLoading: false, isSuccess: false)),

@@ -5,17 +5,16 @@ import 'package:tryproject/core/common/snackbar/my_snackbar.dart';
 import 'package:tryproject/features/auth/domain/use_case/login_usecase.dart';
 import 'package:tryproject/features/home/presentation/view/buyer/homeview.dart';
 import 'package:tryproject/features/home/presentation/view_model/home_cubit.dart';
-// import 'package:tryproject/view/homeview.dart';
 
-part 'login_event.dart';
-part 'login_state.dart';
+part 'artist_login_event.dart';
+part 'artist_login_state.dart';
 
-class LoginBloc extends Bloc<LoginEvent, LoginState> {
+class ArtistLoginBloc extends Bloc<ArtistLoginEvent, ArtistLoginState> {
   // final RegisterBloc _registerBloc;
   final HomeCubit _homeCubit;
   final LoginUseCase _loginUseCase;
 
-  LoginBloc({
+  ArtistLoginBloc({
     // required RegisterBloc registerBloc,
     required HomeCubit homeCubit,
     required LoginUseCase loginUseCase,
@@ -23,7 +22,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         //  _registerBloc = registerBloc,
         _homeCubit = homeCubit,
         _loginUseCase = loginUseCase,
-        super(LoginState.initial()) {
+        super(ArtistLoginState.initial()) {
     // on<NavigateRegisterScreenEvent>(
     //   (event, emit) {
     //     Navigator.push(

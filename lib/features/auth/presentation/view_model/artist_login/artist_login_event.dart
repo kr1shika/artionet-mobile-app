@@ -1,13 +1,13 @@
-part of 'login_bloc.dart';
+part of 'artist_login_bloc.dart';
 
-sealed class LoginEvent extends Equatable {
-  const LoginEvent();
+sealed class ArtistLoginEvent extends Equatable {
+  const ArtistLoginEvent();
 
   @override
   List<Object> get props => [];
 }
 
-class NavigateRegisterScreenEvent extends LoginEvent {
+class NavigateRegisterScreenEvent extends ArtistLoginEvent {
   final BuildContext context;
   final Widget destination;
 
@@ -17,7 +17,7 @@ class NavigateRegisterScreenEvent extends LoginEvent {
   });
 }
 
-class NavigateHomeScreenEvent extends LoginEvent {
+class NavigateHomeScreenEvent extends ArtistLoginEvent {
   final BuildContext context;
   final Widget destination;
 
@@ -27,7 +27,7 @@ class NavigateHomeScreenEvent extends LoginEvent {
   });
 }
 
-class LoginUserEvent extends LoginEvent {
+class LoginUserEvent extends ArtistLoginEvent {
   final BuildContext context;
   final String email;
   final String password;

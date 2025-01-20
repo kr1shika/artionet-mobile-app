@@ -32,12 +32,24 @@ class HiveService {
   }
 
   // Login using email and password
-  Future<AuthHiveModel?> login(String email, String password) async {
+  // Future<AuthHiveModel?> login(String email, String password) async {
+  //   var box = await Hive.openBox<AuthHiveModel>(HiveTableConstant.userBox);
+  //   var auth = box.values.firstWhere(
+  //       (element) => element.email == email && element.password == password,
+  //       orElse: () => const AuthHiveModel.initial());
+  //   return auth;
+  // }
+
+  Future<AuthHiveModel> login(String email, String password) async {
     var box = await Hive.openBox<AuthHiveModel>(HiveTableConstant.userBox);
-    var auth = box.values.firstWhere(
+    try {
+      return box.values.firstWhere(
         (element) => element.email == email && element.password == password,
-        orElse: () => const AuthHiveModel.initial());
-    return auth;
+      );
+    } catch (e) {
+      throw Exception(
+          "Invalid email or password."); // Explicitly throw an exception.
+    }
   }
 
   Future<void> clearAll() async {

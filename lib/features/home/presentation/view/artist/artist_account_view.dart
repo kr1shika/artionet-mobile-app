@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tryproject/view/artists_view/chatbox.dart';
-import 'package:tryproject/view/artists_view/notificationView.dart';
-import 'package:tryproject/view/artists_view/settingsview.dart';
+import 'package:tryproject/features/home/presentation/view/artist/chatbox_view.dart';
+import 'package:tryproject/features/home/presentation/view/artist/notification_view.dart';
+import 'package:tryproject/features/home/presentation/view/artist/settings_view.dart';
 
 class Artistprofileview extends StatefulWidget {
   const Artistprofileview({super.key});

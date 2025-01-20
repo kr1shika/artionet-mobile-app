@@ -16,7 +16,6 @@ class _SplashViewState extends State<SplashView> {
     // uture.delayed(const Duration(milliseconds: 4510), () {
     //   Navigator.pushReplacementNamed(context, '/OnboardFirst');
     // });
-
     context.read<SplashCubit>().init(context);
   }
 
