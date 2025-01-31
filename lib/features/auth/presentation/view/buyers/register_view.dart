@@ -102,9 +102,9 @@ class _RegisterViewState extends State<RegisterView> {
                                     children: [
                                       ElevatedButton.icon(
                                         onPressed: () {
-                                          // checkCameraPermssion();
-                                          // _browseImage(ImageSource.camera);
-                                          // Navigator.pop(context);
+                                          checkCameraPermssion();
+                                          _browseImage(ImageSource.camera);
+                                          Navigator.pop(context);
                                           // Upload image it is not null
                                         },
                                         icon: const Icon(Icons.camera),
@@ -112,7 +112,7 @@ class _RegisterViewState extends State<RegisterView> {
                                       ),
                                       ElevatedButton.icon(
                                         onPressed: () {
-                                          // _browseImage(ImageSource.gallery);
+                                          _browseImage(ImageSource.gallery);
                                         },
                                         icon: const Icon(Icons.image),
                                         label: const Text('Gallery'),
@@ -122,19 +122,19 @@ class _RegisterViewState extends State<RegisterView> {
                                 ),
                               );
                             },
-                            child: const SizedBox(
+                            child: SizedBox(
                               height: 140,
                               width: 140,
                               child: CircleAvatar(
                                 radius: 50,
-                                // backgroundImage: _img != null
-                                //     ? FileImage(_img!)
-                                //     : const AssetImage(
-                                //             'assets/images/profile.png')
-                                //         as ImageProvider,
-                                backgroundImage:
-                                    AssetImage('assets/images/profile.jpg')
+                                backgroundImage: _img != null
+                                    ? FileImage(_img!)
+                                    : const AssetImage(
+                                            'assets/images/profile.jpg')
                                         as ImageProvider,
+                                // backgroundImage:
+                                //     AssetImage('assets/images/profile.jpg')
+                                //         as ImageProvider,
                               ),
                             ),
                           ),
@@ -262,6 +262,9 @@ class _RegisterViewState extends State<RegisterView> {
                           ElevatedButton(
                             onPressed: () {
                               if (_key.currentState!.validate()) {
+                                final registerState =
+                                    context.read<RegisterBloc>().state;
+                                final imageName = registerState.imageName;
                                 context.read<RegisterBloc>().add(
                                       RegisterUser(
                                         context: context,
@@ -270,6 +273,7 @@ class _RegisterViewState extends State<RegisterView> {
                                         contact_no: _contactController.text,
                                         role: _roleController.text,
                                         password: _passwordController.text,
+                                        profilepic: imageName,
                                       ),
                                     );
                               }
