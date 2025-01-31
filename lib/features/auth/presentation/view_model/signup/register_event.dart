@@ -19,6 +19,15 @@ class NavigateScreenEvent extends RegisterEvent {
 
 class LoadCoursesAndBatches extends RegisterEvent {}
 
+// for image-upload
+class LoadImage extends RegisterEvent {
+  final File file;
+
+  const LoadImage({
+    required this.file,
+  });
+}
+
 class RegisterUser extends RegisterEvent {
   final BuildContext context;
   final String full_name;
@@ -27,15 +36,16 @@ class RegisterUser extends RegisterEvent {
 
   final String role;
   final String password;
+  final String? profilepic;
 
-  const RegisterUser({
-    required this.context,
-    required this.full_name,
-    required this.contact_no,
-    required this.email,
-    required this.role,
-    required this.password,
-  });
+  const RegisterUser(
+      {required this.context,
+      required this.full_name,
+      required this.contact_no,
+      required this.email,
+      required this.role,
+      required this.password,
+      this.profilepic});
 }
 
 class NavigateLoginScreenEvent extends RegisterEvent {

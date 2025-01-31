@@ -9,18 +9,20 @@ class Failure {
   @override
   String toString() => 'Failure(message: $message, statusCode: $statusCode)';
 }
-// local database ko failure  
+
+// local database ko failure
 class LocaldatabaseFailure extends Failure {
   LocaldatabaseFailure({
     required super.message,
   });
 }
-// api failure 
+
+// api failure
 class ApiFailure extends Failure {
   @override
-  final int statusCode;
+  final int? statusCode;
   ApiFailure({
-    required this.statusCode,
+    this.statusCode,
     required super.message,
   });
 }

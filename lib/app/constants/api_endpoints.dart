@@ -8,6 +8,7 @@ class ApiEndpoints {
   // static const String baseUrl = "http://localhost:3000/api/v1/";
 
 // --------AUth ROutes
-  static const String register = "auth/register";
-  static const String login = "auth/login";
+  static const String register = "user/register";
+  static const String login = "user/login";
+  static const String uploadImage = "user/uploadImage";
 }
