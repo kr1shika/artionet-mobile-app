@@ -23,6 +23,17 @@ class AuthEntity extends Equatable {
       this.profilepic,
       this.artistname});
 
+  const AuthEntity.empty()
+      : userId = '_empty.userId',
+        full_name = 'empty.full_name',
+        contact_no = 'empty.contact_no',
+        password = 'empty.password',
+        email = 'empty.email',
+        role = 'empty.role',
+        desc = 'empty.desc',
+        profilepic = 'empty.profilepic',
+        artistname = 'empty.artistname';
+
   @override
   List<Object?> get props => [
         userId,

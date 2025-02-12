@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:tryproject/features/auth/presentation/view/buyers/login_view.dart';
 import 'package:tryproject/features/auth/presentation/view_model/signup/register_bloc.dart';
 
@@ -18,6 +22,33 @@ class _RegisterViewState extends State<RegisterView> {
   final _roleController = TextEditingController(text: 'buyer');
   final _passwordController = TextEditingController();
 
+  checkCameraPermssion() async {
+    if (await Permission.camera.request().isRestricted ||
+        await Permission.camera.request().isDenied) {
+      await Permission.camera.request();
+    }
+  }
+
+  File? _img;
+  Future _browseImage(ImageSource imageSource) async {
+    try {
+      final image = await ImagePicker().pickImage(source: imageSource);
+      if (image != null) {
+        setState(() {
+          _img = File(image.path);
+          //send image to server
+          context.read<RegisterBloc>().add(
+                LoadImage(file: _img!),
+              );
+        });
+      } else {
+        return;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,15 +62,13 @@ class _RegisterViewState extends State<RegisterView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Logo
-                    const SizedBox(height: 100),
+                    const SizedBox(height: 50),
                     Image.asset(
                       'assets/images/logo.png',
-                      width: 110,
-                      height: 110,
+                      width: 85,
+                      height: 85,
                     ),
-                    const SizedBox(height: 5),
-
-                    // Signup Text
+                    const SizedBox(height: 4),
                     const Text(
                       "Sign up to artionet",
                       style: TextStyle(
@@ -48,12 +77,68 @@ class _RegisterViewState extends State<RegisterView> {
                         color: Colors.black,
                       ),
                     ),
-                    const SizedBox(height: 21),
+                    const SizedBox(height: 10),
                     // Input Fields
                     Form(
                       key: _key,
                       child: Column(
                         children: [
+                          InkWell(
+                            onTap: () {
+                              showModalBottomSheet(
+                                backgroundColor: Colors.grey[300],
+                                context: context,
+                                isScrollControlled: true,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(15),
+                                  ),
+                                ),
+                                builder: (context) => Padding(
+                                  padding: const EdgeInsets.all(20),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      ElevatedButton.icon(
+                                        onPressed: () {
+                                          checkCameraPermssion();
+                                          _browseImage(ImageSource.camera);
+                                          Navigator.pop(context);
+                                          // Upload image it is not null
+                                        },
+                                        icon: const Icon(Icons.camera),
+                                        label: const Text('Camera'),
+                                      ),
+                                      ElevatedButton.icon(
+                                        onPressed: () {
+                                          _browseImage(ImageSource.gallery);
+                                        },
+                                        icon: const Icon(Icons.image),
+                                        label: const Text('Gallery'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                            child: SizedBox(
+                              height: 140,
+                              width: 140,
+                              child: CircleAvatar(
+                                radius: 50,
+                                backgroundImage: _img != null
+                                    ? FileImage(_img!)
+                                    : const AssetImage(
+                                            'assets/images/profile.jpg')
+                                        as ImageProvider,
+                                // backgroundImage:
+                                //     AssetImage('assets/images/profile.jpg')
+                                //         as ImageProvider,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 15),
                           Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 41.0),
@@ -177,6 +262,9 @@ class _RegisterViewState extends State<RegisterView> {
                           ElevatedButton(
                             onPressed: () {
                               if (_key.currentState!.validate()) {
+                                final registerState =
+                                    context.read<RegisterBloc>().state;
+                                final imageName = registerState.imageName;
                                 context.read<RegisterBloc>().add(
                                       RegisterUser(
                                         context: context,
@@ -185,6 +273,7 @@ class _RegisterViewState extends State<RegisterView> {
                                         contact_no: _contactController.text,
                                         role: _roleController.text,
                                         password: _passwordController.text,
+                                        profilepic: imageName,
                                       ),
                                     );
                               }
@@ -215,7 +304,7 @@ class _RegisterViewState extends State<RegisterView> {
                             onPressed: () {
                               context.read<RegisterBloc>().add(
                                     NavigateScreenEvent(
-                                      destination: LoginView(),
+                                      destination: const LoginView(),
                                       context: context,
                                     ),
                                   );
