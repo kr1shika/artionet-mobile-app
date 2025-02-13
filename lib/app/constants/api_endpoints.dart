@@ -11,4 +11,7 @@ class ApiEndpoints {
   static const String register = "user/register";
   static const String login = "user/login";
   static const String uploadImage = "user/uploadImage";
+
+//  ______-art work
+  static const String getArtworks = "artwork/";
 }

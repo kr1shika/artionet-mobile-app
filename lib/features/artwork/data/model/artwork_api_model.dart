@@ -58,6 +58,8 @@ class ArtworkApiModel extends Equatable {
     );
   }
 
+  static List<ArtworkEntity> toEntityList(List<ArtworkApiModel> models) =>
+      models.map((model) => model.toEntity()).toList();
   @override
   // TODO: implement props
   List<Object?> get props => [
