@@ -1,0 +1,2 @@
+D:/sem_5th/krishika_ArtionetMobile/android/app/.cxx/Debug/1j391r35/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/sem_5th/krishika_ArtionetMobile/android/app/.cxx/Debug/1j391r35/armeabi-v7a/CMakeFiles/rebuild_cache.dir

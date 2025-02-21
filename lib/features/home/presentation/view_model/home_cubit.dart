@@ -8,13 +8,11 @@ import 'package:tryproject/features/home/presentation/view_model/home_state.dart
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(HomeState.initial());
 
-  /// Method to handle tab changes
   void onTabTapped(int index) {
     emit(state.copyWith(selectedIndex: index));
   }
 
   void logout(BuildContext context) {
-    // Wait for 2 seconds
     Future.delayed(const Duration(seconds: 2), () async {
       if (context.mounted) {
         Navigator.pushReplacement(
@@ -22,7 +20,7 @@ class HomeCubit extends Cubit<HomeState> {
           MaterialPageRoute(
             builder: (context) => BlocProvider.value(
               value: getIt<LoginBloc>(),
-              child: LoginView(),
+              child: const LoginView(),
             ),
           ),
         );

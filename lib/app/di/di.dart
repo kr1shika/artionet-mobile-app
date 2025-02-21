@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:tryproject/core/network/api_service.dart';
 import 'package:tryproject/core/network/hive_service.dart';
+import 'package:tryproject/features/artwork/data/data_source/artwork_remote_datasource.dart';
+import 'package:tryproject/features/artwork/data/repository/artwork_remote_repository.dart';
+import 'package:tryproject/features/artwork/domain/use_case/get_all_artwork_usecase.dart';
+import 'package:tryproject/features/artwork/domain/use_case/get_artwork_usecase.dart';
+import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
 import 'package:tryproject/features/auth/data/data_source/local_data_source/auth_local_datasource.dart';
 import 'package:tryproject/features/auth/data/data_source/remote_data_source/auth_remote_datasource.dart';
 import 'package:tryproject/features/auth/data/repository/auth_local_repository/auth_local_repository.dart';
@@ -24,15 +29,14 @@ Future<void> initDependencies() async {
   // First initialize hive service
   await _initHiveService();
   await _initApiService();
-
   await _initHomeDependencies();
   await _initRegisterDependencies();
   await _initLoginDependencies();
-
   await _initSplashScreenDependencies();
   await _initOnboardDependencies();
   await _initArtistRegisterDependencies();
   await _initArtistOnboardDependencies();
+  await _initArtworkDependencies();
 }
 
 _initApiService() {
@@ -43,6 +47,31 @@ _initApiService() {
 
 _initHiveService() {
   getIt.registerLazySingleton<HiveService>(() => HiveService());
+}
+
+_initArtworkDependencies() async {
+  // remote data
+  getIt.registerFactory<ArtworkRemoteDatasource>(
+      () => ArtworkRemoteDatasource(dio: getIt<Dio>()));
+
+// repository
+  getIt.registerLazySingleton(() => ArtworkRemoteRepository(
+      remoteDataSource: getIt<ArtworkRemoteDatasource>()));
+
+  // usecase
+  getIt.registerLazySingleton<GetAllArtworkUsecase>(
+    () => GetAllArtworkUsecase(
+        artworkRepository: getIt<ArtworkRemoteRepository>()),
+  );
+
+  getIt.registerLazySingleton<GetArtworkByIdUsecase>(
+    () => GetArtworkByIdUsecase(
+        artworkRepository: getIt<ArtworkRemoteRepository>()),
+  );
+
+  getIt.registerFactory<ArtworkBloc>(() => ArtworkBloc(
+      getAllArtworkUsecase: getIt<GetAllArtworkUsecase>(),
+      getArtworkByIdUsecase: getIt<GetArtworkByIdUsecase>()));
 }
 
 _initRegisterDependencies() {
@@ -85,39 +114,12 @@ _initRegisterDependencies() {
   );
 }
 
-// _initArtistRegisterDependencies() {
-//   // init local data source
-//   getIt.registerLazySingleton(
-//     () => AuthLocalDatasource(getIt<HiveService>()),
-//   );
-
-//   // init local repository
-//   getIt.registerLazySingleton(
-//     () => AuthLocalRepository(getIt<AuthLocalDatasource>()),
-//   );
-
-//   // register use usecase
-//   getIt.registerLazySingleton<RegisterUseCase>(
-//     () => RegisterUseCase(
-//       getIt<AuthLocalRepository>(),
-//     ),
-//   );
-
-//   getIt.registerFactory<ArtistRegisterBloc>(
-//     () => ArtistRegisterBloc(
-//       registerUseCase: getIt(), loginBloc: getIt<LoginBloc>(),
-//       // LoginBloc: getIt<LoginBloc>(),
-//     ),
-//   );
-// }
-
 _initArtistRegisterDependencies() {
   getIt.registerFactory<ArtistRegisterBloc>(
     () => ArtistRegisterBloc(
       registerUseCase:
           getIt(), // Already registered in _initRegisterDependencies
-      loginBloc:
-          getIt<LoginBloc>(), // Already registered in _initLoginDependencies
+      loginBloc: getIt<LoginBloc>(),
     ),
   );
 }
