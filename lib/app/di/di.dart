@@ -6,6 +6,7 @@ import 'package:tryproject/core/network/hive_service.dart';
 import 'package:tryproject/features/artwork/data/data_source/artwork_remote_datasource.dart';
 import 'package:tryproject/features/artwork/data/repository/artwork_remote_repository.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_all_artwork_usecase.dart';
+import 'package:tryproject/features/artwork/domain/use_case/get_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
 import 'package:tryproject/features/auth/data/data_source/local_data_source/auth_local_datasource.dart';
 import 'package:tryproject/features/auth/data/data_source/remote_data_source/auth_remote_datasource.dart';
@@ -62,8 +63,15 @@ _initArtworkDependencies() async {
     () => GetAllArtworkUsecase(
         artworkRepository: getIt<ArtworkRemoteRepository>()),
   );
-  getIt.registerFactory<ArtworkBloc>(
-      () => ArtworkBloc(getAllArtworkUsecase: getIt<GetAllArtworkUsecase>()));
+
+  getIt.registerLazySingleton<GetArtworkByIdUsecase>(
+    () => GetArtworkByIdUsecase(
+        artworkRepository: getIt<ArtworkRemoteRepository>()),
+  );
+
+  getIt.registerFactory<ArtworkBloc>(() => ArtworkBloc(
+      getAllArtworkUsecase: getIt<GetAllArtworkUsecase>(),
+      getArtworkByIdUsecase: getIt<GetArtworkByIdUsecase>()));
 }
 
 _initRegisterDependencies() {
@@ -111,8 +119,7 @@ _initArtistRegisterDependencies() {
     () => ArtistRegisterBloc(
       registerUseCase:
           getIt(), // Already registered in _initRegisterDependencies
-      loginBloc:
-          getIt<LoginBloc>(), // Already registered in _initLoginDependencies
+      loginBloc: getIt<LoginBloc>(),
     ),
   );
 }

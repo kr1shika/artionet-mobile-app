@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:tryproject/core/error/failure.dart';
 import 'package:tryproject/features/artwork/domain/entity/artwork_entity.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_all_artwork_usecase.dart';
@@ -23,6 +24,17 @@ class ArtworkBloc extends Bloc<ArtworkEvent, ArtworkState> {
     on<FetchArtworkById>(_onFetchArtworkById);
 
     add(FetchAllArtworks());
+
+    on<NavigateToArtworkDetail>(
+      (event, emit) {
+        Navigator.push(
+          event.context,
+          MaterialPageRoute(
+            builder: (context) => event.destination,
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _onFetchAllArtworks(

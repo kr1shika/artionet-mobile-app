@@ -17,3 +17,13 @@ class FetchArtworkById extends ArtworkEvent {
   @override
   List<Object> get props => [id];
 }
+
+class NavigateToArtworkDetail extends ArtworkEvent {
+  final BuildContext context;
+  final Widget destination;
+
+  const NavigateToArtworkDetail({
+    required this.context,
+    required this.destination,
+  });
+}
