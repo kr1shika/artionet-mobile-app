@@ -1,10 +1,12 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tryproject/core/common/snackbar/my_snackbar.dart';
 import 'package:tryproject/features/auth/domain/use_case/login_usecase.dart';
 import 'package:tryproject/features/home/presentation/view/buyer/homeview.dart';
 import 'package:tryproject/features/home/presentation/view_model/home_cubit.dart';
+
 // import 'package:tryproject/view/homeview.dart';
 
 part 'login_event.dart';
@@ -24,22 +26,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         _homeCubit = homeCubit,
         _loginUseCase = loginUseCase,
         super(LoginState.initial()) {
-    // on<NavigateRegisterScreenEvent>(
-    //   (event, emit) {
-    //     Navigator.push(
-    //       event.context,
-    //       MaterialPageRoute(
-    //         builder: (context) => MultiBlocProvider(
-    //           providers: [
-    //             BlocProvider.value(value: _registerBloc),
-    //           ],
-    //           child: event.destination,
-    //         ),
-    //       ),
-    //     );
-    //   },
-    // );
-
     on<NavigateHomeScreenEvent>(
       (event, emit) {
         Navigator.pushReplacement(
@@ -72,10 +58,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
               color: Colors.red,
             );
           },
-          (token) {
+          (token) async {
             emit(state.copyWith(isLoading: false, isSuccess: true));
-            // final prefs=await SharedPreferences.getInstance();
+            final prefs = await SharedPreferences.getInstance();
             // await prefs.setString('email',user.email);
+            await prefs.setString('auth_token', token);
+            String? savedToken = prefs.getString('auth_token');
+            print('Saved Token: $savedToken');
             add(
               NavigateHomeScreenEvent(
                 context: event.context,

@@ -254,7 +254,7 @@ class _ArtistSignupView extends State<ArtistSignupView> {
                               onPressed: () {
                                 context.read<ArtistRegisterBloc>().add(
                                       NavigateScreenEvent(
-                                        destination: LoginView(),
+                                        destination: const LoginView(),
                                         context: context,
                                       ),
                                     );

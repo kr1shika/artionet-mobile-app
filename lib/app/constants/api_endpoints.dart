@@ -13,5 +13,5 @@ class ApiEndpoints {
   static const String uploadImage = "user/uploadImage";
 
 //  ______-art work
-  static const String getArtworks = "artwork/";
+  static const String getArtworks = "artwork/findall";
 }

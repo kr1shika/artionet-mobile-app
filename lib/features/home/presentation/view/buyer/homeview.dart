@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tryproject/core/common/snackbar/my_snackbar.dart';
+import 'package:tryproject/features/artwork/presentation/view/search_view.dart';
 import 'package:tryproject/features/home/presentation/view/buyer/pages/customerProfileView.dart';
 import 'package:tryproject/features/home/presentation/view/buyer/pages/dashboard_view.dart';
 import 'package:tryproject/features/home/presentation/view/buyer/pages/notification_view.dart';
-import 'package:tryproject/features/home/presentation/view/buyer/pages/search_view.dart';
 import 'package:tryproject/features/home/presentation/view_model/home_cubit.dart';
 import 'package:tryproject/features/home/presentation/view_model/home_state.dart';
 
@@ -21,7 +21,7 @@ class HomeView extends StatelessWidget {
 
           final List<Widget> pages = [
             const HomeScreen(),
-            const SearchView(),
+            SearchView(),
             const Customerprofileview(),
             const NotificationsView(),
           ];
@@ -50,35 +50,65 @@ class HomeView extends StatelessWidget {
                 ),
               ],
             ),
-            body: IndexedStack(
-              index: state.selectedIndex,
-              children: pages,
-            ),
-            bottomNavigationBar: BottomNavigationBar(
-              type: BottomNavigationBarType.fixed,
-              backgroundColor: const Color.fromARGB(255, 27, 29, 30),
-              currentIndex: state.selectedIndex,
-              onTap: (index) => homeCubit.onTabTapped(index),
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.search),
-                  label: 'Search',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.person),
-                  label: 'Profile',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.notifications),
-                  label: 'Notifications',
-                ),
-              ],
-              selectedItemColor: const Color.fromARGB(255, 133, 139, 144),
-              unselectedItemColor: const Color.fromARGB(255, 255, 255, 255),
+            body: BlocBuilder<HomeCubit, HomeState>(builder: (context, state) {
+              return state.views.elementAt(state.selectedIndex);
+            }),
+            // bottomNavigationBar: BottomNavigationBar(
+            //   type: BottomNavigationBarType.fixed,
+            //   backgroundColor: const Color.fromARGB(255, 27, 29, 30),
+            //   currentIndex: state.selectedIndex,
+            //   onTap: (index) => homeCubit.onTabTapped(index),
+            //   items: const [
+            //     BottomNavigationBarItem(
+            //       icon: Icon(Icons.home),
+            //       label: 'Home',
+            //     ),
+            //     BottomNavigationBarItem(
+            //       icon: Icon(Icons.search),
+            //       label: 'Search',
+            //     ),
+            //     BottomNavigationBarItem(
+            //       icon: Icon(Icons.person),
+            //       label: 'Profile',
+            //     ),
+            //     BottomNavigationBarItem(
+            //       icon: Icon(Icons.notifications),
+            //       label: 'Notifications',
+            //     ),
+            //   ],
+            //   selectedItemColor: const Color.fromARGB(255, 133, 139, 144),
+            //   unselectedItemColor: const Color.fromARGB(255, 255, 255, 255),
+            // ),
+
+            bottomNavigationBar: BlocBuilder<HomeCubit, HomeState>(
+              builder: (context, state) {
+                return BottomNavigationBar(
+                  items: const <BottomNavigationBarItem>[
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.home),
+                      label: 'Home',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.search),
+                      label: 'Search',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.person),
+                      label: 'Profile',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.notifications),
+                      label: 'Notifications',
+                    ),
+                  ],
+                  currentIndex: state.selectedIndex,
+                  selectedItemColor: const Color.fromARGB(255, 133, 139, 144),
+                  unselectedItemColor: const Color.fromARGB(255, 255, 255, 255),
+                  onTap: (index) {
+                    context.read<HomeCubit>().onTabTapped(index);
+                  },
+                );
+              },
             ),
           );
         },

@@ -1,54 +1,46 @@
-// class HomeState extends Equatable {
-//   final int selectedIndex;
-//   final List<Widget> views;
+import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tryproject/app/di/di.dart';
+import 'package:tryproject/features/home/presentation/view/buyer/pages/dashboard_view.dart';
+import 'package:tryproject/features/home/presentation/view/buyer/pages/customerProfileView.dart';
+import 'package:tryproject/features/home/presentation/view/buyer/pages/notification_view.dart';
+import 'package:tryproject/features/artwork/presentation/view/search_view.dart';
+import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
 
-//   const HomeState({
-//     required this.selectedIndex,
-//     required this.views,
-//   });
-
-//   // Initial state
-//   static HomeState initial() {
-//     return const HomeState(
-//       selectedIndex: 0,
-//       views: [
-//         Center(
-//           child: Text('Dashboard'),
-//         ),
-//         Center(
-//           child: Text('Account'),
-//         ),
-//       ],
-//     );
-//   }
-
-//   HomeState copyWith({
-//     int? selectedIndex,
-//     List<Widget>? views,
-//   }) {
-//     return HomeState(
-//       selectedIndex: selectedIndex ?? this.selectedIndex,
-//       views: views ?? this.views,
-//     );
-//   }
-
-//   @override
-//   List<Object?> get props => [selectedIndex, views];
-// }
-
-/// State Class for HomeView
-class HomeState {
+class HomeState extends Equatable {
   final int selectedIndex;
+  final List<Widget> views;
 
-  const HomeState({required this.selectedIndex});
+  const HomeState({
+    required this.selectedIndex,
+    required this.views,
+  });
 
-  // Initial state
-  factory HomeState.initial() {
-    return const HomeState(selectedIndex: 0);
+  static HomeState initial() {
+    return HomeState(
+      selectedIndex: 0,
+      views: [
+        const HomeScreen(),
+        BlocProvider(
+          create: (context) => getIt<ArtworkBloc>(),
+          child: SearchView(),
+        ),
+        const Customerprofileview(),
+        const NotificationsView(),
+      ],
+    );
   }
 
-  // Copy with method to create a new instance with updated data
-  HomeState copyWith({int? selectedIndex}) {
-    return HomeState(selectedIndex: selectedIndex ?? this.selectedIndex);
+  HomeState copyWith({
+    int? selectedIndex,
+  }) {
+    return HomeState(
+      selectedIndex: selectedIndex ?? this.selectedIndex,
+      views: views,
+    );
   }
+
+  @override
+  List<Object?> get props => [selectedIndex, views];
 }

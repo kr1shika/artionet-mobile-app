@@ -19,7 +19,7 @@ class _RegisterViewState extends State<RegisterView> {
   final _fullnameController = TextEditingController();
   final _emailController = TextEditingController();
   final _contactController = TextEditingController();
-  final _roleController = TextEditingController(text: 'buyer');
+  final _roleController = TextEditingController(text: 'artist');
   final _passwordController = TextEditingController();
 
   checkCameraPermssion() async {
