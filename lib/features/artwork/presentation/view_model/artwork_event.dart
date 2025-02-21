@@ -8,3 +8,12 @@ abstract class ArtworkEvent extends Equatable {
 }
 
 class FetchAllArtworks extends ArtworkEvent {}
+
+class FetchArtworkById extends ArtworkEvent {
+  final String id;
+
+  const FetchArtworkById(this.id);
+
+  @override
+  List<Object> get props => [id];
+}

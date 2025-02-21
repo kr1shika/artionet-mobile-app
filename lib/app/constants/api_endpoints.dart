@@ -4,6 +4,7 @@ class ApiEndpoints {
   static const Duration connectionTimeout = Duration(seconds: 1000);
   static const Duration receiveTimeout = Duration(seconds: 1000);
   static const String baseUrl = "http://10.0.2.2:5055/api/";
+
   // For iphone
   // static const String baseUrl = "http://localhost:3000/api/v1/";
 
@@ -14,4 +15,5 @@ class ApiEndpoints {
 
 //  ______-art work
   static const String getArtworks = "artwork/findall";
+  static const String getArtworkbyId = "artwork/find";
 }

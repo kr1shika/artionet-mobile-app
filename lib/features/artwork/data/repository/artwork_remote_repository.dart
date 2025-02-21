@@ -17,4 +17,14 @@ class ArtworkRemoteRepository implements IArtworkRepository {
       return Left(ApiFailure(message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, ArtworkEntity>> getArtworkById(String id) async {
+    try {
+      final artwork = await remoteDataSource.getArtworkById(id);
+      return Right(artwork);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
+  }
 }

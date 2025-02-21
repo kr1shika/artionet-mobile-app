@@ -74,7 +74,8 @@ class SearchView extends StatelessWidget {
                             elevation: 3,
                             child: ListTile(
                               leading: artwork.images != null
-                                  ? Image.network(artwork.images!,
+                                  ? 
+                                  Image.network(artwork.images!,
                                       width: 50, height: 50, fit: BoxFit.cover)
                                   : const Icon(Icons.image_not_supported),
                               title: Text(artwork.title),

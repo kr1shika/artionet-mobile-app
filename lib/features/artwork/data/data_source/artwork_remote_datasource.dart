@@ -27,4 +27,20 @@ class ArtworkRemoteDatasource implements IArtworkDataSource {
       throw Exception(e);
     }
   }
+
+  @override
+  Future<ArtworkEntity> getArtworkById(String id) async {
+    try {
+      var response = await _dio.get('${ApiEndpoints.getArtworkbyId}/$id');
+      if (response.statusCode == 200) {
+        return ArtworkApiModel.fromJson(response.data).toEntity();
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } on DioException catch (e) {
+      throw Exception(e);
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
 }

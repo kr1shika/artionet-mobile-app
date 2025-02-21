@@ -12,12 +12,12 @@ class ArtworkApiModel extends Equatable {
   final String dimensions;
   final String price;
   final String medium_used;
-  final String? images;
+  late String? images;
   final String? archive;
   final String? artistId;
   final String categories;
 
-  const ArtworkApiModel(
+  ArtworkApiModel(
       {this.id,
       required this.artistId,
       required this.title,
@@ -28,8 +28,14 @@ class ArtworkApiModel extends Equatable {
       required this.medium_used,
       required this.categories});
 
-  factory ArtworkApiModel.fromJson(Map<String, dynamic> json) =>
-      _$ArtworkApiModelFromJson(json);
+  factory ArtworkApiModel.fromJson(Map<String, dynamic> json) {
+    String? imageUrl = json['images'];
+    if (imageUrl != null && !imageUrl.startsWith('http')) {
+      // Prepend your server's base URL if it's a relative path
+      imageUrl = 'http://10.0.2.2:5055/$imageUrl';
+    }
+    return _$ArtworkApiModelFromJson(json)..images = imageUrl;
+  }
 
   Map<String, dynamic> toJson() => _$ArtworkApiModelToJson(this);
 
@@ -60,8 +66,8 @@ class ArtworkApiModel extends Equatable {
 
   static List<ArtworkEntity> toEntityList(List<ArtworkApiModel> models) =>
       models.map((model) => model.toEntity()).toList();
+      
   @override
-  // TODO: implement props
   List<Object?> get props => [
         id,
         title,
