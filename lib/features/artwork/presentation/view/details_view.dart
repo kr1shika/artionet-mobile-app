@@ -2,15 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
 
-class DetailView extends StatelessWidget {
+class DetailView extends StatefulWidget {
   final String artworkId;
 
   const DetailView({super.key, required this.artworkId});
 
   @override
+  _DetailViewState createState() => _DetailViewState();
+}
+
+class _DetailViewState extends State<DetailView> {
+  bool isFavorite = false; // Track heart icon state
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(title: const Text('Artwork Details')),
       body: BlocBuilder<ArtworkBloc, ArtworkState>(
         builder: (context, state) {
           final artwork = state.selectedArtwork;
@@ -37,16 +43,48 @@ class DetailView extends StatelessWidget {
                     ? Image.network(artwork.images!, fit: BoxFit.cover)
                     : const Icon(Icons.image_not_supported, size: 100),
                 const SizedBox(height: 10),
-                Text(
-                  artwork.title,
-                  style: const TextStyle(
-                      fontSize: 24, fontWeight: FontWeight.bold),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        artwork.title,
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        isFavorite ? Icons.favorite : Icons.favorite_border,
+                        color: isFavorite ? Colors.red : Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          isFavorite = !isFavorite; // Toggle favorite state
+                        });
+                      },
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 10),
                 Text('Medium: ${artwork.medium_used}'),
                 Text('Price: ${artwork.price}'),
-                const SizedBox(height: 10),
-                // Text(artwork.description ?? 'No description available'),
+                const SizedBox(height: 20),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Handle purchase logic
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 12),
+                      textStyle: const TextStyle(fontSize: 18),
+                    ),
+                    child: const Text('Purchase'),
+                  ),
+                ),
               ],
             ),
           );

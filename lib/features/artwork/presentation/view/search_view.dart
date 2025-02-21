@@ -15,8 +15,8 @@ class SearchView extends StatefulWidget {
 class _SearchViewState extends State<SearchView> {
   final searchController = TextEditingController();
   final _searchFormKey = GlobalKey<FormState>();
-
   String? selectedArtworkId;
+  final Set<String> likedArtworks = {};
 
   @override
   Widget build(BuildContext context) {
@@ -94,33 +94,108 @@ class _SearchViewState extends State<SearchView> {
                       } else if (state.artworks.isEmpty) {
                         return const Center(child: Text('No artworks found.'));
                       } else {
-                        return ListView.builder(
+                        return GridView.builder(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                            childAspectRatio: 0.8,
+                          ),
                           itemCount: state.artworks.length,
                           itemBuilder: (context, index) {
                             final artwork = state.artworks[index];
-                            return Card(
-                              elevation: 3,
-                              child: ListTile(
-                                leading: artwork.images != null
-                                    ? Image.network(
-                                        artwork.images!,
-                                        width: 50,
-                                        height: 50,
-                                        fit: BoxFit.cover,
-                                      )
-                                    : const Icon(Icons.image_not_supported),
-                                title: Text(artwork.title),
-                                subtitle: Text(
-                                    'Medium: ${artwork.medium_used}\nPrice: ${artwork.price}'),
-                                onTap: () {
-                                  setState(() {
-                                    selectedArtworkId = artwork
-                                        .artworkId; // Set selected artwork
-                                  });
-                                  BlocProvider.of<ArtworkBloc>(context).add(
-                                    FetchArtworkById(artwork.artworkId ?? ''),
-                                  );
-                                },
+                            final isLiked =
+                                likedArtworks.contains(artwork.artworkId);
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  selectedArtworkId = artwork.artworkId;
+                                });
+                                BlocProvider.of<ArtworkBloc>(context).add(
+                                  FetchArtworkById(artwork.artworkId ?? ''),
+                                );
+                              },
+                              child: Card(
+                                elevation: 3,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: ClipRRect(
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(4),
+                                          topRight: Radius.circular(4),
+                                        ),
+                                        child: artwork.images != null
+                                            ? Image.network(
+                                                artwork.images!,
+                                                width: double.infinity,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : const Icon(
+                                                Icons.image_not_supported,
+                                                size: 100,
+                                              ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                artwork.title,
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              Text(
+                                                'Price: ${artwork.price}',
+                                                style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: Color.fromARGB(
+                                                        255, 24, 24, 24)),
+                                              ),
+                                            ],
+                                          ),
+                                          IconButton(
+                                            icon: Icon(
+                                              isLiked
+                                                  ? Icons.favorite
+                                                  : Icons.favorite_border,
+                                              color: isLiked
+                                                  ? Colors.red
+                                                  : Colors.grey,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                if (isLiked) {
+                                                  likedArtworks.remove(
+                                                      artwork.artworkId);
+                                                } else {
+                                                  likedArtworks
+                                                      .add(artwork.artworkId!);
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
                           },
@@ -131,8 +206,7 @@ class _SearchViewState extends State<SearchView> {
                 ),
               ] else ...[
                 Expanded(
-                  child: DetailView(
-                      artworkId: selectedArtworkId!), // Show detail view
+                  child: DetailView(artworkId: selectedArtworkId!),
                 ),
               ],
             ],
