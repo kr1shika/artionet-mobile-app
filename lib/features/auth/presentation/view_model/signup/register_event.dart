@@ -17,8 +17,6 @@ class NavigateScreenEvent extends RegisterEvent {
   });
 }
 
-class LoadCoursesAndBatches extends RegisterEvent {}
-
 // for image-upload
 class LoadImage extends RegisterEvent {
   final File file;

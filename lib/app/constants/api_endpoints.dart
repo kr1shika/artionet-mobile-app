@@ -16,4 +16,9 @@ class ApiEndpoints {
 //  ______-art work
   static const String getArtworks = "artwork/findall";
   static const String getArtworkbyId = "artwork/find";
+
+  // purchase
+  static const String getPurchasesByUserId = "purchases/buyer";
+  static const String createPurchase = "purchases/create";
+  static const String verifyPurchase = "purchases/verify-otp";
 }

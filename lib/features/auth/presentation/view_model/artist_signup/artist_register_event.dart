@@ -17,8 +17,6 @@ class NavigateScreenEvent extends ArtistRegisterEvent {
   });
 }
 
-class LoadCoursesAndBatches extends ArtistRegisterEvent {}
-
 class RegisterUser extends ArtistRegisterEvent {
   final BuildContext context;
   final String full_name;

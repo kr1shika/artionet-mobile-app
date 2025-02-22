@@ -1,23 +1,25 @@
 import 'package:dio/dio.dart';
 import 'package:tryproject/app/constants/api_endpoints.dart';
-import 'package:tryproject/features/artwork/data/data_source/artwork_datasource.dart';
-import 'package:tryproject/features/artwork/data/dto/get_all_artwork_dto.dart';
-import 'package:tryproject/features/artwork/data/model/artwork_api_model.dart';
-import 'package:tryproject/features/artwork/domain/entity/artwork_entity.dart';
+import 'package:tryproject/features/purchases/data/data_source/purchase_datasource.dart';
+import 'package:tryproject/features/purchases/data/model/purchase_api_model.dart';
+import 'package:tryproject/features/purchases/domain/entity/purchase_entity.dart';
 
-class ArtworkRemoteDatasource implements IArtworkDataSource {
+class PurchaseRemoteDatasource implements IPurchaseDataSource {
   final Dio _dio;
 
-  ArtworkRemoteDatasource({required Dio dio}) : _dio = dio;
+  PurchaseRemoteDatasource({required Dio dio}) : _dio = dio;
 
   @override
-  Future<List<ArtworkEntity>> getArtworks() async {
+  Future<void> createPurchase(PurchaseEntity purchase) async {
     try {
-      var response = await _dio.get(ApiEndpoints.getArtworks);
-      if (response.statusCode == 200) {
-        GetAllArtworkDTO artworkaddDTO =
-            GetAllArtworkDTO.fromJson(response.data);
-        return ArtworkApiModel.toEntityList(artworkaddDTO.data);
+      // Convert entity to model
+      var purchaseApiModel = PurchaseApiModel.fromEntity(purchase);
+      var response = await _dio.post(
+        ApiEndpoints.createPurchase,
+        data: purchaseApiModel.toJson(),
+      );
+      if (response.statusCode == 201) {
+        return;
       } else {
         throw Exception(response.statusMessage);
       }
@@ -28,12 +30,14 @@ class ArtworkRemoteDatasource implements IArtworkDataSource {
     }
   }
 
-  @override
-  Future<ArtworkEntity> getArtworkById(String id) async {
+    Future<void> verifyPurchase(String purchaseId, String otp) async {
     try {
-      var response = await _dio.get('${ApiEndpoints.getArtworkbyId}/$id');
+      var response = await _dio.post(
+        ApiEndpoints.verifyPurchase,
+        data: {"purchaseId": purchaseId, "otp": otp},
+      );
       if (response.statusCode == 200) {
-        return ArtworkApiModel.fromJson(response.data).toEntity();
+        return;
       } else {
         throw Exception(response.statusMessage);
       }
@@ -42,5 +46,12 @@ class ArtworkRemoteDatasource implements IArtworkDataSource {
     } catch (e) {
       throw Exception(e);
     }
+  }
+
+
+  @override
+  Future<List<PurchaseEntity>> getPurchasesByUserId(String id) {
+    // TODO: implement getPurchasesByUserId
+    throw UnimplementedError();
   }
 }
