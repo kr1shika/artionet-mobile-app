@@ -8,6 +8,8 @@ class PurchaseState extends Equatable {
   final String? artworkTitle;
   final double? artworkPrice;
   final List<String>? artworkImages; // To store image URLs or paths
+  final List<PurchaseEntity>? purchases;
+  final String? errorMessage;
 
   const PurchaseState({
     required this.isLoading,
@@ -17,6 +19,8 @@ class PurchaseState extends Equatable {
     this.artworkTitle,
     this.artworkPrice,
     this.artworkImages,
+    this.purchases,
+    this.errorMessage,
   });
 
   factory PurchaseState.initial() {
@@ -28,6 +32,8 @@ class PurchaseState extends Equatable {
       artworkTitle: null,
       artworkPrice: null,
       artworkImages: null,
+      purchases: [],
+      errorMessage: null,
     );
   }
 
@@ -39,6 +45,8 @@ class PurchaseState extends Equatable {
     String? artworkTitle,
     double? artworkPrice,
     List<String>? artworkImages,
+    List<PurchaseEntity>? purchases,
+    String? errorMessage,
   }) {
     return PurchaseState(
       isLoading: isLoading ?? this.isLoading,
@@ -48,6 +56,8 @@ class PurchaseState extends Equatable {
       artworkTitle: artworkTitle ?? this.artworkTitle,
       artworkPrice: artworkPrice ?? this.artworkPrice,
       artworkImages: artworkImages ?? this.artworkImages,
+      purchases: purchases ?? this.purchases,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 
@@ -60,5 +70,7 @@ class PurchaseState extends Equatable {
         artworkTitle,
         artworkPrice,
         artworkImages,
+        purchases ?? [],
+        errorMessage ?? '',
       ];
 }

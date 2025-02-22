@@ -1,6 +1,3 @@
-// import 'package:equatable/equatable.dart';
-// import 'package:flutter/material.dart';
-
 part of 'purchase_bloc.dart';
 
 sealed class PurchaseEvent extends Equatable {
@@ -33,25 +30,25 @@ class CreatePurchaseEvent extends PurchaseEvent {
     this.totalAmount,
     this.purchaseId,
   });
+
   @override
   List<Object> get props => [art_id, buyer_id, address];
 }
 
-class VerifyPurchaseEvent extends PurchaseEvent {
-  final String art_id;
-  final String buyer_id;
-  final String address;
-  final String otp;
-  final String purchaseId;
+class FetchPurchasesByUserId extends PurchaseEvent {
+  final String userId;
 
-  const VerifyPurchaseEvent({
-    required this.art_id,
-    required this.buyer_id,
-    required this.address,
-    required this.otp,
-    required this.purchaseId,
-  });
+  const FetchPurchasesByUserId({required this.userId});
 
   @override
-  List<Object> get props => [art_id, buyer_id, address, otp, purchaseId];
+  List<Object> get props => [userId];
+}
+
+class FetchArtworkById extends PurchaseEvent {
+  final String id;
+
+  const FetchArtworkById({required this.id});
+
+  @override
+  List<Object> get props => [id];
 }

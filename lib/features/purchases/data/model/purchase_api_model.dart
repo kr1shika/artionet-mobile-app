@@ -17,9 +17,9 @@ class PurchaseApiModel extends Equatable {
   final DateTime? orderDate;
   final int? totalAmount;
   final String? title;
-  late String? imageUrl; // Make imageUrl late to initialize later if necessary
+  final String? imageUrl; // Make imageUrl late to initialize later if necessary
 
-  PurchaseApiModel({
+  const PurchaseApiModel({
     this.purchaseId,
     required this.art_id,
     required this.buyer_id,
@@ -42,7 +42,22 @@ class PurchaseApiModel extends Equatable {
           'http://10.0.2.2:5055/$imageUrl'; // Replace with your server base URL
     }
 
-    return _$PurchaseApiModelFromJson(json)..imageUrl = imageUrl;
+    return PurchaseApiModel(
+      purchaseId: json['purchaseId'],
+      art_id: json['art_id'],
+      buyer_id: json['buyer_id'],
+      address: json['address'],
+      status: json['status'],
+      otp: json['otp'],
+      otp_expiration: json['otp_expiration'] != null
+          ? DateTime.parse(json['otp_expiration'])
+          : null,
+      orderDate:
+          json['orderDate'] != null ? DateTime.parse(json['orderDate']) : null,
+      totalAmount: json['totalAmount'],
+      title: json['title'],
+      imageUrl: imageUrl,
+    );
   }
 
   Map<String, dynamic> toJson() {

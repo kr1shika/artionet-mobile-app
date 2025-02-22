@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:tryproject/app/constants/api_endpoints.dart';
 import 'package:tryproject/features/purchases/data/data_source/purchase_datasource.dart';
+import 'package:tryproject/features/purchases/data/dto/purchase_with_artwork_response_dto.dart';
 import 'package:tryproject/features/purchases/data/model/purchase_api_model.dart';
 import 'package:tryproject/features/purchases/domain/entity/purchase_entity.dart';
 
@@ -33,14 +34,17 @@ class PurchaseRemoteDatasource implements IPurchaseDataSource {
   }
 
   @override
+  @override
   Future<List<PurchaseEntity>> getPurchasesByUserId(String userId) async {
     try {
       final response =
           await _dio.get('${ApiEndpoints.getPurchasesByUserId}/$userId');
       if (response.statusCode == 200) {
-        final List<dynamic> data = response.data;
-        return data
-            .map((item) => PurchaseApiModel.fromJson(item).toEntity())
+        // Parse the response using the DTO
+        PurchaseWithArtworkResponseDTO responseDTO =
+            PurchaseWithArtworkResponseDTO.fromJson(response.data);
+        return responseDTO.data
+            .map((item) => PurchaseApiModel.fromJson(item.toJson()).toEntity())
             .toList();
       } else {
         throw Exception('Failed to load purchases');
