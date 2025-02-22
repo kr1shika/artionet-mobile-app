@@ -19,6 +19,7 @@ class CreatePurchaseEvent extends PurchaseEvent {
   final DateTime? otp_expiration;
   final DateTime? orderDate;
   final int? totalAmount;
+  final String? purchaseId;
 
   const CreatePurchaseEvent({
     required this.context,
@@ -30,6 +31,7 @@ class CreatePurchaseEvent extends PurchaseEvent {
     this.otp_expiration,
     this.orderDate,
     this.totalAmount,
+    this.purchaseId,
   });
   @override
   List<Object> get props => [art_id, buyer_id, address];
@@ -40,14 +42,16 @@ class VerifyPurchaseEvent extends PurchaseEvent {
   final String buyer_id;
   final String address;
   final String otp;
+  final String purchaseId;
 
   const VerifyPurchaseEvent({
     required this.art_id,
     required this.buyer_id,
     required this.address,
     required this.otp,
+    required this.purchaseId,
   });
 
   @override
-  List<Object> get props => [art_id, buyer_id, address, otp];
+  List<Object> get props => [art_id, buyer_id, address, otp, purchaseId];
 }

@@ -10,18 +10,19 @@ class PurchaseEntity extends Equatable {
   final DateTime? otp_expiration;
   final DateTime? orderDate;
   final int? totalAmount;
+  final String? imageUrl;
 
-  const PurchaseEntity({
-    this.purchaseId,
-    required this.art_id,
-    required this.buyer_id,
-    required this.address,
-    required this.status,
-    this.otp,
-    this.otp_expiration,
-    this.orderDate,
-    this.totalAmount,
-  });
+  const PurchaseEntity(
+      {this.purchaseId,
+      required this.art_id,
+      required this.buyer_id,
+      required this.address,
+      required this.status,
+      this.otp,
+      this.otp_expiration,
+      this.orderDate,
+      this.totalAmount,
+      this.imageUrl});
 
   const PurchaseEntity.empty()
       : purchaseId = '_empty.purchaseId',
@@ -32,6 +33,7 @@ class PurchaseEntity extends Equatable {
         otp = '_empty.otp',
         otp_expiration = null,
         orderDate = null,
+        imageUrl = '_empty.imagwUrl',
         totalAmount = null;
 
   @override
@@ -45,6 +47,7 @@ class PurchaseEntity extends Equatable {
         otp,
         otp_expiration,
         orderDate,
-        totalAmount
+        totalAmount,
+        imageUrl
       ];
 }

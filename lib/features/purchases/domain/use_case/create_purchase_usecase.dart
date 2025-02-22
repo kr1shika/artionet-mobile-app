@@ -7,6 +7,7 @@ import 'package:tryproject/features/purchases/domain/repository/purchase_reposit
 
 class CreatePurchaseUserParams extends Equatable {
   final String art_id;
+  final String? purchaseId;
   final String buyer_id;
   final String address;
   final String status;
@@ -20,6 +21,7 @@ class CreatePurchaseUserParams extends Equatable {
     required this.buyer_id,
     required this.address,
     required this.status,
+    this.purchaseId,
     this.otp,
     this.otp_expiration,
     this.orderDate,
@@ -36,26 +38,30 @@ class CreatePurchaseUserParams extends Equatable {
         otp_expiration,
         orderDate,
         totalAmount,
+        purchaseId
       ];
 }
 
 class CreatePurchaseUsecase
-    implements UsecaseWithParams<void, CreatePurchaseUserParams> {
+    implements UsecaseWithParams<String?, CreatePurchaseUserParams> {
   final IPurchaseRepository repository;
 
   CreatePurchaseUsecase(this.repository);
 
   @override
-  Future<Either<Failure, void>> call(CreatePurchaseUserParams params) {
+  Future<Either<Failure, String?>> call(CreatePurchaseUserParams params) async {
     final purchaseEntity = PurchaseEntity(
-        art_id: params.art_id,
-        buyer_id: params.buyer_id,
-        address: params.address,
-        status: params.status,
-        otp: params.otp,
-        otp_expiration: params.otp_expiration,
-        orderDate: params.orderDate,
-        totalAmount: params.totalAmount);
-    return repository.requestPurchaseOTP(purchaseEntity);
+      art_id: params.art_id,
+      buyer_id: params.buyer_id,
+      address: params.address,
+      status: params.status,
+    );
+
+    final result = await repository.createPurchase(purchaseEntity);
+
+    return result.fold(
+      (failure) => Left(failure),
+      (_) => Right(purchaseEntity.purchaseId), // ✅ Return purchaseId
+    );
   }
 }

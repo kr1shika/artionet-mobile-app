@@ -24,7 +24,6 @@ import 'package:tryproject/features/onboard/presentation/view_model/buyer_onboar
 import 'package:tryproject/features/purchases/data/data_source/purchase_remote_datasource.dart';
 import 'package:tryproject/features/purchases/data/repository/purchase_remote_repository.dart';
 import 'package:tryproject/features/purchases/domain/use_case/create_purchase_usecase.dart';
-import 'package:tryproject/features/purchases/domain/use_case/verify_purchase_usecase.dart';
 import 'package:tryproject/features/purchases/presentation/view_model/purchase_bloc.dart';
 import 'package:tryproject/features/splash/presentation/view_model/splash_cubit.dart';
 
@@ -69,16 +68,17 @@ _initPurchaseDependencies() async {
     () => CreatePurchaseUsecase(getIt<PurchaseRemoteRepository>()),
   );
 
-  getIt.registerLazySingleton<VerifyPurchaseUsecase>(
-    () => VerifyPurchaseUsecase(
-      getIt<PurchaseRemoteRepository>(),
-    ),
-  );
+  // getIt.registerLazySingleton<VerifyPurchaseUsecase>(
+  //   () => VerifyPurchaseUsecase(
+  //     getIt<PurchaseRemoteRepository>(),
+  //   ),
+  // );
 
   // purchase bloc
   getIt.registerFactory<PurchaseBloc>(() => PurchaseBloc(
-      createPurchaseUsecase: getIt<CreatePurchaseUsecase>(),
-      verifyPurchaseUsecase: getIt<VerifyPurchaseUsecase>()));
+        createPurchaseUsecase: getIt<CreatePurchaseUsecase>(),
+        getArtworkByIdUsecase: getIt(),
+      ));
 }
 
 _initArtworkDependencies() async {

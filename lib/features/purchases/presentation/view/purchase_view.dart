@@ -14,8 +14,6 @@ class PurchaseView extends StatefulWidget {
 class _PurchaseViewState extends State<PurchaseView> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController addressController = TextEditingController();
-  final TextEditingController otpController = TextEditingController();
-  String? purchaseId;
 
   @override
   Widget build(BuildContext context) {
@@ -23,13 +21,14 @@ class _PurchaseViewState extends State<PurchaseView> {
       appBar: AppBar(title: const Text('Purchase Artwork')),
       body: BlocConsumer<PurchaseBloc, PurchaseState>(
         listener: (context, state) {
-          if (state.isSuccess && state.purchaseId != null) {
-            setState(() {
-              purchaseId =
-                  state.purchaseId; // Store purchaseId for OTP verification
-            });
+          if (state.isSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('OTP sent to your email')),
+              const SnackBar(content: Text('Purchase Successful!')),
+            );
+          } else if (!state.isSuccess && !state.isLoading) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                  content: Text('Purchase Failed. Please try again.')),
             );
           }
         },
@@ -39,6 +38,7 @@ class _PurchaseViewState extends State<PurchaseView> {
             child: Form(
               key: _formKey,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextFormField(
                     controller: addressController,
@@ -47,50 +47,31 @@ class _PurchaseViewState extends State<PurchaseView> {
                         value!.isEmpty ? 'Enter address' : null,
                   ),
                   const SizedBox(height: 20),
+
+                  // Confirm Purchase Button
                   ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        context.read<PurchaseBloc>().add(
-                              CreatePurchaseEvent(
-                                art_id: widget.artworkId,
-                                buyer_id: "buyer_123",
-                                address: addressController.text,
-                                context: context,
-                                status: '',
-                              ),
-                            );
-                      }
-                    },
+                    onPressed: state.isLoading
+                        ? null
+                        : () {
+                            if (_formKey.currentState!.validate()) {
+                              context.read<PurchaseBloc>().add(
+                                    CreatePurchaseEvent(
+                                      art_id: widget.artworkId,
+                                      buyer_id: "679cb11ed81a6e1b96420af0",
+                                      address: addressController.text,
+                                      status: 'Order Confirmed',
+                                      context: context,
+                                      purchaseId:
+                                          "", // No need for purchaseId now
+                                    ),
+                                  );
+                            }
+                          },
                     child: state.isLoading
                         ? const CircularProgressIndicator()
                         : const Text('Confirm Purchase'),
                   ),
                   const SizedBox(height: 20),
-                  if (purchaseId != null) ...[
-                    TextFormField(
-                      controller: otpController,
-                      decoration: const InputDecoration(labelText: 'Enter OTP'),
-                      validator: (value) => value!.isEmpty ? 'Enter OTP' : null,
-                    ),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (otpController.text.isNotEmpty) {
-                          context.read<PurchaseBloc>().add(
-                                VerifyPurchaseEvent(
-                                  otp: otpController.text,
-                                  art_id: widget.artworkId,
-                                  buyer_id: "buyer_123",
-                                  address: addressController.text,
-                                ),
-                              );
-                        }
-                      },
-                      child: state.isLoading
-                          ? const CircularProgressIndicator()
-                          : const Text('Verify OTP'),
-                    ),
-                  ],
                 ],
               ),
             ),
@@ -98,5 +79,11 @@ class _PurchaseViewState extends State<PurchaseView> {
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    addressController.dispose();
+    super.dispose();
   }
 }

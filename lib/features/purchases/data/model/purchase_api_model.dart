@@ -16,8 +16,10 @@ class PurchaseApiModel extends Equatable {
   final DateTime? otp_expiration;
   final DateTime? orderDate;
   final int? totalAmount;
+  final String? title;
+  late String? imageUrl; // Make imageUrl late to initialize later if necessary
 
-  const PurchaseApiModel({
+  PurchaseApiModel({
     this.purchaseId,
     required this.art_id,
     required this.buyer_id,
@@ -27,19 +29,20 @@ class PurchaseApiModel extends Equatable {
     this.otp_expiration,
     this.orderDate,
     this.totalAmount,
+    this.title,
+    this.imageUrl,
   });
 
   factory PurchaseApiModel.fromJson(Map<String, dynamic> json) {
-    return PurchaseApiModel(
-        purchaseId: json['_id'],
-        art_id: json['art_id'],
-        buyer_id: json['buyer_id'],
-        address: json['address'],
-        status: json["status"],
-        otp: json["otp"],
-        otp_expiration: json['otp_expiration'],
-        orderDate: json['orderDate'],
-        totalAmount: json['totalAmount']);
+    String? imageUrl = json['imageUrl']; // Get image URL
+
+    // If the image URL is not a full URL, prepend the server base URL (if required)
+    if (imageUrl != null && !imageUrl.startsWith('http')) {
+      imageUrl =
+          'http://10.0.2.2:5055/$imageUrl'; // Replace with your server base URL
+    }
+
+    return _$PurchaseApiModelFromJson(json)..imageUrl = imageUrl;
   }
 
   Map<String, dynamic> toJson() {
@@ -47,11 +50,12 @@ class PurchaseApiModel extends Equatable {
       'art_id': art_id,
       'buyer_id': buyer_id,
       'address': address,
-      'status': "status",
-      'otp': "otp",
+      'status': status,
+      'otp': otp,
       'otp_expiration': otp_expiration,
       'orderDate': orderDate,
-      'totalAmount': totalAmount
+      'totalAmount': totalAmount,
+      'imageUrl': imageUrl, // Include the image URL in the JSON
     };
   }
 
@@ -65,7 +69,8 @@ class PurchaseApiModel extends Equatable {
           otp: entity.otp,
           otp_expiration: entity.otp_expiration,
           orderDate: entity.orderDate,
-          totalAmount: entity.totalAmount);
+          totalAmount: entity.totalAmount,
+          imageUrl: entity.imageUrl);
 
   PurchaseEntity toEntity() => PurchaseEntity(
       purchaseId: purchaseId,
@@ -76,12 +81,24 @@ class PurchaseApiModel extends Equatable {
       otp: otp,
       otp_expiration: otp_expiration,
       orderDate: orderDate,
-      totalAmount: totalAmount);
+      totalAmount: totalAmount,
+      imageUrl: imageUrl);
 
   static List<PurchaseEntity> toEntityList(List<PurchaseApiModel> models) =>
       models.map((model) => model.toEntity()).toList();
 
   @override
-  // TODO: implement props
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [
+        purchaseId,
+        art_id,
+        buyer_id,
+        address,
+        status,
+        otp,
+        otp_expiration,
+        orderDate,
+        totalAmount,
+        title,
+        imageUrl
+      ];
 }

@@ -21,6 +21,8 @@ PurchaseApiModel _$PurchaseApiModelFromJson(Map<String, dynamic> json) =>
           ? null
           : DateTime.parse(json['orderDate'] as String),
       totalAmount: (json['totalAmount'] as num?)?.toInt(),
+      title: json['title'] as String?,
+      imageUrl: json['imageUrl'] as String?,
     );
 
 Map<String, dynamic> _$PurchaseApiModelToJson(PurchaseApiModel instance) =>
@@ -34,4 +36,6 @@ Map<String, dynamic> _$PurchaseApiModelToJson(PurchaseApiModel instance) =>
       'otp_expiration': instance.otp_expiration?.toIso8601String(),
       'orderDate': instance.orderDate?.toIso8601String(),
       'totalAmount': instance.totalAmount,
+      'title': instance.title,
+      'imageUrl': instance.imageUrl,
     };

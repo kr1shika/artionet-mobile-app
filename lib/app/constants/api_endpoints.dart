@@ -18,7 +18,6 @@ class ApiEndpoints {
   static const String getArtworkbyId = "artwork/find";
 
   // purchase
-  static const String getPurchasesByUserId = "purchases/buyer";
-  static const String requestPurchaseOTP = "purchases/create";
-  static const String verifyPurchase = "purchases/verify-otp";
+  static const String getPurchasesByUserId = "purchases/getpurchases";
+  static const String createPurchase = "purchases/create";
 }

@@ -9,62 +9,44 @@ class PurchaseRemoteDatasource implements IPurchaseDataSource {
 
   PurchaseRemoteDatasource({required Dio dio}) : _dio = dio;
 
-  // Request OTP (does not create a purchase yet)
-  Future<void> requestPurchaseOTP(PurchaseEntity purchase) async {
+  @override
+  Future<String?> createPurchase(PurchaseEntity purchase) async {
     try {
       var response = await _dio.post(
-        ApiEndpoints.requestPurchaseOTP,
+        ApiEndpoints.createPurchase,
         data: {
           "art_id": purchase.art_id,
           "buyer_id": purchase.buyer_id,
           "address": purchase.address,
         },
       );
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
-    } on DioException catch (e) {
-      throw Exception(e);
-    } catch (e) {
-      throw Exception(e);
-    }
-  }
 
-  // Verify OTP and Create Purchase
-  Future<void> verifyPurchase(String artId, String buyerId, String address, String otp) async {
-    try {
-      var response = await _dio.post(
-        ApiEndpoints.verifyPurchase,
-        data: {
-          "art_id": artId,
-          "buyer_id": buyerId,
-          "address": address,
-          "otp": otp,
-        },
-      );
       if (response.statusCode == 200) {
-        return;
+        final responseData = response.data as Map<String, dynamic>;
+        return responseData['purchaseId'] as String?;
       } else {
         throw Exception(response.statusMessage);
       }
     } on DioException catch (e) {
-      throw Exception(e);
-    } catch (e) {
       throw Exception(e);
     }
   }
 
   @override
-  Future<List<PurchaseEntity>> getPurchasesByUserId(String id) {
-    // TODO: implement getPurchasesByUserId
-    throw UnimplementedError();
+  Future<List<PurchaseEntity>> getPurchasesByUserId(String userId) async {
+    try {
+      final response =
+          await _dio.get('${ApiEndpoints.getPurchasesByUserId}/$userId');
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data;
+        return data
+            .map((item) => PurchaseApiModel.fromJson(item).toEntity())
+            .toList();
+      } else {
+        throw Exception('Failed to load purchases');
+      }
+    } on DioException catch (e) {
+      throw Exception(e);
+    }
   }
-  
-  // @override
-  // Future<void> createPurchase(PurchaseEntity purchase) {
-  //   // TODO: implement createPurchase
-  //   throw UnimplementedError();
-  // }
 }
