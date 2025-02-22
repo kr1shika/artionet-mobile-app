@@ -9,32 +9,16 @@ class PurchaseRemoteDatasource implements IPurchaseDataSource {
 
   PurchaseRemoteDatasource({required Dio dio}) : _dio = dio;
 
-  @override
-  Future<void> createPurchase(PurchaseEntity purchase) async {
-    try {
-      // Convert entity to model
-      var purchaseApiModel = PurchaseApiModel.fromEntity(purchase);
-      var response = await _dio.post(
-        ApiEndpoints.createPurchase,
-        data: purchaseApiModel.toJson(),
-      );
-      if (response.statusCode == 201) {
-        return;
-      } else {
-        throw Exception(response.statusMessage);
-      }
-    } on DioException catch (e) {
-      throw Exception(e);
-    } catch (e) {
-      throw Exception(e);
-    }
-  }
-
-    Future<void> verifyPurchase(String purchaseId, String otp) async {
+  // Request OTP (does not create a purchase yet)
+  Future<void> requestPurchaseOTP(PurchaseEntity purchase) async {
     try {
       var response = await _dio.post(
-        ApiEndpoints.verifyPurchase,
-        data: {"purchaseId": purchaseId, "otp": otp},
+        ApiEndpoints.requestPurchaseOTP,
+        data: {
+          "art_id": purchase.art_id,
+          "buyer_id": purchase.buyer_id,
+          "address": purchase.address,
+        },
       );
       if (response.statusCode == 200) {
         return;
@@ -48,10 +32,39 @@ class PurchaseRemoteDatasource implements IPurchaseDataSource {
     }
   }
 
+  // Verify OTP and Create Purchase
+  Future<void> verifyPurchase(String artId, String buyerId, String address, String otp) async {
+    try {
+      var response = await _dio.post(
+        ApiEndpoints.verifyPurchase,
+        data: {
+          "art_id": artId,
+          "buyer_id": buyerId,
+          "address": address,
+          "otp": otp,
+        },
+      );
+      if (response.statusCode == 200) {
+        return;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } on DioException catch (e) {
+      throw Exception(e);
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
 
   @override
   Future<List<PurchaseEntity>> getPurchasesByUserId(String id) {
     // TODO: implement getPurchasesByUserId
     throw UnimplementedError();
   }
+  
+  // @override
+  // Future<void> createPurchase(PurchaseEntity purchase) {
+  //   // TODO: implement createPurchase
+  //   throw UnimplementedError();
+  // }
 }

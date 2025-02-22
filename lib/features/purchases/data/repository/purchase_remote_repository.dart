@@ -10,9 +10,10 @@ class PurchaseRemoteRepository implements IPurchaseRepository {
   PurchaseRemoteRepository({required this.remoteDatasource});
 
   @override
-  Future<Either<Failure, void>> createPurchase(PurchaseEntity purchase) async {
+  Future<Either<Failure, void>> requestPurchaseOTP(
+      PurchaseEntity purchase) async {
     try {
-      remoteDatasource.createPurchase(purchase);
+      remoteDatasource.requestPurchaseOTP(purchase);
       return const Right(null);
     } catch (e) {
       return Left(
@@ -23,10 +24,11 @@ class PurchaseRemoteRepository implements IPurchaseRepository {
     }
   }
 
+  @override
   Future<Either<Failure, void>> verifyPurchase(
-      String purchaseId, String otp) async {
+      String artId, String otp, String address, String buyerId) async {
     try {
-      await remoteDatasource.verifyPurchase(purchaseId, otp);
+      await remoteDatasource.verifyPurchase(buyerId, artId, otp, address);
       return const Right(null);
     } catch (e) {
       return Left(ApiFailure(message: e.toString()));

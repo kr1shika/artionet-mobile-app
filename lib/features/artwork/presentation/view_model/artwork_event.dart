@@ -18,11 +18,11 @@ class FetchArtworkById extends ArtworkEvent {
   List<Object> get props => [id];
 }
 
-class NavigateToArtworkDetail extends ArtworkEvent {
+class NavigateToPurchase extends ArtworkEvent {
   final BuildContext context;
   final Widget destination;
 
-  const NavigateToArtworkDetail({
+  const NavigateToPurchase({
     required this.context,
     required this.destination,
   });

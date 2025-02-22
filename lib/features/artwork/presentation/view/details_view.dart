@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
+import 'package:tryproject/features/purchases/presentation/view/purchase_view.dart';
 
 class DetailView extends StatefulWidget {
   final String artworkId;
@@ -75,7 +76,13 @@ class _DetailViewState extends State<DetailView> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      // Handle purchase logic
+                      context.read<ArtworkBloc>().add(
+                            NavigateToPurchase(
+                              context: context,
+                              destination:
+                                  PurchaseView(artworkId: widget.artworkId),
+                            ),
+                          );
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(

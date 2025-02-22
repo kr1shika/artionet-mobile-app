@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tryproject/features/purchases/domain/use_case/create_purchase_usecase.dart';
 import 'package:tryproject/features/purchases/domain/use_case/verify_purchase_usecase.dart';
@@ -27,17 +28,15 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     emit(state.copyWith(isLoading: true));
 
     final result = await _createPurchaseUsecase.call(CreatePurchaseUserParams(
-      art_id: event.artId,
-      buyer_id: event.buyerId,
+      art_id: event.art_id,
+      buyer_id: event.buyer_id,
       address: event.address,
       status: "Pending",
-      phone_number: event.phoneNumber,
     ));
 
     result.fold(
       (failure) => emit(state.copyWith(isLoading: false, isSuccess: false)),
-      (_) => emit(state.copyWith(
-          isLoading: false, isSuccess: true, purchaseId: event.purchaseId)),
+      (_) => emit(state.copyWith(isLoading: false, isSuccess: true)),
     );
   }
 
@@ -48,7 +47,12 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     emit(state.copyWith(isLoading: true));
 
     final result = await _verifyPurchaseUsecase.call(
-      VerifyPurchaseParams(purchaseId: event.purchaseId, otp: event.otp),
+      VerifyPurchaseParams(
+        art_id: event.art_id,
+        buyer_id: event.buyer_id,
+        address: event.address,
+        otp: event.otp,
+      ),
     );
 
     result.fold(

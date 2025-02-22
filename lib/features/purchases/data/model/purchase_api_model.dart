@@ -12,7 +12,6 @@ class PurchaseApiModel extends Equatable {
   final String buyer_id;
   final String address;
   final String status;
-  final String phone_number;
   final String? otp;
   final DateTime? otp_expiration;
   final DateTime? orderDate;
@@ -24,7 +23,6 @@ class PurchaseApiModel extends Equatable {
     required this.buyer_id,
     required this.address,
     required this.status,
-    required this.phone_number,
     this.otp,
     this.otp_expiration,
     this.orderDate,
@@ -38,7 +36,6 @@ class PurchaseApiModel extends Equatable {
         buyer_id: json['buyer_id'],
         address: json['address'],
         status: json["status"],
-        phone_number: json['phone_number'],
         otp: json["otp"],
         otp_expiration: json['otp_expiration'],
         orderDate: json['orderDate'],
@@ -51,7 +48,6 @@ class PurchaseApiModel extends Equatable {
       'buyer_id': buyer_id,
       'address': address,
       'status': "status",
-      'phone_number': phone_number,
       'otp': "otp",
       'otp_expiration': otp_expiration,
       'orderDate': orderDate,
@@ -66,7 +62,6 @@ class PurchaseApiModel extends Equatable {
           buyer_id: entity.buyer_id,
           address: entity.address,
           status: entity.status,
-          phone_number: entity.phone_number,
           otp: entity.otp,
           otp_expiration: entity.otp_expiration,
           orderDate: entity.orderDate,
@@ -78,7 +73,6 @@ class PurchaseApiModel extends Equatable {
       buyer_id: buyer_id,
       address: address,
       status: status,
-      phone_number: phone_number,
       otp: otp,
       otp_expiration: otp_expiration,
       orderDate: orderDate,

@@ -10,7 +10,6 @@ class CreatePurchaseUserParams extends Equatable {
   final String buyer_id;
   final String address;
   final String status;
-  final String phone_number;
   final String? otp;
   final DateTime? otp_expiration;
   final DateTime? orderDate;
@@ -21,37 +20,22 @@ class CreatePurchaseUserParams extends Equatable {
     required this.buyer_id,
     required this.address,
     required this.status,
-    required this.phone_number,
     this.otp,
     this.otp_expiration,
     this.orderDate,
     this.totalAmount,
   });
 
-  const CreatePurchaseUserParams.initial(
-    this.otp,
-    this.otp_expiration,
-    this.orderDate,
-    this.totalAmount, {
-    required this.art_id,
-    required this.buyer_id,
-    required this.address,
-    required this.status,
-    required this.phone_number,
-  });
-
   @override
-  // TODO: implement props
   List<Object?> get props => [
         art_id,
         buyer_id,
         address,
         status,
-        phone_number,
         otp,
         otp_expiration,
         orderDate,
-        totalAmount
+        totalAmount,
       ];
 }
 
@@ -68,11 +52,10 @@ class CreatePurchaseUsecase
         buyer_id: params.buyer_id,
         address: params.address,
         status: params.status,
-        phone_number: params.phone_number,
         otp: params.otp,
         otp_expiration: params.otp_expiration,
         orderDate: params.orderDate,
         totalAmount: params.totalAmount);
-    return repository.createPurchase(purchaseEntity);
+    return repository.requestPurchaseOTP(purchaseEntity);
   }
 }

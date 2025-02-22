@@ -21,6 +21,11 @@ import 'package:tryproject/features/auth/presentation/view_model/signup/register
 import 'package:tryproject/features/home/presentation/view_model/home_cubit.dart';
 import 'package:tryproject/features/onboard/presentation/view_model/buyer_onboard/artist_onboard_cubit.dart';
 import 'package:tryproject/features/onboard/presentation/view_model/buyer_onboard/onboard_cubit.dart';
+import 'package:tryproject/features/purchases/data/data_source/purchase_remote_datasource.dart';
+import 'package:tryproject/features/purchases/data/repository/purchase_remote_repository.dart';
+import 'package:tryproject/features/purchases/domain/use_case/create_purchase_usecase.dart';
+import 'package:tryproject/features/purchases/domain/use_case/verify_purchase_usecase.dart';
+import 'package:tryproject/features/purchases/presentation/view_model/purchase_bloc.dart';
 import 'package:tryproject/features/splash/presentation/view_model/splash_cubit.dart';
 
 final getIt = GetIt.instance;
@@ -37,6 +42,7 @@ Future<void> initDependencies() async {
   await _initArtistRegisterDependencies();
   await _initArtistOnboardDependencies();
   await _initArtworkDependencies();
+  await _initPurchaseDependencies();
 }
 
 _initApiService() {
@@ -49,12 +55,38 @@ _initHiveService() {
   getIt.registerLazySingleton<HiveService>(() => HiveService());
 }
 
+// purchase register
+_initPurchaseDependencies() async {
+  getIt.registerFactory<PurchaseRemoteDatasource>(
+      () => PurchaseRemoteDatasource(dio: getIt<Dio>()));
+
+  // repository
+  getIt.registerLazySingleton(() => PurchaseRemoteRepository(
+      remoteDatasource: getIt<PurchaseRemoteDatasource>()));
+
+  // usecase
+  getIt.registerLazySingleton<CreatePurchaseUsecase>(
+    () => CreatePurchaseUsecase(getIt<PurchaseRemoteRepository>()),
+  );
+
+  getIt.registerLazySingleton<VerifyPurchaseUsecase>(
+    () => VerifyPurchaseUsecase(
+      getIt<PurchaseRemoteRepository>(),
+    ),
+  );
+
+  // purchase bloc
+  getIt.registerFactory<PurchaseBloc>(() => PurchaseBloc(
+      createPurchaseUsecase: getIt<CreatePurchaseUsecase>(),
+      verifyPurchaseUsecase: getIt<VerifyPurchaseUsecase>()));
+}
+
 _initArtworkDependencies() async {
   // remote data
   getIt.registerFactory<ArtworkRemoteDatasource>(
       () => ArtworkRemoteDatasource(dio: getIt<Dio>()));
 
-// repository
+  // repository
   getIt.registerLazySingleton(() => ArtworkRemoteRepository(
       remoteDataSource: getIt<ArtworkRemoteDatasource>()));
 
@@ -70,8 +102,10 @@ _initArtworkDependencies() async {
   );
 
   getIt.registerFactory<ArtworkBloc>(() => ArtworkBloc(
-      getAllArtworkUsecase: getIt<GetAllArtworkUsecase>(),
-      getArtworkByIdUsecase: getIt<GetArtworkByIdUsecase>()));
+        getAllArtworkUsecase: getIt<GetAllArtworkUsecase>(),
+        getArtworkByIdUsecase: getIt<GetArtworkByIdUsecase>(),
+        purchaseBloc: getIt<PurchaseBloc>(),
+      ));
 }
 
 _initRegisterDependencies() {
