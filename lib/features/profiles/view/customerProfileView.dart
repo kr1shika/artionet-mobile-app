@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tryproject/features/artwork/presentation/view/upload_artwork_view.dart';
 import 'package:tryproject/features/profiles/view_model/profile_bloc.dart';
 
 class CustomerProfileView extends StatefulWidget {
@@ -25,12 +26,10 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
     return Scaffold(
       body: SafeArea(
         child: DefaultTabController(
-          length: 2, // Number of tabs
+          length: 2,
           child: SingleChildScrollView(
-            // Make the entire page scrollable
             child: Column(
               children: [
-                // Profile UI components
                 const SizedBox(height: 10),
                 ClipOval(
                   child: Image.asset(
@@ -51,7 +50,10 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                 const SizedBox(height: 3),
                 ElevatedButton(
                   onPressed: () {
-                    // Navigate to edit profile screen
+                    context.read<ProfileBloc>().add(NavigateToUpload(
+                          context: context,
+                          destination: const UploadPage(),
+                        ));
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
@@ -65,7 +67,7 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                     ),
                   ),
                   child: const Text(
-                    'Post',
+                    'Upload',
                     style: TextStyle(
                       fontFamily: 'IM_FELL_Great_Primer',
                       fontSize: 16,
@@ -73,8 +75,6 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                   ),
                 ),
                 const SizedBox(height: 4),
-
-                // TabBar
                 const TabBar(
                   labelColor: Colors.black,
                   unselectedLabelColor: Colors.grey,
@@ -84,11 +84,8 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                     Tab(text: "Saved"),
                   ],
                 ),
-
-                // TabBarView wrapped in a SizedBox with fixed height
                 SizedBox(
-                  height: MediaQuery.of(context).size.height *
-                      1.1, // Adjust height as needed
+                  height: MediaQuery.of(context).size.height * 1.1,
                   child: BlocBuilder<ProfileBloc, ProfileState>(
                     builder: (context, state) {
                       if (state.isLoading) {
@@ -117,7 +114,6 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                       } else {
                         return TabBarView(
                           children: [
-                            // Your Orders Tab
                             ListView.builder(
                               itemCount: state.purchases.length,
                               itemBuilder: (context, index) {
@@ -128,7 +124,6 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.stretch,
                                     children: [
-                                      // Image at the top
                                       ClipRRect(
                                         borderRadius: const BorderRadius.only(
                                           topLeft: Radius.circular(4),
@@ -151,7 +146,6 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                                                 ),
                                               ),
                                       ),
-                                      // Title, Status, and Price
                                       Padding(
                                         padding: const EdgeInsets.all(12),
                                         child: Column(
@@ -189,8 +183,6 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                                 );
                               },
                             ),
-
-                            // Saved Tab
                             const Center(
                               child: Text(
                                 "No saved posts yet!",

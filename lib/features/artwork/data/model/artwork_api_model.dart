@@ -16,6 +16,7 @@ class ArtworkApiModel extends Equatable {
   final String? archive;
   final String? artistId;
   final String categories;
+  final String? creatorsNote;
 
   ArtworkApiModel(
       {this.id,
@@ -26,6 +27,7 @@ class ArtworkApiModel extends Equatable {
       required this.archive,
       required this.price,
       required this.medium_used,
+      this.creatorsNote,
       required this.categories});
 
   factory ArtworkApiModel.fromJson(Map<String, dynamic> json) {
@@ -48,7 +50,7 @@ class ArtworkApiModel extends Equatable {
         medium_used: medium_used,
         categories: categories,
         artistId: artistId,
-        images: images);
+        images: images, creatorsNote:creatorsNote);
   }
 
   factory ArtworkApiModel.fromEntity(ArtworkEntity entity) {
@@ -61,6 +63,7 @@ class ArtworkApiModel extends Equatable {
       artistId: entity.artistId,
       images: entity.images,
       archive: entity.archive,
+      creatorsNote:entity.creatorsNote
     );
   }
 

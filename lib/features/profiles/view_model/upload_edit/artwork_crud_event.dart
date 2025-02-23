@@ -1,14 +1,14 @@
-part of 'profile_bloc.dart';
+part of 'artwork_crud_bloc.dart';
 
 @immutable
-class ProfileEvent extends Equatable {
-  const ProfileEvent();
+class ArtworkCrudEvent extends Equatable {
+  const ArtworkCrudEvent();
 
   @override
   List<Object?> get props => [];
 }
 
-class CreateArtworkEvent extends ProfileEvent {
+class CreateArtworkEvent extends ArtworkCrudEvent {
   final String title;
   final String dimensions;
   final String price;
@@ -16,7 +16,7 @@ class CreateArtworkEvent extends ProfileEvent {
   final String artistId;
   final String categories;
   final String? creatorsNote;
-  final File imageFile;
+  final File images;
   final BuildContext context;
 
   const CreateArtworkEvent({
@@ -27,7 +27,7 @@ class CreateArtworkEvent extends ProfileEvent {
     required this.artistId,
     required this.categories,
     this.creatorsNote,
-    required this.imageFile,
+    required this.images,
     required this.context,
   });
 
@@ -40,26 +40,15 @@ class CreateArtworkEvent extends ProfileEvent {
         artistId,
         categories,
         creatorsNote ?? '',
-        imageFile,
+        images,
         context,
       ];
 }
 
-class FetchPurchasesByUserId extends ProfileEvent {
-  final String userId;
+class LoadImage extends ArtworkCrudEvent {
+  final File file;
 
-  const FetchPurchasesByUserId({required this.userId});
-
-  @override
-  List<Object?> get props => [userId];
-}
-
-class NavigateToUpload extends ProfileEvent {
-  final BuildContext context;
-  final Widget destination;
-
-  const NavigateToUpload({
-    required this.context,
-    required this.destination,
+  const LoadImage({
+    required this.file,
   });
 }
