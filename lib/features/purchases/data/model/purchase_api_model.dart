@@ -15,7 +15,7 @@ class PurchaseApiModel extends Equatable {
   final String? otp;
   final DateTime? otp_expiration;
   final DateTime? orderDate;
-  final int? totalAmount;
+  final String? totalAmount;
   final String? title;
   final String? imageUrl; // Make imageUrl late to initialize later if necessary
 
@@ -39,7 +39,7 @@ class PurchaseApiModel extends Equatable {
     // If the image URL is not a full URL, prepend the server base URL (if required)
     if (imageUrl != null && !imageUrl.startsWith('http')) {
       imageUrl =
-          'http://10.0.2.2:5055/$imageUrl'; // Replace with your server base URL
+          'http://10.0.2.2:5055/$imageUrl'; 
     }
 
     return PurchaseApiModel(

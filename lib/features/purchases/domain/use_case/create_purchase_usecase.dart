@@ -14,7 +14,7 @@ class CreatePurchaseUserParams extends Equatable {
   final String? otp;
   final DateTime? otp_expiration;
   final DateTime? orderDate;
-  final int? totalAmount;
+  final String? totalAmount;
 
   const CreatePurchaseUserParams({
     required this.art_id,

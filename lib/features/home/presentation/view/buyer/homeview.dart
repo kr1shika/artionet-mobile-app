@@ -6,6 +6,7 @@ import 'package:tryproject/features/home/presentation/view/buyer/pages/notificat
 import 'package:tryproject/features/home/presentation/view_model/home_cubit.dart';
 import 'package:tryproject/features/home/presentation/view_model/home_state.dart';
 import 'package:tryproject/features/profiles/view/customerProfileView.dart';
+import 'package:tryproject/features/profiles/view/orders/purchases_orders_view.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -25,6 +26,7 @@ class HomeView extends StatelessWidget {
               userId: '679cb11ed81a6e1b96420af0',
             ),
             const NotificationsView(),
+            const PurchasesOrdersView(userId: '679cb11ed81a6e1b96420af0')
           ];
 
           return Scaffold(
@@ -51,6 +53,10 @@ class HomeView extends StatelessWidget {
                     BottomNavigationBarItem(
                       icon: Icon(Icons.notifications),
                       label: 'Notifications',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.shop_two_outlined),
+                      label: 'orders',
                     ),
                   ],
                   currentIndex: state.selectedIndex,

@@ -9,8 +9,9 @@ class PurchaseEntity extends Equatable {
   final String? otp;
   final DateTime? otp_expiration;
   final DateTime? orderDate;
-  final int? totalAmount;
+  final String? totalAmount;
   final String? imageUrl;
+  final String? title;
 
   const PurchaseEntity(
       {this.purchaseId,
@@ -22,7 +23,8 @@ class PurchaseEntity extends Equatable {
       this.otp_expiration,
       this.orderDate,
       this.totalAmount,
-      this.imageUrl});
+      this.imageUrl,
+      this.title});
 
   const PurchaseEntity.empty()
       : purchaseId = '_empty.purchaseId',
@@ -34,7 +36,8 @@ class PurchaseEntity extends Equatable {
         otp_expiration = null,
         orderDate = null,
         imageUrl = '_empty.imagwUrl',
-        totalAmount = null;
+        totalAmount = 'null',
+        title = '_empty.title';
 
   @override
   // TODO: implement props
@@ -48,6 +51,7 @@ class PurchaseEntity extends Equatable {
         otp_expiration,
         orderDate,
         totalAmount,
-        imageUrl
+        imageUrl,
+        title
       ];
 }

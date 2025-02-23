@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tryproject/features/profiles/view_model/profile_bloc.dart';
 
-class CustomerProfileView extends StatefulWidget {
+class PurchasesOrdersView extends StatefulWidget {
   final String userId;
 
-  const CustomerProfileView({super.key, required this.userId});
+  const PurchasesOrdersView({super.key, required this.userId});
 
   @override
-  CustomerProfileViewState createState() => CustomerProfileViewState();
+  PurchasesOrdersViewState createState() => PurchasesOrdersViewState();
 }
 
-class CustomerProfileViewState extends State<CustomerProfileView> {
+class PurchasesOrdersViewState extends State<PurchasesOrdersView> {
   @override
   void initState() {
     super.initState();
@@ -31,47 +31,7 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
             child: Column(
               children: [
                 // Profile UI components
-                const SizedBox(height: 10),
-                ClipOval(
-                  child: Image.asset(
-                    'assets/images/krishika.jpg',
-                    height: 120,
-                    width: 120,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  "@kr1shika",
-                  style: TextStyle(
-                    fontFamily: 'IM_FELL_Great_Primer',
-                    fontSize: 26,
-                  ),
-                ),
-                const SizedBox(height: 3),
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigate to edit profile screen
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 30,
-                      vertical: 1,
-                    ),
-                    backgroundColor: const Color.fromARGB(73, 27, 29, 30),
-                    foregroundColor: const Color(0xFFFFFFF7),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  child: const Text(
-                    'Post',
-                    style: TextStyle(
-                      fontFamily: 'IM_FELL_Great_Primer',
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
+
                 const SizedBox(height: 4),
 
                 // TabBar
@@ -81,11 +41,10 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                   indicatorColor: Colors.black,
                   tabs: [
                     Tab(text: "Your Orders"),
-                    Tab(text: "Saved"),
+                    Tab(text: "Your Purchases"),
                   ],
                 ),
 
-                // TabBarView wrapped in a SizedBox with fixed height
                 SizedBox(
                   height: MediaQuery.of(context).size.height *
                       1.1, // Adjust height as needed

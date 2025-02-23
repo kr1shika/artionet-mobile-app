@@ -20,7 +20,7 @@ PurchaseApiModel _$PurchaseApiModelFromJson(Map<String, dynamic> json) =>
       orderDate: json['orderDate'] == null
           ? null
           : DateTime.parse(json['orderDate'] as String),
-      totalAmount: (json['totalAmount'] as num?)?.toInt(),
+      totalAmount: json['totalAmount'] as String?,
       title: json['title'] as String?,
       imageUrl: json['imageUrl'] as String?,
     );

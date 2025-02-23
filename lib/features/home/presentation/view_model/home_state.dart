@@ -7,6 +7,7 @@ import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc
 import 'package:tryproject/features/home/presentation/view/buyer/pages/dashboard_view.dart';
 import 'package:tryproject/features/home/presentation/view/buyer/pages/notification_view.dart';
 import 'package:tryproject/features/profiles/view/customerProfileView.dart';
+import 'package:tryproject/features/profiles/view/orders/purchases_orders_view.dart';
 import 'package:tryproject/features/profiles/view_model/profile_bloc.dart';
 
 class HomeState extends Equatable {
@@ -35,6 +36,12 @@ class HomeState extends Equatable {
           ),
         ),
         const NotificationsView(),
+        BlocProvider(
+          create: (context) => getIt<ProfileBloc>(),
+          child: const PurchasesOrdersView(
+            userId: '679cb11ed81a6e1b96420af0',
+          ),
+        )
       ],
     );
   }

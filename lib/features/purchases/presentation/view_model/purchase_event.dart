@@ -15,7 +15,7 @@ class CreatePurchaseEvent extends PurchaseEvent {
   final String? otp;
   final DateTime? otp_expiration;
   final DateTime? orderDate;
-  final int? totalAmount;
+  final String? totalAmount;
   final String? purchaseId;
 
   const CreatePurchaseEvent({
