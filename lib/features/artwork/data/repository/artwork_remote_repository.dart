@@ -32,10 +32,9 @@ class ArtworkRemoteRepository implements IArtworkRepository {
 
   @override
   Future<Either<Failure, ArtworkEntity>> createNewArtwork(
-      ArtworkEntity artwork, File imageFile) async {
+      ArtworkEntity artwork) async {
     try {
-      final newArtwork =
-          await remoteDataSource.createNewArtwork(artwork, imageFile);
+      final newArtwork = await remoteDataSource.createNewArtwork(artwork);
       return Right(newArtwork);
     } catch (e) {
       return Left(ApiFailure(message: e.toString()));

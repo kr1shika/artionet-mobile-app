@@ -13,10 +13,10 @@ class CreateArtworkEvent extends ArtworkCrudEvent {
   final String dimensions;
   final String price;
   final String mediumUsed;
-  final String artistId;
+  final String? artistId;
   final String categories;
   final String? creatorsNote;
-  final File images;
+  final String? images;
   final BuildContext context;
 
   const CreateArtworkEvent({
@@ -24,10 +24,10 @@ class CreateArtworkEvent extends ArtworkCrudEvent {
     required this.dimensions,
     required this.price,
     required this.mediumUsed,
-    required this.artistId,
+    this.artistId,
     required this.categories,
     this.creatorsNote,
-    required this.images,
+    this.images,
     required this.context,
   });
 
@@ -37,10 +37,9 @@ class CreateArtworkEvent extends ArtworkCrudEvent {
         dimensions,
         price,
         mediumUsed,
-        artistId,
         categories,
         creatorsNote ?? '',
-        images,
+        // images,
         context,
       ];
 }

@@ -21,8 +21,7 @@ class ArtworkCrudBloc extends Bloc<ArtworkCrudEvent, ArtworkCrudState> {
         _uploadArtworkImageUsecase = uploadArtworkimageusecase,
         super(const ArtworkCrudState.initial()) {
     on<CreateArtworkEvent>(_onCreateArtworkEvent);
-        on<LoadImage>(_onLoadArtImage);
-
+    on<LoadImage>(_onLoadArtImage);
   }
 
   void _onLoadArtImage(LoadImage event, Emitter<ArtworkCrudState> emit) async {
@@ -47,7 +46,9 @@ class ArtworkCrudBloc extends Bloc<ArtworkCrudEvent, ArtworkCrudState> {
     emit(state.copyWith(isLoading: true));
 
     // Prepare the params for the usecase
-    final params = CreateArtworkParams(
+
+    // Call the usecase
+    final result = await _createArtworkUsecase.call(CreateArtworkParams(
       title: event.title,
       dimensions: event.dimensions,
       price: event.price,
@@ -56,10 +57,7 @@ class ArtworkCrudBloc extends Bloc<ArtworkCrudEvent, ArtworkCrudState> {
       categories: event.categories,
       creatorsNote: event.creatorsNote,
       images: event.images,
-    );
-
-    // Call the usecase
-    final result = await _createArtworkUsecase.call(params);
+    ));
 
     // Handle the result
     result.fold(

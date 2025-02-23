@@ -8,6 +8,6 @@ abstract interface class IArtworkRepository {
   Future<Either<Failure, List<ArtworkEntity>>> getArtworks();
   Future<Either<Failure, ArtworkEntity>> getArtworkById(String id);
   Future<Either<Failure, ArtworkEntity>> createNewArtwork(
-      ArtworkEntity artwork, File imageFile);
+      ArtworkEntity artwork);
   Future<Either<Failure, String>> uploadArtImage(File file);
 }

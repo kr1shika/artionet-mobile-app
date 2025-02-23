@@ -47,11 +47,8 @@ class ArtworkRemoteDatasource implements IArtworkDataSource {
   }
 
   @override
-  Future<ArtworkEntity> createNewArtwork(
-      ArtworkEntity artwork, File imageFile) async {
+  Future<ArtworkEntity> createNewArtwork(ArtworkEntity artwork) async {
     try {
-      String fileName = imageFile.path.split('/').last;
-
       FormData formData = FormData.fromMap({
         'title': artwork.title,
         'dimensions': artwork.dimensions,

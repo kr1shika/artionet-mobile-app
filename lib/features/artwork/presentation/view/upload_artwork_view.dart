@@ -14,6 +14,8 @@ class UploadPage extends StatefulWidget {
 }
 
 class _UploadPageState extends State<UploadPage> {
+  final _artkey = GlobalKey<FormState>();
+
   final _titleController = TextEditingController();
   final _dimensionsController = TextEditingController();
   final _priceController = TextEditingController();
@@ -45,30 +47,6 @@ class _UploadPageState extends State<UploadPage> {
     }
   }
 
-  void _submitArtwork() {
-    if (_titleController.text.isEmpty || _uploadedImageName == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Please provide a title and upload an image.')),
-      );
-      return;
-    }
-
-    context.read<ArtworkCrudBloc>().add(
-          CreateArtworkEvent(
-            context: context,
-            title: _titleController.text,
-            dimensions: _dimensionsController.text,
-            price: _priceController.text,
-            mediumUsed: _mediumUsedController.text,
-            artistId: 'artist_id_placeholder',
-            categories: _categoriesController.text,
-            creatorsNote: _creatorsNoteController.text,
-            images: _image!,
-          ),
-        );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,69 +61,107 @@ class _UploadPageState extends State<UploadPage> {
         },
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              InkWell(
-                onTap: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) => Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ListTile(
-                          leading: const Icon(Icons.camera),
-                          title: const Text('Camera'),
-                          onTap: () {
-                            _checkCameraPermission();
-                            _browseImage(ImageSource.camera);
-                            Navigator.pop(context);
-                          },
-                        ),
-                        ListTile(
-                          leading: const Icon(Icons.image),
-                          title: const Text('Gallery'),
-                          onTap: () {
-                            _browseImage(ImageSource.gallery);
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundImage: _image != null
-                      ? FileImage(_image!)
-                      : const AssetImage('assets/images/placeholder.png')
-                          as ImageProvider,
+          child: Form(
+            key: _artkey, // ✅ Form added and key assigned
+            child: Column(
+              children: [
+                InkWell(
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) => Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            leading: const Icon(Icons.camera),
+                            title: const Text('Camera'),
+                            onTap: () {
+                              _checkCameraPermission();
+                              _browseImage(ImageSource.camera);
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ListTile(
+                            leading: const Icon(Icons.image),
+                            title: const Text('Gallery'),
+                            onTap: () {
+                              _browseImage(ImageSource.gallery);
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundImage: _image != null
+                        ? FileImage(_image!)
+                        : const AssetImage('assets/images/placeholder.png')
+                            as ImageProvider,
+                  ),
                 ),
-              ),
-              TextField(
-                  controller: _titleController,
-                  decoration: const InputDecoration(labelText: 'Title')),
-              TextField(
-                  controller: _dimensionsController,
-                  decoration: const InputDecoration(labelText: 'Dimensions')),
-              TextField(
-                  controller: _priceController,
-                  decoration: const InputDecoration(labelText: 'Price')),
-              TextField(
-                  controller: _mediumUsedController,
-                  decoration: const InputDecoration(labelText: 'Medium Used')),
-              TextField(
-                  controller: _categoriesController,
-                  decoration: const InputDecoration(labelText: 'Categories')),
-              TextField(
-                  controller: _creatorsNoteController,
-                  decoration:
-                      const InputDecoration(labelText: 'Creators Note')),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _submitArtwork,
-                child: const Text('Submit Artwork'),
-              ),
-            ],
+                TextFormField(
+                    controller: _titleController,
+                    decoration: const InputDecoration(labelText: 'Title')),
+                TextFormField(
+                    controller: _dimensionsController,
+                    decoration: const InputDecoration(labelText: 'Dimensions')),
+                TextFormField(
+                    controller: _priceController,
+                    decoration: const InputDecoration(labelText: 'Price')),
+                TextFormField(
+                    controller: _mediumUsedController,
+                    decoration:
+                        const InputDecoration(labelText: 'Medium Used')),
+                TextFormField(
+                    controller: _categoriesController,
+                    decoration: const InputDecoration(labelText: 'Categories')),
+                TextFormField(
+                    controller: _creatorsNoteController,
+                    decoration:
+                        const InputDecoration(labelText: 'Creators Note')),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_artkey.currentState!.validate()) {
+                      final artworkState =
+                          context.read<ArtworkCrudBloc>().state;
+                      final imageName = artworkState.imageName;
+                      context.read<ArtworkCrudBloc>().add(
+                            CreateArtworkEvent(
+                              context: context,
+                              title: _titleController.text,
+                              dimensions: _dimensionsController.text,
+                              price: _priceController.text,
+                              mediumUsed: _mediumUsedController.text,
+                              artistId: '679cb11ed81a6e1b96420af0',
+                              categories: _categoriesController.text,
+                              creatorsNote: _creatorsNoteController.text,
+                              images: imageName,
+                            ),
+                          );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 42,
+                      vertical: 4,
+                    ),
+                    backgroundColor: const Color.fromARGB(255, 27, 29, 30),
+                    foregroundColor: const Color(0xFFFFFFF7),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text(
+                    'Upload ARtwork',
+                    style: TextStyle(
+                        fontFamily: 'IM_FELL_Great_Primer', fontSize: 18),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

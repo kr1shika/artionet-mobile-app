@@ -50,21 +50,21 @@ class ArtworkApiModel extends Equatable {
         medium_used: medium_used,
         categories: categories,
         artistId: artistId,
-        images: images, creatorsNote:creatorsNote);
+        images: images,
+        creatorsNote: creatorsNote);
   }
 
   factory ArtworkApiModel.fromEntity(ArtworkEntity entity) {
     return ArtworkApiModel(
-      title: entity.title,
-      dimensions: entity.dimensions,
-      price: entity.price,
-      medium_used: entity.medium_used,
-      categories: entity.categories,
-      artistId: entity.artistId,
-      images: entity.images,
-      archive: entity.archive,
-      creatorsNote:entity.creatorsNote
-    );
+        title: entity.title,
+        dimensions: entity.dimensions,
+        price: entity.price,
+        medium_used: entity.medium_used,
+        categories: entity.categories,
+        artistId: entity.artistId,
+        images: entity.images,
+        archive: entity.archive,
+        creatorsNote: entity.creatorsNote);
   }
 
   static List<ArtworkEntity> toEntityList(List<ArtworkApiModel> models) =>
