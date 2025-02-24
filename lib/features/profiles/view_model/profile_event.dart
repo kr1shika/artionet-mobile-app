@@ -54,6 +54,15 @@ class FetchPurchasesByUserId extends ProfileEvent {
   List<Object?> get props => [userId];
 }
 
+class FetchArtworkByUserID extends ProfileEvent {
+  final String userId;
+
+  const FetchArtworkByUserID({required this.userId});
+
+  @override
+  List<Object?> get props => [userId];
+}
+
 class NavigateToUpload extends ProfileEvent {
   final BuildContext context;
   final Widget destination;

@@ -5,6 +5,8 @@ class ProfileState extends Equatable {
   final bool isLoading;
   final bool isSuccess;
   final List<PurchaseEntity> purchases;
+  final List<ArtworkEntity> artworks;
+
   final String errorMessage;
 
   const ProfileState({
@@ -12,6 +14,7 @@ class ProfileState extends Equatable {
     required this.purchases,
     required this.errorMessage,
     required this.isSuccess,
+    required this.artworks,
   });
 
   // Initial state of the ProfileBloc
@@ -21,6 +24,7 @@ class ProfileState extends Equatable {
       purchases: [],
       errorMessage: '',
       isSuccess: false,
+      artworks: [],
     );
   }
 
@@ -28,17 +32,20 @@ class ProfileState extends Equatable {
   ProfileState copyWith({
     bool? isLoading,
     List<PurchaseEntity>? purchases,
+    List<ArtworkEntity>? artworks,
     String? errorMessage,
     bool? isSuccess,
   }) {
     return ProfileState(
       isLoading: isLoading ?? this.isLoading,
       purchases: purchases ?? this.purchases,
+      artworks: artworks ?? this.artworks,
       errorMessage: errorMessage ?? this.errorMessage,
       isSuccess: isSuccess ?? this.isSuccess,
     );
   }
 
   @override
-  List<Object?> get props => [isLoading, purchases, errorMessage, isSuccess];
+  List<Object?> get props =>
+      [isLoading, purchases, errorMessage, isSuccess, artworks];
 }

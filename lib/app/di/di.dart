@@ -8,6 +8,7 @@ import 'package:tryproject/features/artwork/data/repository/artwork_remote_repos
 import 'package:tryproject/features/artwork/domain/use_case/create_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_all_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_artwork_usecase.dart';
+import 'package:tryproject/features/artwork/domain/use_case/get_artworks_by_userId.dart';
 import 'package:tryproject/features/artwork/domain/use_case/upload_artwork_image_usecase.dart';
 import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
 import 'package:tryproject/features/auth/data/data_source/local_data_source/auth_local_datasource.dart';
@@ -72,6 +73,7 @@ _initProfileDependencies() async {
   getIt.registerFactory<ProfileBloc>(() => ProfileBloc(
         getPurchasesByUserIdUsecase: getIt<GetPurchasesByUserIdUsecase>(),
         artworkCrudBloc: getIt<ArtworkCrudBloc>(),
+        getArtworksByUseridUsecase: getIt<GetArtworksByUseridUsecase>(),
       ));
 }
 
@@ -122,6 +124,10 @@ _initArtworkDependencies() async {
     () => GetArtworkByIdUsecase(
         artworkRepository: getIt<ArtworkRemoteRepository>()),
   );
+
+  getIt.registerLazySingleton<GetArtworksByUseridUsecase>(() =>
+      GetArtworksByUseridUsecase(
+          artworkRepository: getIt<ArtworkRemoteRepository>()));
 
   getIt.registerLazySingleton<UploadArtworkUsecase>(
     () => UploadArtworkUsecase(

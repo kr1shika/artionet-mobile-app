@@ -18,7 +18,7 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
     super.initState();
     context
         .read<ProfileBloc>()
-        .add(FetchPurchasesByUserId(userId: widget.userId));
+        .add(FetchArtworkByUserID(userId: widget.userId)); // Updated event
   }
 
   @override
@@ -80,7 +80,7 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                   unselectedLabelColor: Colors.grey,
                   indicatorColor: Colors.black,
                   tabs: [
-                    Tab(text: "Your Orders"),
+                    Tab(text: "Your Artworks"), // Updated text
                     Tab(text: "Saved"),
                   ],
                 ),
@@ -100,10 +100,10 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                             ),
                           ),
                         );
-                      } else if (state.purchases.isEmpty) {
+                      } else if (state.artworks.isEmpty) {
                         return const Center(
                           child: Text(
-                            "No orders made yet!",
+                            "No artworks uploaded yet!",
                             style: TextStyle(
                               fontFamily: 'IM_FELL_Great_Primer',
                               fontSize: 16,
@@ -115,9 +115,9 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                         return TabBarView(
                           children: [
                             ListView.builder(
-                              itemCount: state.purchases.length,
+                              itemCount: state.artworks.length,
                               itemBuilder: (context, index) {
-                                final purchase = state.purchases[index];
+                                final artwork = state.artworks[index];
                                 return Card(
                                   margin: const EdgeInsets.all(8),
                                   child: Column(
@@ -129,9 +129,9 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                                           topLeft: Radius.circular(4),
                                           topRight: Radius.circular(4),
                                         ),
-                                        child: purchase.imageUrl != null
+                                        child: artwork.images != null
                                             ? Image.network(
-                                                purchase.imageUrl!,
+                                                artwork.images!,
                                                 height: 150,
                                                 width: double.infinity,
                                                 fit: BoxFit.cover,
@@ -153,7 +153,7 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              purchase.title ?? 'Unknown Art',
+                                              artwork.title ?? 'Unknown Art',
                                               style: const TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold,
@@ -161,7 +161,7 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                                             ),
                                             const SizedBox(height: 8),
                                             Text(
-                                              'Status: ${purchase.status}',
+                                              'Status: ${artwork.price}',
                                               style: const TextStyle(
                                                 color: Colors.green,
                                                 fontSize: 14,
@@ -169,7 +169,7 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                                             ),
                                             const SizedBox(height: 8),
                                             Text(
-                                              'Price: \$${purchase.totalAmount}',
+                                              'Price: \$${artwork.price}',
                                               style: const TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
