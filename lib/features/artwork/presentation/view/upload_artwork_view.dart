@@ -136,7 +136,7 @@ class _UploadPageState extends State<UploadPage> {
                               price: _priceController.text,
                               mediumUsed: _mediumUsedController.text,
                               artistId: '679cb11ed81a6e1b96420af0',
-                              categories: _categoriesController.text,
+                              categories: 'Painting',
                               creatorsNote: _creatorsNoteController.text,
                               images: imageName,
                             ),

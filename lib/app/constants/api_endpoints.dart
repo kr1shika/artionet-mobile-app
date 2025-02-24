@@ -18,6 +18,7 @@ class ApiEndpoints {
   static const String getArtworkbyId = "artwork/find";
   static const String createNewArtwork = "artwork/save";
   static const String uploadArtImage = "artwork/uploadArtImage";
+  static const String getArtworksbyUserId = "artwork//users-art";
 
   // purchase
   static const String getPurchasesByUserId = "purchases/getpurchases";

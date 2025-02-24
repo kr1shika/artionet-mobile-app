@@ -64,8 +64,8 @@ class ArtworkRemoteDatasource implements IArtworkDataSource {
         ApiEndpoints.createNewArtwork,
         data: formData,
         options: Options(headers: {
-          "Accept": "application/json", // Fixed typo
-          "Content-Type": "multipart/form-data", // Removed incorrect JSON type
+          "Accept": "application/json", 
+          "Content-Type": "multipart/form-data", 
         }),
       );
 
@@ -102,6 +102,24 @@ class ArtworkRemoteDatasource implements IArtworkDataSource {
       throw Exception(e);
     } catch (e) {
       throw Exception(e);
+    }
+  }
+
+  @override
+  Future<List<ArtworkEntity>> getArtworksbyUserId(String id) async {
+    try {
+      final response =
+          await _dio.get('${ApiEndpoints.getArtworksbyUserId}/$id');
+      if (response.statusCode == 200) {
+        GetAllArtworkDTO responseDTO = GetAllArtworkDTO.fromJson(response.data);
+        return ArtworkApiModel.toEntityList(responseDTO.data);
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } catch (e) {
+      throw Exception(e.toString());
     }
   }
 }
