@@ -5,8 +5,10 @@ import 'package:tryproject/core/network/api_service.dart';
 import 'package:tryproject/core/network/hive_service.dart';
 import 'package:tryproject/features/artwork/data/data_source/artwork_remote_datasource.dart';
 import 'package:tryproject/features/artwork/data/repository/artwork_remote_repository.dart';
+import 'package:tryproject/features/artwork/domain/use_case/create_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_all_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_artwork_usecase.dart';
+import 'package:tryproject/features/artwork/domain/use_case/upload_artwork_image_usecase.dart';
 import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
 import 'package:tryproject/features/auth/data/data_source/local_data_source/auth_local_datasource.dart';
 import 'package:tryproject/features/auth/data/data_source/remote_data_source/auth_remote_datasource.dart';
@@ -21,6 +23,13 @@ import 'package:tryproject/features/auth/presentation/view_model/signup/register
 import 'package:tryproject/features/home/presentation/view_model/home_cubit.dart';
 import 'package:tryproject/features/onboard/presentation/view_model/buyer_onboard/artist_onboard_cubit.dart';
 import 'package:tryproject/features/onboard/presentation/view_model/buyer_onboard/onboard_cubit.dart';
+import 'package:tryproject/features/profiles/view_model/profile_bloc.dart';
+import 'package:tryproject/features/profiles/view_model/upload_edit/artwork_crud_bloc.dart';
+import 'package:tryproject/features/purchases/data/data_source/purchase_remote_datasource.dart';
+import 'package:tryproject/features/purchases/data/repository/purchase_remote_repository.dart';
+import 'package:tryproject/features/purchases/domain/use_case/GetPurchasesByUserIdUsecase.dart';
+import 'package:tryproject/features/purchases/domain/use_case/create_purchase_usecase.dart';
+import 'package:tryproject/features/purchases/presentation/view_model/purchase_bloc.dart';
 import 'package:tryproject/features/splash/presentation/view_model/splash_cubit.dart';
 
 final getIt = GetIt.instance;
@@ -37,6 +46,9 @@ Future<void> initDependencies() async {
   await _initArtistRegisterDependencies();
   await _initArtistOnboardDependencies();
   await _initArtworkDependencies();
+  await _initPurchaseDependencies();
+  await _initProfileDependencies();
+  await _initArtworkCrudDependencies();
 }
 
 _initApiService() {
@@ -49,12 +61,54 @@ _initHiveService() {
   getIt.registerLazySingleton<HiveService>(() => HiveService());
 }
 
+_initArtworkCrudDependencies() async {
+  getIt.registerFactory<ArtworkCrudBloc>(() => ArtworkCrudBloc(
+        createArtworkUsecase: getIt<CreateArtworkUsecase>(),
+        uploadArtworkimageusecase: getIt<UploadArtworkUsecase>(),
+      ));
+}
+
+_initProfileDependencies() async {
+  getIt.registerFactory<ProfileBloc>(() => ProfileBloc(
+        getPurchasesByUserIdUsecase: getIt<GetPurchasesByUserIdUsecase>(),
+        artworkCrudBloc: getIt<ArtworkCrudBloc>(),
+      ));
+}
+
+// purchase register
+_initPurchaseDependencies() async {
+  getIt.registerFactory<PurchaseRemoteDatasource>(
+      () => PurchaseRemoteDatasource(dio: getIt<Dio>()));
+
+  // repository
+  getIt.registerLazySingleton(() => PurchaseRemoteRepository(
+      remoteDatasource: getIt<PurchaseRemoteDatasource>()));
+
+  // usecase
+  getIt.registerLazySingleton<CreatePurchaseUsecase>(
+    () => CreatePurchaseUsecase(getIt<PurchaseRemoteRepository>()),
+  );
+
+  getIt.registerLazySingleton<GetPurchasesByUserIdUsecase>(
+    () => GetPurchasesByUserIdUsecase(
+      purchaseRepository: getIt<PurchaseRemoteRepository>(),
+    ),
+  );
+
+  // purchase bloc
+  getIt.registerFactory<PurchaseBloc>(() => PurchaseBloc(
+        createPurchaseUsecase: getIt<CreatePurchaseUsecase>(),
+        getArtworkByIdUsecase: getIt(),
+        getPurchasesByUserIdUsecase: getIt<GetPurchasesByUserIdUsecase>(),
+      ));
+}
+
 _initArtworkDependencies() async {
   // remote data
   getIt.registerFactory<ArtworkRemoteDatasource>(
       () => ArtworkRemoteDatasource(dio: getIt<Dio>()));
 
-// repository
+  // repository
   getIt.registerLazySingleton(() => ArtworkRemoteRepository(
       remoteDataSource: getIt<ArtworkRemoteDatasource>()));
 
@@ -69,9 +123,22 @@ _initArtworkDependencies() async {
         artworkRepository: getIt<ArtworkRemoteRepository>()),
   );
 
+  getIt.registerLazySingleton<UploadArtworkUsecase>(
+    () => UploadArtworkUsecase(
+      getIt<ArtworkRemoteRepository>(),
+    ),
+  );
+
+  // CreateArtworkUsecase
+  getIt.registerLazySingleton<CreateArtworkUsecase>(
+    () => CreateArtworkUsecase(getIt<ArtworkRemoteRepository>()),
+  );
+
   getIt.registerFactory<ArtworkBloc>(() => ArtworkBloc(
-      getAllArtworkUsecase: getIt<GetAllArtworkUsecase>(),
-      getArtworkByIdUsecase: getIt<GetArtworkByIdUsecase>()));
+        getAllArtworkUsecase: getIt<GetAllArtworkUsecase>(),
+        getArtworkByIdUsecase: getIt<GetArtworkByIdUsecase>(),
+        purchaseBloc: getIt<PurchaseBloc>(),
+      ));
 }
 
 _initRegisterDependencies() {

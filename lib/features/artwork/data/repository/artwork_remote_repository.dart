@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:tryproject/core/error/failure.dart';
 import 'package:tryproject/features/artwork/data/data_source/artwork_remote_datasource.dart';
@@ -23,6 +25,38 @@ class ArtworkRemoteRepository implements IArtworkRepository {
     try {
       final artwork = await remoteDataSource.getArtworkById(id);
       return Right(artwork);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, ArtworkEntity>> createNewArtwork(
+      ArtworkEntity artwork) async {
+    try {
+      final newArtwork = await remoteDataSource.createNewArtwork(artwork);
+      return Right(newArtwork);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> uploadArtImage(File file) async {
+    try {
+      final imageName = await remoteDataSource.uploadArtImage(file);
+      return Right(imageName);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<ArtworkEntity>>> getArtworksbyUserId(
+      String id) async {
+    try {
+      final artworks = await remoteDataSource.getArtworksbyUserId(id);
+      return Right(artworks);
     } catch (e) {
       return Left(ApiFailure(message: e.toString()));
     }
