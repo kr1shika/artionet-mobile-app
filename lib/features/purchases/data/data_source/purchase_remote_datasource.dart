@@ -34,7 +34,6 @@ class PurchaseRemoteDatasource implements IPurchaseDataSource {
   }
 
   @override
-  @override
   Future<List<PurchaseEntity>> getPurchasesByUserId(String userId) async {
     try {
       final response =

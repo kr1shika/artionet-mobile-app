@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tryproject/features/artwork/presentation/view/upload_artwork_view.dart';
-import 'package:tryproject/features/profiles/view/artworkcud/artwork_details.dart';
+import 'package:tryproject/features/profiles/view/artwork-crud/artwork_details.dart';
 import 'package:tryproject/features/profiles/view_model/profile_bloc.dart';
 
 class CustomerProfileView extends StatefulWidget {
@@ -124,7 +124,7 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                                   color: Colors.grey,
                                 ),
                               ),
-                            ); 
+                            );
                           } else {
                             return TabBarView(
                               children: [
