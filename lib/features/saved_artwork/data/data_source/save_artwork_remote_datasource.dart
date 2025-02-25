@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:tryproject/app/constants/api_endpoints.dart';
 import 'package:tryproject/features/saved_artwork/data/data_source/save_artwork_datasource.dart';
+import 'package:tryproject/features/saved_artwork/data/dto/saved_artworks_with_image_dto.dart';
+import 'package:tryproject/features/saved_artwork/data/model/save_artwork_api_model.dart';
 import 'package:tryproject/features/saved_artwork/domain/entity/save_artwork_entity.dart';
 
 class SaveArtworkRemoteDatasource implements ISaveArtsDataSource {
@@ -9,9 +11,22 @@ class SaveArtworkRemoteDatasource implements ISaveArtsDataSource {
   SaveArtworkRemoteDatasource({required Dio dio}) : _dio = dio;
 
   @override
-  Future<List<SaveArtworkEntity>> getCollection(String buyerId) {
-    // TODO: implement getCollection
-    throw UnimplementedError();
+  Future<List<SaveArtworkEntity>> getCollection(String buyerId) async {
+    try {
+      final response = await _dio.get('${ApiEndpoints.getCollection}/$buyerId');
+      if (response.statusCode == 200) {
+        getUserCollectionDTO responseDTO =
+            getUserCollectionDTO.fromJson(response.data);
+        return responseDTO.data
+            .map((item) =>
+                SaveArtworkApiModel.fromJson(item.toJson()).toEntity())
+            .toList();
+      } else {
+        throw Exception('Failed to load asaved artworks for thi user');
+      }
+    } on DioException catch (e) {
+      throw Exception(e);
+    }
   }
 
   @override
@@ -77,7 +92,7 @@ class SaveArtworkRemoteDatasource implements ISaveArtsDataSource {
         },
       );
 
-            print("API Response: ${response.data}");
+      print("API Response: ${response.data}");
 
       if (response.statusCode == 200) {
         return response.data['isLiked'] ?? false;

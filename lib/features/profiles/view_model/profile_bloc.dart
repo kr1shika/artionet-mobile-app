@@ -12,6 +12,8 @@ import 'package:tryproject/features/artwork/domain/use_case/get_artworks_by_user
 import 'package:tryproject/features/profiles/view_model/upload_edit/artwork_crud_bloc.dart';
 import 'package:tryproject/features/purchases/domain/entity/purchase_entity.dart';
 import 'package:tryproject/features/purchases/domain/use_case/GetPurchasesByUserIdUsecase.dart';
+import 'package:tryproject/features/saved_artwork/domain/entity/save_artwork_entity.dart';
+import 'package:tryproject/features/saved_artwork/domain/use_case/fetch_saved_artwork_by_userid.dart';
 
 part 'profile_event.dart';
 part 'profile_state.dart';
@@ -22,6 +24,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final GetArtworksByUseridUsecase _getArtworksByUseridUsecase;
   final GetArtworkByIdUsecase _getArtworkByIdUsecase;
   final DeleteArtworkByIdUseCase _deleteArtworkByIdUseCase;
+  final GetSavedCollectionUsecase _getSavedCollectionUsecase;
 
   ProfileBloc({
     required GetArtworksByUseridUsecase getArtworksByUseridUsecase,
@@ -29,13 +32,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required GetArtworkByIdUsecase getArtworkByIdUsecase,
     required GetPurchasesByUserIdUsecase getPurchasesByUserIdUsecase,
     required DeleteArtworkByIdUseCase deleteArtworkByIdUseCase,
+    required GetSavedCollectionUsecase getSavedCollectionUsecase,
   })  : _getPurchasesByUserIdUsecase = getPurchasesByUserIdUsecase,
         _artworkCrudBloc = artworkCrudBloc,
         _getArtworksByUseridUsecase = getArtworksByUseridUsecase,
         _getArtworkByIdUsecase = getArtworkByIdUsecase,
         _deleteArtworkByIdUseCase = deleteArtworkByIdUseCase,
+        _getSavedCollectionUsecase = getSavedCollectionUsecase,
         super(ProfileState.initial()) {
     on<FetchPurchasesByUserId>(_onFetchPurchasesByUserId);
+    on<GetCollection>(_onGetCollection);
+
     on<FetchArtworkByUserID>(_onFetchArtworksByUserId);
     on<FetchArtworkById>(_onFetchArtworkById);
     on<DeleteArtworkById>(_onDeleteArtworkById);
@@ -62,6 +69,26 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }, (artworks) {
       emit(state.copyWith(isLoading: false, artworks: artworks));
     });
+  }
+
+  Future<void> _onGetCollection(
+    GetCollection event,
+    Emitter<ProfileState> emit,
+  ) async {
+    emit(state.copyWith(isLoading: true));
+
+    final result = await _getSavedCollectionUsecase.call(event.buyerId);
+    result.fold(
+      (failure) {
+        print("API Error: ${failure.message}");
+
+        emit(state.copyWith(
+            isLoading: false, collection: [], errorMessage: failure.message));
+      },
+      (collection) {
+        emit(state.copyWith(isLoading: false, collection: collection));
+      },
+    );
   }
 
   // Fetch purchases by user ID

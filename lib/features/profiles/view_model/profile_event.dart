@@ -60,6 +60,14 @@ class FetchPurchasesByUserId extends ProfileEvent {
   List<Object?> get props => [userId];
 }
 
+class GetCollection extends ProfileEvent {
+  final String buyerId;
+  const GetCollection({required this.buyerId});
+
+  @override
+  List<Object?> get props => [buyerId];
+}
+
 class FetchArtworkByUserID extends ProfileEvent {
   final String userId;
 
@@ -86,7 +94,6 @@ class DeleteArtworkById extends ProfileEvent {
   @override
   List<Object> get props => [artworkId];
 }
-
 
 class NavigateToUpload extends ProfileEvent {
   final BuildContext context;

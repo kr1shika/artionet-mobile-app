@@ -11,9 +11,13 @@ class SaveArtworkRemoteRepository implements ISaveArtsRepository {
 
   @override
   Future<Either<Failure, List<SaveArtworkEntity>>> getCollection(
-      String buyerId) {
-    // TODO: implement getCollection
-    throw UnimplementedError();
+      String buyerId) async {
+    try {
+      final collection = await remoteDatasource.getCollection(buyerId);
+      return Right(collection);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
   }
 
   @override

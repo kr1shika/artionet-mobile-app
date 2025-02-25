@@ -35,6 +35,7 @@ import 'package:tryproject/features/purchases/presentation/view_model/purchase_b
 import 'package:tryproject/features/saved_artwork/data/data_source/save_artwork_remote_datasource.dart';
 import 'package:tryproject/features/saved_artwork/data/repository/save_artwork_remote_repository.dart';
 import 'package:tryproject/features/saved_artwork/domain/use_case/check_artwork_status_usecase.dart';
+import 'package:tryproject/features/saved_artwork/domain/use_case/fetch_saved_artwork_by_userid.dart';
 import 'package:tryproject/features/saved_artwork/domain/use_case/remove_saved_artwork_usecase.dart';
 import 'package:tryproject/features/saved_artwork/domain/use_case/save_artwork_usecase.dart';
 import 'package:tryproject/features/splash/presentation/view_model/splash_cubit.dart';
@@ -83,6 +84,7 @@ _initProfileDependencies() async {
         getArtworksByUseridUsecase: getIt<GetArtworksByUseridUsecase>(),
         getArtworkByIdUsecase: getIt<GetArtworkByIdUsecase>(),
         deleteArtworkByIdUseCase: getIt<DeleteArtworkByIdUseCase>(),
+        getSavedCollectionUsecase: getIt<GetSavedCollectionUsecase>(),
       ));
 }
 
@@ -101,6 +103,11 @@ _initSaveArtsDependencies() async {
 
   getIt.registerLazySingleton<RemoveSavedArtworkUsecase>(
     () => RemoveSavedArtworkUsecase(
+      getIt<SaveArtworkRemoteRepository>(),
+    ),
+  );
+  getIt.registerLazySingleton<GetSavedCollectionUsecase>(
+    () => GetSavedCollectionUsecase(
       getIt<SaveArtworkRemoteRepository>(),
     ),
   );

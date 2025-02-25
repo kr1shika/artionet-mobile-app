@@ -19,9 +19,11 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
   @override
   void initState() {
     super.initState();
-    context
-        .read<ProfileBloc>()
-        .add(FetchArtworkByUserID(userId: widget.userId));
+    final profileBloc = context.read<ProfileBloc>();
+
+    // Fetch uploaded and saved artworks when the profile screen loads
+    profileBloc.add(FetchArtworkByUserID(userId: widget.userId));
+    profileBloc.add(GetCollection(buyerId: widget.userId));
   }
 
   void _closeDetailView() {
@@ -33,15 +35,6 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: selectedArtworkId == null
-      //     ? null
-      //     : AppBar(
-      //         // title: const Text("Artwork Details"),
-      //         leading: IconButton(
-      //           icon: const Icon(Icons.arrow_back),
-      //           onPressed: _closeDetailView,
-      //         ),
-      //       ),
       body: SafeArea(
         child: selectedArtworkId == null
             ? DefaultTabController(
@@ -114,116 +107,14 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                                     color: Colors.red, fontSize: 16),
                               ),
                             );
-                          } else if (state.artworks.isEmpty) {
-                            return const Center(
-                              child: Text(
-                                "No artworks uploaded yet!",
-                                style: TextStyle(
-                                  fontFamily: 'IM_FELL_Great_Primer',
-                                  fontSize: 16,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            );
-                          } else {
-                            return TabBarView(
-                              children: [
-                                GridView.builder(
-                                  padding: const EdgeInsets.all(8),
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    crossAxisSpacing: 8,
-                                    mainAxisSpacing: 8,
-                                    childAspectRatio: 0.8,
-                                  ),
-                                  itemCount: state.artworks.length,
-                                  itemBuilder: (context, index) {
-                                    final artwork = state.artworks[index];
-                                    return GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          selectedArtworkId = artwork.artworkId;
-                                        });
-                                        BlocProvider.of<ProfileBloc>(context)
-                                            .add(
-                                          FetchArtworkById(
-                                              artwork.artworkId ?? ''),
-                                        );
-                                      },
-                                      child: Card(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
-                                          children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                topLeft: Radius.circular(2),
-                                                topRight: Radius.circular(2),
-                                              ),
-                                              child: artwork.images != null
-                                                  ? Image.network(
-                                                      artwork.images!,
-                                                      height: 175,
-                                                      width: double.infinity,
-                                                      fit: BoxFit.cover,
-                                                    )
-                                                  : Container(
-                                                      height: 150,
-                                                      color: Colors.grey[300],
-                                                      child: const Icon(
-                                                        Icons
-                                                            .image_not_supported,
-                                                        size: 50,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(6),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    artwork.title ??
-                                                        'Unknown Art',
-                                                    style: const TextStyle(
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    'State: ${artwork.archive}',
-                                                    style: const TextStyle(
-                                                      color: Colors.green,
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                                const Center(
-                                  child: Text(
-                                    "No saved posts yet!",
-                                    style: TextStyle(
-                                      fontFamily: 'IM_FELL_Great_Primer',
-                                      fontSize: 16,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            );
                           }
+
+                          return TabBarView(
+                            children: [
+                              _buildUploadedArtworks(state),
+                              _buildSavedArtworks(state),
+                            ],
+                          );
                         },
                       ),
                     ),
@@ -232,12 +123,140 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
               )
             : ArtworkDetailView(
                 artworkId: selectedArtworkId!,
-                onBack: () {
-                  setState(() {
-                    selectedArtworkId = null; // This will close the detail page
-                  });
-                },
+                onBack: _closeDetailView,
               ),
+      ),
+    );
+  }
+
+  /// Builds the "Your Artworks" tab
+  Widget _buildUploadedArtworks(ProfileState state) {
+    if (state.artworks.isEmpty) {
+      return const Center(
+        child: Text(
+          "No artworks uploaded yet!",
+          style: TextStyle(
+            fontFamily: 'IM_FELL_Great_Primer',
+            fontSize: 16,
+            color: Colors.grey,
+          ),
+        ),
+      );
+    }
+
+    return GridView.builder(
+      padding: const EdgeInsets.all(8),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        childAspectRatio: 0.8,
+      ),
+      itemCount: state.artworks.length,
+      itemBuilder: (context, index) {
+        final artwork = state.artworks[index];
+        return _buildArtworkCard(artwork.artworkId ?? '', artwork.images,
+            artwork.title ?? 'Unknown Art', artwork.archive ?? 'Unknown');
+      },
+    );
+  }
+
+  /// Builds the "Saved" tab
+  Widget _buildSavedArtworks(ProfileState state) {
+    if (state.collection.isEmpty) {
+      return const Center(
+        child: Text(
+          "No saved artworks yet!",
+          style: TextStyle(
+            fontFamily: 'IM_FELL_Great_Primer',
+            fontSize: 16,
+            color: Colors.grey,
+          ),
+        ),
+      );
+    }
+
+    return GridView.builder(
+      padding: const EdgeInsets.all(8),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        childAspectRatio: 0.8,
+      ),
+      itemCount: state.collection.length,
+      itemBuilder: (context, index) {
+        final savedArtwork = state.collection[index];
+        return _buildArtworkCard(
+          savedArtwork.art_id,
+          savedArtwork.imageUrl,
+          savedArtwork.title ?? 'Unknown Art',
+          savedArtwork.status,
+        );
+      },
+    );
+  }
+
+  /// Reusable method to build an artwork card
+  Widget _buildArtworkCard(
+      String artworkId, String? imageUrl, String title, String status) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedArtworkId = artworkId;
+        });
+        BlocProvider.of<ProfileBloc>(context).add(FetchArtworkById(artworkId));
+      },
+      child: Card(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(2),
+                topRight: Radius.circular(2),
+              ),
+              child: imageUrl != null
+                  ? Image.network(
+                      imageUrl,
+                      height: 175,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    )
+                  : Container(
+                      height: 150,
+                      color: Colors.grey[300],
+                      child: const Icon(
+                        Icons.image_not_supported,
+                        size: 50,
+                        color: Colors.grey,
+                      ),
+                    ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(6),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    'Status: $status',
+                    style: const TextStyle(
+                      color: Colors.green,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

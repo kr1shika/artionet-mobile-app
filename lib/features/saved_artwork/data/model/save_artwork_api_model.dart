@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tryproject/features/saved_artwork/domain/entity/save_artwork_entity.dart';
 
+part 'save_artwork_api_model.g.dart';
+
 @JsonSerializable()
 class SaveArtworkApiModel extends Equatable {
   @JsonKey(name: '_id')
