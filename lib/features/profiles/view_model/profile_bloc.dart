@@ -1,9 +1,12 @@
 import 'dart:io';
 
+import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tryproject/core/error/failure.dart';
 import 'package:tryproject/features/artwork/domain/entity/artwork_entity.dart';
+import 'package:tryproject/features/artwork/domain/use_case/get_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_artworks_by_userId.dart';
 import 'package:tryproject/features/profiles/view_model/upload_edit/artwork_crud_bloc.dart';
 import 'package:tryproject/features/purchases/domain/entity/purchase_entity.dart';
@@ -16,17 +19,21 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final GetPurchasesByUserIdUsecase _getPurchasesByUserIdUsecase;
   final ArtworkCrudBloc _artworkCrudBloc;
   final GetArtworksByUseridUsecase _getArtworksByUseridUsecase;
+  final GetArtworkByIdUsecase _getArtworkByIdUsecase;
 
   ProfileBloc({
     required GetArtworksByUseridUsecase getArtworksByUseridUsecase,
     required ArtworkCrudBloc artworkCrudBloc,
+    required GetArtworkByIdUsecase getArtworkByIdUsecase,
     required GetPurchasesByUserIdUsecase getPurchasesByUserIdUsecase,
   })  : _getPurchasesByUserIdUsecase = getPurchasesByUserIdUsecase,
         _artworkCrudBloc = artworkCrudBloc,
         _getArtworksByUseridUsecase = getArtworksByUseridUsecase,
+        _getArtworkByIdUsecase = getArtworkByIdUsecase,
         super(ProfileState.initial()) {
     on<FetchPurchasesByUserId>(_onFetchPurchasesByUserId);
     on<FetchArtworkByUserID>(_onFetchArtworksByUserId);
+    on<FetchArtworkById>(_onFetchArtworkById);
 
     on<NavigateToUpload>((event, emit) {
       Navigator.push(
@@ -72,5 +79,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         emit(state.copyWith(isLoading: false, purchases: purchases));
       },
     );
+  }
+
+  Future<void> _onFetchArtworkById(
+      FetchArtworkById event, Emitter<ProfileState> emit) async {
+    emit(state.copyWith(isLoading: true));
+    final Either<Failure, ArtworkEntity> result =
+        await _getArtworkByIdUsecase.call(event.id);
+    result.fold(
+        (failure) => emit(
+            state.copyWith(isLoading: false, errorMessage: failure.message)),
+        (artwork) =>
+            emit(state.copyWith(isLoading: false, selectedArtwork: artwork)));
   }
 }

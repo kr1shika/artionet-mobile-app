@@ -74,6 +74,7 @@ _initProfileDependencies() async {
         getPurchasesByUserIdUsecase: getIt<GetPurchasesByUserIdUsecase>(),
         artworkCrudBloc: getIt<ArtworkCrudBloc>(),
         getArtworksByUseridUsecase: getIt<GetArtworksByUseridUsecase>(),
+        getArtworkByIdUsecase: getIt<GetArtworkByIdUsecase>(),
       ));
 }
 

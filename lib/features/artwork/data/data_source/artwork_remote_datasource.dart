@@ -64,8 +64,8 @@ class ArtworkRemoteDatasource implements IArtworkDataSource {
         ApiEndpoints.createNewArtwork,
         data: formData,
         options: Options(headers: {
-          "Accept": "application/json", 
-          "Content-Type": "multipart/form-data", 
+          "Accept": "application/json",
+          "Content-Type": "multipart/form-data",
         }),
       );
 

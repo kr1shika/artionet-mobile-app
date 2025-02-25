@@ -10,7 +10,9 @@ class ProfileEvent extends Equatable {
 
 class CreateArtworkEvent extends ProfileEvent {
   final String title;
+  final String artworkId;
   final String dimensions;
+  final String archive;
   final String price;
   final String mediumUsed;
   final String artistId;
@@ -26,7 +28,9 @@ class CreateArtworkEvent extends ProfileEvent {
     required this.mediumUsed,
     required this.artistId,
     required this.categories,
+    required this.artworkId,
     this.creatorsNote,
+    required this.archive,
     required this.imageFile,
     required this.context,
   });
@@ -39,9 +43,11 @@ class CreateArtworkEvent extends ProfileEvent {
         mediumUsed,
         artistId,
         categories,
+        artworkId,
         creatorsNote ?? '',
         imageFile,
         context,
+        archive
       ];
 }
 
@@ -61,6 +67,15 @@ class FetchArtworkByUserID extends ProfileEvent {
 
   @override
   List<Object?> get props => [userId];
+}
+
+class FetchArtworkById extends ProfileEvent {
+  final String id;
+
+  const FetchArtworkById(this.id);
+
+  @override
+  List<Object> get props => [id];
 }
 
 class NavigateToUpload extends ProfileEvent {

@@ -14,21 +14,30 @@ class CreateArtworkParams extends Equatable {
   final String categories;
   final String? creatorsNote;
   final String? images;
+  final String? archive;
 
-  const CreateArtworkParams({
-    required this.title,
-    required this.dimensions,
-    required this.price,
-    required this.medium_used,
-    this.artistId,
-    required this.categories,
-    this.creatorsNote,
-    this.images,
-  });
+  const CreateArtworkParams(
+      {required this.title,
+      required this.dimensions,
+      required this.price,
+      required this.medium_used,
+      this.artistId,
+      required this.categories,
+      this.creatorsNote,
+      this.images,
+      this.archive});
 
   @override
-  List<Object?> get props =>
-      [title, dimensions, price, medium_used, categories, creatorsNote, images];
+  List<Object?> get props => [
+        title,
+        archive,
+        dimensions,
+        price,
+        medium_used,
+        categories,
+        creatorsNote,
+        images
+      ];
 }
 
 class CreateArtworkUsecase
@@ -40,14 +49,16 @@ class CreateArtworkUsecase
   @override
   Future<Either<Failure, ArtworkEntity>> call(CreateArtworkParams params) {
     final artworkEntity = ArtworkEntity(
-        title: params.title,
-        dimensions: params.dimensions,
-        price: params.price,
-        medium_used: params.medium_used,
-        artistId: params.artistId,
-        categories: params.categories,
-        creatorsNote: params.creatorsNote,
-        images: params.images);
+      archive: params.archive,
+      title: params.title,
+      dimensions: params.dimensions,
+      price: params.price,
+      medium_used: params.medium_used,
+      artistId: params.artistId,
+      categories: params.categories,
+      creatorsNote: params.creatorsNote,
+      images: params.images,
+    );
     return _repository.createNewArtwork(artworkEntity);
   }
 }

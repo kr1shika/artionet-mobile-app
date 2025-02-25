@@ -51,7 +51,8 @@ class ArtworkApiModel extends Equatable {
         categories: categories,
         artistId: artistId,
         images: images,
-        creatorsNote: creatorsNote);
+        creatorsNote: creatorsNote,
+        archive: archive);
   }
 
   factory ArtworkApiModel.fromEntity(ArtworkEntity entity) {

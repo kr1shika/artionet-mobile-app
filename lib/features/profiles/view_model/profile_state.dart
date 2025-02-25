@@ -6,6 +6,7 @@ class ProfileState extends Equatable {
   final bool isSuccess;
   final List<PurchaseEntity> purchases;
   final List<ArtworkEntity> artworks;
+  final ArtworkEntity? selectedArtwork;
 
   final String errorMessage;
 
@@ -15,6 +16,7 @@ class ProfileState extends Equatable {
     required this.errorMessage,
     required this.isSuccess,
     required this.artworks,
+    this.selectedArtwork,
   });
 
   // Initial state of the ProfileBloc
@@ -25,6 +27,7 @@ class ProfileState extends Equatable {
       errorMessage: '',
       isSuccess: false,
       artworks: [],
+      selectedArtwork: null,
     );
   }
 
@@ -35,6 +38,7 @@ class ProfileState extends Equatable {
     List<ArtworkEntity>? artworks,
     String? errorMessage,
     bool? isSuccess,
+    ArtworkEntity? selectedArtwork,
   }) {
     return ProfileState(
       isLoading: isLoading ?? this.isLoading,
@@ -42,10 +46,17 @@ class ProfileState extends Equatable {
       artworks: artworks ?? this.artworks,
       errorMessage: errorMessage ?? this.errorMessage,
       isSuccess: isSuccess ?? this.isSuccess,
+      selectedArtwork: selectedArtwork ?? this.selectedArtwork,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [isLoading, purchases, errorMessage, isSuccess, artworks];
+  List<Object?> get props => [
+        isLoading,
+        purchases,
+        errorMessage,
+        isSuccess,
+        artworks,
+        selectedArtwork
+      ];
 }
