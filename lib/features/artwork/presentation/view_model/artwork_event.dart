@@ -18,6 +18,36 @@ class FetchArtworkById extends ArtworkEvent {
   List<Object> get props => [id];
 }
 
+class SaveArtworkEvent extends ArtworkEvent {
+  final String artId;
+  final String buyerId;
+
+  const SaveArtworkEvent({required this.artId, required this.buyerId});
+
+  @override
+  List<Object> get props => [artId, buyerId];
+}
+
+class RemoveSavedArtworkEvent extends ArtworkEvent {
+  final String artId;
+  final String buyerId;
+
+  const RemoveSavedArtworkEvent({required this.artId, required this.buyerId});
+
+  @override
+  List<Object> get props => [artId, buyerId];
+}
+
+class CheckArtworkStatusEvent extends ArtworkEvent {
+  final String artId;
+  final String buyerId;
+
+  const CheckArtworkStatusEvent({required this.artId, required this.buyerId});
+
+  @override
+  List<Object> get props => [artId, buyerId];
+}
+
 class NavigateToPurchase extends ArtworkEvent {
   final BuildContext context;
   final Widget destination;

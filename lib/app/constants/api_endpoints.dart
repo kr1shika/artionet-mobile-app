@@ -29,4 +29,6 @@ class ApiEndpoints {
   static const String save = "saveArt/save";
   static const String removeFromCollection = "saveArt/";
   static const String getCollection = "saveArt/fetchcollection";
+    static const String checkStatus = "saveArt/checkStatus";
+
 }

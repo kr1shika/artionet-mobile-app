@@ -65,4 +65,29 @@ class SaveArtworkRemoteDatasource implements ISaveArtsDataSource {
       throw Exception("Unexpected error: $e");
     }
   }
+
+  @override
+  Future<bool> checkStatus(String artId, String buyerId) async {
+    try {
+      final response = await _dio.post(
+        ApiEndpoints.checkStatus,
+        data: {
+          "art_id": artId,
+          "buyer_id": buyerId,
+        },
+      );
+
+            print("API Response: ${response.data}");
+
+      if (response.statusCode == 200) {
+        return response.data['isLiked'] ?? false;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } on DioException catch (e) {
+      throw Exception("Failed to check artwork status: ${e.message}");
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
+    }
+  }
 }

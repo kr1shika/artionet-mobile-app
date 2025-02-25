@@ -4,4 +4,5 @@ abstract interface class ISaveArtsDataSource {
   Future<List<SaveArtworkEntity>> getCollection(String buyerId);
   Future<String?> save(SaveArtworkEntity collection);
   Future<void> removeFromCollection(String artId, String buyerId);
+  Future<bool> checkStatus(String artId, String buyerId);
 }

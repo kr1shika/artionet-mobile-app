@@ -8,4 +8,5 @@ abstract interface class ISaveArtsRepository {
   Future<Either<Failure, void>> save(SaveArtworkEntity collection);
   Future<Either<Failure, void>> removeFromCollection(
       String artId, String buyerId);
+  Future<Either<Failure, bool>> checkStatus(String artId, String buyerId);
 }

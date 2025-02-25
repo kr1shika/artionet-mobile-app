@@ -36,4 +36,15 @@ class SaveArtworkRemoteRepository implements ISaveArtsRepository {
       return Left(ApiFailure(message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, bool>> checkStatus(
+      String artId, String buyerId) async {
+    try {
+      final isLiked = await remoteDatasource.checkStatus(artId, buyerId);
+      return Right(isLiked);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
+  }
 }

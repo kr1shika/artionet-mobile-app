@@ -32,6 +32,11 @@ import 'package:tryproject/features/purchases/data/repository/purchase_remote_re
 import 'package:tryproject/features/purchases/domain/use_case/GetPurchasesByUserIdUsecase.dart';
 import 'package:tryproject/features/purchases/domain/use_case/create_purchase_usecase.dart';
 import 'package:tryproject/features/purchases/presentation/view_model/purchase_bloc.dart';
+import 'package:tryproject/features/saved_artwork/data/data_source/save_artwork_remote_datasource.dart';
+import 'package:tryproject/features/saved_artwork/data/repository/save_artwork_remote_repository.dart';
+import 'package:tryproject/features/saved_artwork/domain/use_case/check_artwork_status_usecase.dart';
+import 'package:tryproject/features/saved_artwork/domain/use_case/remove_saved_artwork_usecase.dart';
+import 'package:tryproject/features/saved_artwork/domain/use_case/save_artwork_usecase.dart';
 import 'package:tryproject/features/splash/presentation/view_model/splash_cubit.dart';
 
 final getIt = GetIt.instance;
@@ -51,6 +56,7 @@ Future<void> initDependencies() async {
   await _initPurchaseDependencies();
   await _initProfileDependencies();
   await _initArtworkCrudDependencies();
+  await _initSaveArtsDependencies();
 }
 
 _initApiService() {
@@ -78,6 +84,32 @@ _initProfileDependencies() async {
         getArtworkByIdUsecase: getIt<GetArtworkByIdUsecase>(),
         deleteArtworkByIdUseCase: getIt<DeleteArtworkByIdUseCase>(),
       ));
+}
+
+_initSaveArtsDependencies() async {
+  getIt.registerFactory<SaveArtworkRemoteDatasource>(
+      () => SaveArtworkRemoteDatasource(dio: getIt<Dio>()));
+
+  // repository
+  getIt.registerLazySingleton(() => SaveArtworkRemoteRepository(
+      remoteDatasource: getIt<SaveArtworkRemoteDatasource>()));
+
+  // usecase
+  getIt.registerLazySingleton<SaveArtworkUsecase>(
+    () => SaveArtworkUsecase(getIt<SaveArtworkRemoteRepository>()),
+  );
+
+  getIt.registerLazySingleton<RemoveSavedArtworkUsecase>(
+    () => RemoveSavedArtworkUsecase(
+      getIt<SaveArtworkRemoteRepository>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<CheckArtworkStatusUsecase>(
+    () => CheckArtworkStatusUsecase(
+      getIt<SaveArtworkRemoteRepository>(),
+    ),
+  );
 }
 
 // purchase register
@@ -150,6 +182,9 @@ _initArtworkDependencies() async {
         getAllArtworkUsecase: getIt<GetAllArtworkUsecase>(),
         getArtworkByIdUsecase: getIt<GetArtworkByIdUsecase>(),
         purchaseBloc: getIt<PurchaseBloc>(),
+        saveArtworkUsecase: getIt<SaveArtworkUsecase>(),
+        removeSavedArtworkUsecase: getIt<RemoveSavedArtworkUsecase>(),
+        checkArtworkStatusUsecase: getIt<CheckArtworkStatusUsecase>(),
       ));
 }
 
