@@ -122,4 +122,21 @@ class ArtworkRemoteDatasource implements IArtworkDataSource {
       throw Exception(e.toString());
     }
   }
+
+  @override
+  Future<void> deleteArtworkbyId(String id) async {
+    try {
+      final response =
+          await _dio.delete('${ApiEndpoints.deleteArtworkbyId}/$id');
+      if (response.statusCode != 200) {
+        throw Exception(response.statusMessage);
+      }
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+  
+
 }

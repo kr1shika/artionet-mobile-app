@@ -6,6 +6,7 @@ import 'package:tryproject/core/network/hive_service.dart';
 import 'package:tryproject/features/artwork/data/data_source/artwork_remote_datasource.dart';
 import 'package:tryproject/features/artwork/data/repository/artwork_remote_repository.dart';
 import 'package:tryproject/features/artwork/domain/use_case/create_artwork_usecase.dart';
+import 'package:tryproject/features/artwork/domain/use_case/deleteArtworkByIdUsecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_all_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_artworks_by_userId.dart';
@@ -75,6 +76,7 @@ _initProfileDependencies() async {
         artworkCrudBloc: getIt<ArtworkCrudBloc>(),
         getArtworksByUseridUsecase: getIt<GetArtworksByUseridUsecase>(),
         getArtworkByIdUsecase: getIt<GetArtworkByIdUsecase>(),
+        deleteArtworkByIdUseCase: getIt<DeleteArtworkByIdUseCase>(),
       ));
 }
 
@@ -135,6 +137,9 @@ _initArtworkDependencies() async {
       getIt<ArtworkRemoteRepository>(),
     ),
   );
+
+  getIt.registerLazySingleton<DeleteArtworkByIdUseCase>(
+      () => DeleteArtworkByIdUseCase(getIt<ArtworkRemoteRepository>()));
 
   // CreateArtworkUsecase
   getIt.registerLazySingleton<CreateArtworkUsecase>(

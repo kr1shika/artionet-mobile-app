@@ -78,6 +78,16 @@ class FetchArtworkById extends ProfileEvent {
   List<Object> get props => [id];
 }
 
+class DeleteArtworkById extends ProfileEvent {
+  final String artworkId;
+
+  const DeleteArtworkById(this.artworkId);
+
+  @override
+  List<Object> get props => [artworkId];
+}
+
+
 class NavigateToUpload extends ProfileEvent {
   final BuildContext context;
   final Widget destination;

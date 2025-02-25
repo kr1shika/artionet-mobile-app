@@ -124,7 +124,7 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                                   color: Colors.grey,
                                 ),
                               ),
-                            );
+                            ); 
                           } else {
                             return TabBarView(
                               children: [

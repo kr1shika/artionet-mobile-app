@@ -61,4 +61,14 @@ class ArtworkRemoteRepository implements IArtworkRepository {
       return Left(ApiFailure(message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> deleteArtworkbyId(String id) async {
+    try {
+      await remoteDataSource.deleteArtworkbyId(id);
+      return const Right(null);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
+  }
 }

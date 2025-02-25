@@ -8,4 +8,5 @@ abstract interface class IArtworkDataSource {
   Future<ArtworkEntity> createNewArtwork(ArtworkEntity artwork);
   Future<String> uploadArtImage(File file);
   Future<List<ArtworkEntity>> getArtworksbyUserId(String id);
+  Future<void> deleteArtworkbyId(String id);
 }
