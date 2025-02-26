@@ -5,60 +5,60 @@ import 'package:tryproject/core/error/failure.dart';
 import 'package:tryproject/features/artwork/domain/entity/artwork_entity.dart';
 import 'package:tryproject/features/artwork/domain/repository/artwork_repository.dart';
 
-class CreateArtworkParams extends Equatable {
+class UpdateArtworkParams extends Equatable {
+  final String artworkId;
   final String title;
   final String dimensions;
   final String price;
-  final String medium_used;
-  final String? artistId;
+  final String mediumUsed;
   final String categories;
   final String? creatorsNote;
   final String? images;
-  final String? archive;
 
-  const CreateArtworkParams(
-      {required this.title,
-      required this.dimensions,
-      required this.price,
-      required this.medium_used,
-      this.artistId,
-      required this.categories,
-      this.creatorsNote,
-      this.images,
-      this.archive});
+  const UpdateArtworkParams({
+    required this.artworkId,
+    required this.title,
+    required this.dimensions,
+    required this.price,
+    required this.mediumUsed,
+    required this.categories,
+    this.creatorsNote,
+    this.images,
+  });
 
   @override
   List<Object?> get props => [
+        artworkId,
         title,
-        archive,
         dimensions,
         price,
-        medium_used,
+        mediumUsed,
         categories,
         creatorsNote,
-        images
+        images,
       ];
 }
 
-class CreateArtworkUsecase
-    implements UsecaseWithParams<ArtworkEntity, CreateArtworkParams> {
+class UpdateArtworkUsecase
+    implements UsecaseWithParams<ArtworkEntity, UpdateArtworkParams> {
   final IArtworkRepository _repository;
 
-  CreateArtworkUsecase(this._repository);
+  UpdateArtworkUsecase(this._repository);
 
   @override
-  Future<Either<Failure, ArtworkEntity>> call(CreateArtworkParams params) {
+  Future<Either<Failure, ArtworkEntity>> call(UpdateArtworkParams params) {
     final artworkEntity = ArtworkEntity(
-      archive: params.archive,
+      artworkId: params.artworkId,
       title: params.title,
       dimensions: params.dimensions,
       price: params.price,
-      medium_used: params.medium_used,
-      artistId: params.artistId,
+      medium_used: params.mediumUsed,
       categories: params.categories,
       creatorsNote: params.creatorsNote,
       images: params.images,
     );
-    return _repository.createNewArtwork(artworkEntity);
+    print('from usecase101');
+    print(params.title);
+    return _repository.updateArtwork(artworkEntity);
   }
 }

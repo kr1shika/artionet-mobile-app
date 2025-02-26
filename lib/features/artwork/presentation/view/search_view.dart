@@ -184,9 +184,29 @@ class _SearchViewState extends State<SearchView> {
                                                 if (isLiked) {
                                                   likedArtworks.remove(
                                                       artwork.artworkId);
+                                                  context
+                                                      .read<ArtworkBloc>()
+                                                      .add(
+                                                        RemoveSavedArtworkEvent(
+                                                          artId: artwork
+                                                              .artworkId!,
+                                                          buyerId:
+                                                              '679cb11ed81a6e1b96420af0', // Replace with actual buyer ID
+                                                        ),
+                                                      );
                                                 } else {
                                                   likedArtworks
                                                       .add(artwork.artworkId!);
+                                                  context
+                                                      .read<ArtworkBloc>()
+                                                      .add(
+                                                        SaveArtworkEvent(
+                                                          artId: artwork
+                                                              .artworkId!,
+                                                          buyerId:
+                                                              '679cb11ed81a6e1b96420af0',
+                                                        ),
+                                                      );
                                                 }
                                               });
                                             },
@@ -206,7 +226,10 @@ class _SearchViewState extends State<SearchView> {
                 ),
               ] else ...[
                 Expanded(
-                  child: DetailView(artworkId: selectedArtworkId!),
+                  child: DetailView(
+                    artworkId: selectedArtworkId!,
+                    buyerId: '',
+                  ),
                 ),
               ],
             ],

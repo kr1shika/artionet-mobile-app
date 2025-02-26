@@ -70,7 +70,7 @@ class PurchaseApiModel extends Equatable {
       'otp_expiration': otp_expiration,
       'orderDate': orderDate,
       'totalAmount': totalAmount,
-      'imageUrl': imageUrl, // Include the image URL in the JSON
+      'imageUrl': imageUrl,
     };
   }
 

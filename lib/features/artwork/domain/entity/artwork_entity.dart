@@ -11,6 +11,7 @@ class ArtworkEntity extends Equatable {
   final String? artistId;
   final String categories;
   final String? creatorsNote;
+  final bool? isLiked;
 
   const ArtworkEntity(
       {this.artworkId,
@@ -18,6 +19,7 @@ class ArtworkEntity extends Equatable {
       required this.title,
       required this.dimensions,
       this.images,
+      this.isLiked,
       this.archive,
       required this.price,
       required this.medium_used,
@@ -34,7 +36,8 @@ class ArtworkEntity extends Equatable {
         price = '_empty.price',
         medium_used = '_empty.medium_used',
         categories = '_empty.categories',
-        creatorsNote = '_empy';
+        creatorsNote = '_empy',
+        isLiked = null;
 
   @override
   List<Object?> get props => [
@@ -47,6 +50,7 @@ class ArtworkEntity extends Equatable {
         price,
         medium_used,
         categories,
-        creatorsNote
+        creatorsNote,
+        isLiked
       ];
 }

@@ -64,8 +64,8 @@ class ArtworkRemoteDatasource implements IArtworkDataSource {
         ApiEndpoints.createNewArtwork,
         data: formData,
         options: Options(headers: {
-          "Accept": "application/json", 
-          "Content-Type": "multipart/form-data", 
+          "Accept": "application/json",
+          "Content-Type": "multipart/form-data",
         }),
       );
 
@@ -113,6 +113,57 @@ class ArtworkRemoteDatasource implements IArtworkDataSource {
       if (response.statusCode == 200) {
         GetAllArtworkDTO responseDTO = GetAllArtworkDTO.fromJson(response.data);
         return ArtworkApiModel.toEntityList(responseDTO.data);
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<void> deleteArtworkbyId(String id) async {
+    try {
+      final response =
+          await _dio.delete('${ApiEndpoints.deleteArtworkbyId}/$id');
+      if (response.statusCode != 200) {
+        throw Exception(response.statusMessage);
+      }
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<ArtworkEntity> updateArtwork(ArtworkEntity artwork) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'title': artwork.title,
+        'dimensions': artwork.dimensions,
+        'price': artwork.price,
+        'medium_used': artwork.medium_used,
+        'categories': artwork.categories,
+        'creators_note': artwork.creatorsNote,
+        'images': artwork.images,
+      });
+      print('from DATASOURC3');
+      print(artwork.title);
+
+      Response response = await _dio.patch(
+        '${ApiEndpoints.updateArtwork}/${artwork.artworkId}',
+        data: formData,
+        options: Options(headers: {
+          "Accept": "application/json",
+          "Content-Type": "multipart/form-data",
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return ArtworkApiModel.fromJson(response.data['artwork']).toEntity();
       } else {
         throw Exception(response.statusMessage);
       }

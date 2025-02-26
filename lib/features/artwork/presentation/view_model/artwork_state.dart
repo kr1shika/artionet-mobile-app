@@ -6,12 +6,14 @@ class ArtworkState extends Equatable {
   final String? errorMessage;
   final List<ArtworkEntity> artworks;
   final ArtworkEntity? selectedArtwork;
+  final Map<String, bool> likedStatuses;
 
   const ArtworkState({
     required this.isLoading,
     this.errorMessage,
     required this.artworks,
     this.selectedArtwork,
+    required this.likedStatuses,
   });
 
   factory ArtworkState.initial() {
@@ -20,6 +22,7 @@ class ArtworkState extends Equatable {
       errorMessage: null,
       artworks: [],
       selectedArtwork: null,
+      likedStatuses: {},
     );
   }
 
@@ -28,9 +31,11 @@ class ArtworkState extends Equatable {
     String? errorMessage,
     List<ArtworkEntity>? artworks,
     ArtworkEntity? selectedArtwork,
+    Map<String, bool>? likedStatuses,
   }) {
     return ArtworkState(
       isLoading: isLoading ?? this.isLoading,
+      likedStatuses: likedStatuses ?? this.likedStatuses,
       errorMessage: errorMessage ?? this.errorMessage,
       artworks: artworks ?? this.artworks,
       selectedArtwork: selectedArtwork ?? this.selectedArtwork,
@@ -39,5 +44,5 @@ class ArtworkState extends Equatable {
 
   @override
   List<Object?> get props =>
-      [isLoading, errorMessage, artworks, selectedArtwork];
+      [isLoading, errorMessage, artworks, selectedArtwork, likedStatuses];
 }

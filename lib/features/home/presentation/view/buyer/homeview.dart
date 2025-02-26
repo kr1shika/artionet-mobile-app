@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tryproject/features/artwork/presentation/view/search_view.dart';
-import 'package:tryproject/features/home/presentation/view/buyer/pages/dashboard_view.dart';
-import 'package:tryproject/features/home/presentation/view/buyer/pages/notification_view.dart';
 import 'package:tryproject/features/home/presentation/view_model/home_cubit.dart';
 import 'package:tryproject/features/home/presentation/view_model/home_state.dart';
-import 'package:tryproject/features/profiles/view/customerProfileView.dart';
-import 'package:tryproject/features/profiles/view/orders/purchases_orders_view.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -17,17 +12,17 @@ class HomeView extends StatelessWidget {
       create: (_) => HomeCubit(),
       child: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
-          final homeCubit = context.read<HomeCubit>();
+          // final homeCubit = context.read<HomeCubit>();
 
-          final List<Widget> pages = [
-            const HomeScreen(),
-            const SearchView(),
-            const CustomerProfileView(
-              userId: '679cb11ed81a6e1b96420af0',
-            ),
-            const NotificationsView(),
-            const PurchasesOrdersView(userId: '679cb11ed81a6e1b96420af0')
-          ];
+          // final List<Widget> pages = [
+          //   const HomeScreen(),
+          //   const SearchView(),
+          //   const CustomerProfileView(
+          //     userId: '679cb11ed81a6e1b96420af0',
+          //   ),
+          //   const NotificationsView(),
+          //   const PurchasesOrdersView(userId: '679cb11ed81a6e1b96420af0')
+          // ];
 
           return Scaffold(
             backgroundColor: const Color(0xFFFFFFF7),
