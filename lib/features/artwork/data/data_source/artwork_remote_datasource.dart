@@ -137,6 +137,38 @@ class ArtworkRemoteDatasource implements IArtworkDataSource {
       throw Exception(e.toString());
     }
   }
-  
 
+  @override
+  Future<ArtworkEntity> updateArtwork(ArtworkEntity artwork) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'title': artwork.title,
+        'dimensions': artwork.dimensions,
+        'price': artwork.price,
+        'medium_used': artwork.medium_used,
+        'categories': artwork.categories,
+        'creators_note': artwork.creatorsNote,
+        'images': artwork.images,
+      });
+
+      Response response = await _dio.patch(
+        '${ApiEndpoints.updateArtwork}/${artwork.artworkId}',
+        data: formData,
+        options: Options(headers: {
+          "Accept": "application/json",
+          "Content-Type": "multipart/form-data",
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return ArtworkApiModel.fromJson(response.data['artwork']).toEntity();
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }

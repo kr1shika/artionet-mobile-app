@@ -149,8 +149,8 @@ class _DetailViewState extends State<DetailView> {
               ),
               // Cross Button to go back
               Positioned(
-                top: 16,
-                left: 16,
+                top: 30,
+                right: 15,
                 child: IconButton(
                   icon: const Icon(Icons.close, size: 30),
                   onPressed: () {

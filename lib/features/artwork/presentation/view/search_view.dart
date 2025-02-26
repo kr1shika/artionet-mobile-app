@@ -204,7 +204,7 @@ class _SearchViewState extends State<SearchView> {
                                                           artId: artwork
                                                               .artworkId!,
                                                           buyerId:
-                                                              '679cb11ed81a6e1b96420af0', // Replace with actual buyer ID
+                                                              '679cb11ed81a6e1b96420af0',
                                                         ),
                                                       );
                                                 }

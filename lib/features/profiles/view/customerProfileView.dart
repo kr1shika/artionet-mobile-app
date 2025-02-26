@@ -173,6 +173,15 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
 
   /// Builds the "Saved" tab
   Widget _buildSavedArtworks(profile.ProfileState state) {
+    if (state.collection.isEmpty) {
+      return const Center(
+        child: Text(
+          "No saved artworks yet!",
+          style: TextStyle(fontSize: 16, color: Colors.grey),
+        ),
+      );
+    }
+
     return GridView.builder(
       padding: const EdgeInsets.all(8),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -190,7 +199,7 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
           savedArtwork.title ?? '',
           'Unknown',
           isSavedTab: true,
-          isLiked: true, // Pass isLiked as true for saved artworks
+          isLiked: true,
         );
       },
     );

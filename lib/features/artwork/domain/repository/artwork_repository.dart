@@ -12,4 +12,5 @@ abstract interface class IArtworkRepository {
   Future<Either<Failure, String>> uploadArtImage(File file);
   Future<Either<Failure, List<ArtworkEntity>>> getArtworksbyUserId(String id);
   Future<Either<Failure, void>> deleteArtworkbyId(String id);
+  Future<Either<Failure, ArtworkEntity>> updateArtwork(ArtworkEntity artwork);
 }

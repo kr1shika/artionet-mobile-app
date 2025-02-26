@@ -100,10 +100,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     final result = await _getSavedCollectionUsecase.call(event.buyerId);
     result.fold(
       (failure) {
-        print("API Error: ${failure.message}");
-
-        emit(state.copyWith(
-            isLoading: false, collection: [], errorMessage: failure.message));
+        if (failure.message.contains("No saved artworks found")) {
+          // If no saved artworks, just set collection as empty without an error
+          emit(state.copyWith(isLoading: false, collection: []));
+        } else {
+          emit(state.copyWith(
+              isLoading: false, collection: [], errorMessage: failure.message));
+        }
       },
       (collection) {
         emit(state.copyWith(isLoading: false, collection: collection));
