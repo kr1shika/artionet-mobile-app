@@ -93,15 +93,24 @@ class SaveArtworkRemoteDatasource implements ISaveArtsDataSource {
       );
 
       print("API Response: ${response.data}");
+      print("API Status Code: ${response.statusCode}");
 
       if (response.statusCode == 200) {
-        return response.data['isLiked'] ?? false;
+        // Ensure the response contains the 'isLiked' field
+        if (response.data is Map<String, dynamic> &&
+            response.data.containsKey('isLiked')) {
+          return response.data['isLiked'] as bool;
+        } else {
+          throw Exception("Invalid response format: 'isLiked' field missing");
+        }
       } else {
-        throw Exception(response.statusMessage);
+        throw Exception("Failed to check status: ${response.statusMessage}");
       }
     } on DioException catch (e) {
+      print("Dio Error: ${e.message}");
       throw Exception("Failed to check artwork status: ${e.message}");
     } catch (e) {
+      print("Unexpected Error: $e");
       throw Exception("Unexpected error: $e");
     }
   }

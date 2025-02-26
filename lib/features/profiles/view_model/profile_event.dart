@@ -104,3 +104,13 @@ class NavigateToUpload extends ProfileEvent {
     required this.destination,
   });
 }
+
+class NavigateToDetailView extends ProfileEvent {
+  final BuildContext context;
+  final Widget destination;
+
+  const NavigateToDetailView({
+    required this.context,
+    required this.destination,
+  });
+}

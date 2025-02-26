@@ -9,6 +9,7 @@ import 'package:tryproject/features/artwork/domain/entity/artwork_entity.dart';
 import 'package:tryproject/features/artwork/domain/use_case/deleteArtworkByIdUsecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_artworks_by_userId.dart';
+import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
 import 'package:tryproject/features/profiles/view_model/upload_edit/artwork_crud_bloc.dart';
 import 'package:tryproject/features/purchases/domain/entity/purchase_entity.dart';
 import 'package:tryproject/features/purchases/domain/use_case/GetPurchasesByUserIdUsecase.dart';
@@ -25,8 +26,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final GetArtworkByIdUsecase _getArtworkByIdUsecase;
   final DeleteArtworkByIdUseCase _deleteArtworkByIdUseCase;
   final GetSavedCollectionUsecase _getSavedCollectionUsecase;
+  final ArtworkBloc _artworkBloc;
 
   ProfileBloc({
+    required ArtworkBloc artwork_bloc,
     required GetArtworksByUseridUsecase getArtworksByUseridUsecase,
     required ArtworkCrudBloc artworkCrudBloc,
     required GetArtworkByIdUsecase getArtworkByIdUsecase,
@@ -39,6 +42,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         _getArtworkByIdUsecase = getArtworkByIdUsecase,
         _deleteArtworkByIdUseCase = deleteArtworkByIdUseCase,
         _getSavedCollectionUsecase = getSavedCollectionUsecase,
+        _artworkBloc = artwork_bloc,
         super(ProfileState.initial()) {
     on<FetchPurchasesByUserId>(_onFetchPurchasesByUserId);
     on<GetCollection>(_onGetCollection);
@@ -55,6 +59,22 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
                   providers: [BlocProvider.value(value: _artworkCrudBloc)],
                   child: event.destination)));
     });
+
+    on<NavigateToDetailView>(
+      (event, emit) {
+        Navigator.push(
+          event.context,
+          MaterialPageRoute(
+            builder: (context) => MultiBlocProvider(
+              providers: [
+                BlocProvider.value(value: _artworkBloc),
+              ],
+              child: event.destination,
+            ),
+          ),
+        );
+      },
+    );
   }
   Future<void> _onFetchArtworksByUserId(
     FetchArtworkByUserID event,

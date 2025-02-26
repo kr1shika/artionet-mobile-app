@@ -19,11 +19,6 @@ class _SearchViewState extends State<SearchView> {
   final Set<String> likedArtworks = {};
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -110,145 +105,118 @@ class _SearchViewState extends State<SearchView> {
                           itemCount: state.artworks.length,
                           itemBuilder: (context, index) {
                             final artwork = state.artworks[index];
-
-                            // Dispatch the CheckArtworkStatusEvent to get the liked status
-                            context.read<ArtworkBloc>().add(
-                                  CheckArtworkStatusEvent(
-                                    artId: artwork.artworkId!,
-                                    buyerId: '679cb11ed81a6e1b96420af0',
-                                  ),
+                            final isLiked =
+                                likedArtworks.contains(artwork.artworkId);
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  selectedArtworkId = artwork.artworkId;
+                                });
+                                BlocProvider.of<ArtworkBloc>(context).add(
+                                  FetchArtworkById(artwork.artworkId ?? ''),
                                 );
-
-                            // Fetch the isLiked status from the Bloc state
-                            final isLiked = context
-                                    .watch<ArtworkBloc>()
-                                    .state
-                                    .likedStatuses[artwork.artworkId] ??
-                                false;
-
-                            return FutureBuilder<bool>(
-                              future: context
-                                  .read<ArtworkBloc>()
-                                  .checkArtworkStatus(
-                                    artId: artwork.artworkId!,
-                                    buyerId: '679cb11ed81a6e1b96420af0',
-                                  ),
-                              builder: (context, snapshot) {
-                                final isLiked = context
-                                        .watch<ArtworkBloc>()
-                                        .state
-                                        .likedStatuses[artwork.artworkId] ??
-                                    false;
-
-                                return GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      selectedArtworkId = artwork.artworkId;
-                                    });
-                                    BlocProvider.of<ArtworkBloc>(context).add(
-                                        FetchArtworkById(
-                                            artwork.artworkId ?? ''));
-                                  },
-                                  child: Card(
-                                    elevation: 3,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              topLeft: Radius.circular(4),
-                                              topRight: Radius.circular(4),
-                                            ),
-                                            child: artwork.images != null
-                                                ? Image.network(
-                                                    artwork.images!,
-                                                    width: double.infinity,
-                                                    fit: BoxFit.cover,
-                                                  )
-                                                : const Icon(
-                                                    Icons.image_not_supported,
-                                                    size: 100,
-                                                  ),
-                                          ),
+                              },
+                              child: Card(
+                                elevation: 3,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: ClipRRect(
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(4),
+                                          topRight: Radius.circular(4),
                                         ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    artwork.title,
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                  Text(
-                                                    'Price: ${artwork.price}',
-                                                    style: const TextStyle(
-                                                        fontSize: 12,
-                                                        color: Color.fromARGB(
-                                                            255, 24, 24, 24)),
-                                                  ),
-                                                ],
+                                        child: artwork.images != null
+                                            ? Image.network(
+                                                artwork.images!,
+                                                width: double.infinity,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : const Icon(
+                                                Icons.image_not_supported,
+                                                size: 100,
                                               ),
-                                              IconButton(
-                                                icon: Icon(
-                                                  isLiked
-                                                      ? Icons.favorite
-                                                      : Icons.favorite_border,
-                                                  color: isLiked
-                                                      ? Colors.red
-                                                      : Colors.grey,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                artwork.title,
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
-                                                onPressed: () {
-                                                  final artworkBloc =
-                                                      BlocProvider.of<
-                                                          ArtworkBloc>(context);
-                                                  if (isLiked) {
-                                                    artworkBloc.add(
-                                                      RemoveSavedArtworkEvent(
-                                                        artId:
-                                                            artwork.artworkId!,
-                                                        buyerId:
-                                                            '679cb11ed81a6e1b96420af0',
-                                                      ),
-                                                    );
-                                                  } else {
-                                                    artworkBloc.add(
-                                                      SaveArtworkEvent(
-                                                        artId:
-                                                            artwork.artworkId!,
-                                                        buyerId:
-                                                            '679cb11ed81a6e1b96420af0',
-                                                      ),
-                                                    );
-                                                  }
-                                                },
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              Text(
+                                                'Price: ${artwork.price}',
+                                                style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: Color.fromARGB(
+                                                        255, 24, 24, 24)),
                                               ),
                                             ],
                                           ),
-                                        ),
-                                      ],
+                                          IconButton(
+                                            icon: Icon(
+                                              isLiked
+                                                  ? Icons.favorite
+                                                  : Icons.favorite_border,
+                                              color: isLiked
+                                                  ? Colors.red
+                                                  : Colors.grey,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                if (isLiked) {
+                                                  likedArtworks.remove(
+                                                      artwork.artworkId);
+                                                  context
+                                                      .read<ArtworkBloc>()
+                                                      .add(
+                                                        RemoveSavedArtworkEvent(
+                                                          artId: artwork
+                                                              .artworkId!,
+                                                          buyerId:
+                                                              '679cb11ed81a6e1b96420af0', // Replace with actual buyer ID
+                                                        ),
+                                                      );
+                                                } else {
+                                                  likedArtworks
+                                                      .add(artwork.artworkId!);
+                                                  context
+                                                      .read<ArtworkBloc>()
+                                                      .add(
+                                                        SaveArtworkEvent(
+                                                          artId: artwork
+                                                              .artworkId!,
+                                                          buyerId:
+                                                              '679cb11ed81a6e1b96420af0', // Replace with actual buyer ID
+                                                        ),
+                                                      );
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
+                                  ],
+                                ),
+                              ),
                             );
                           },
                         );
@@ -258,7 +226,10 @@ class _SearchViewState extends State<SearchView> {
                 ),
               ] else ...[
                 Expanded(
-                  child: DetailView(artworkId: selectedArtworkId!),
+                  child: DetailView(
+                    artworkId: selectedArtworkId!,
+                    buyerId: '',
+                  ),
                 ),
               ],
             ],

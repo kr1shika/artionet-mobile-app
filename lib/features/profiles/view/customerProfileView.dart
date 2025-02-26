@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tryproject/features/artwork/presentation/view/details_view.dart';
 import 'package:tryproject/features/artwork/presentation/view/upload_artwork_view.dart';
 import 'package:tryproject/features/profiles/view/artwork-crud/artwork_details.dart';
-import 'package:tryproject/features/profiles/view_model/profile_bloc.dart';
+import 'package:tryproject/features/profiles/view_model/profile_bloc.dart'
+    as profile;
 
 class CustomerProfileView extends StatefulWidget {
   final String userId;
@@ -19,11 +21,11 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
   @override
   void initState() {
     super.initState();
-    final profileBloc = context.read<ProfileBloc>();
+    final profileBloc = context.read<profile.ProfileBloc>();
 
     // Fetch uploaded and saved artworks when the profile screen loads
-    profileBloc.add(FetchArtworkByUserID(userId: widget.userId));
-    profileBloc.add(GetCollection(buyerId: widget.userId));
+    profileBloc.add(profile.FetchArtworkByUserID(userId: widget.userId));
+    profileBloc.add(profile.GetCollection(buyerId: widget.userId));
   }
 
   void _closeDetailView() {
@@ -61,7 +63,9 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                     const SizedBox(height: 3),
                     ElevatedButton(
                       onPressed: () {
-                        context.read<ProfileBloc>().add(NavigateToUpload(
+                        context
+                            .read<profile.ProfileBloc>()
+                            .add(profile.NavigateToUpload(
                               context: context,
                               destination: const UploadPage(),
                             ));
@@ -94,7 +98,8 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                       ],
                     ),
                     Expanded(
-                      child: BlocBuilder<ProfileBloc, ProfileState>(
+                      child: BlocBuilder<profile.ProfileBloc,
+                          profile.ProfileState>(
                         builder: (context, state) {
                           if (state.isLoading) {
                             return const Center(
@@ -130,7 +135,7 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
   }
 
   /// Builds the "Your Artworks" tab
-  Widget _buildUploadedArtworks(ProfileState state) {
+  Widget _buildUploadedArtworks(profile.ProfileState state) {
     if (state.artworks.isEmpty) {
       return const Center(
         child: Text(
@@ -155,27 +160,19 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
       itemCount: state.artworks.length,
       itemBuilder: (context, index) {
         final artwork = state.artworks[index];
-        return _buildArtworkCard(artwork.artworkId ?? '', artwork.images,
-            artwork.title ?? 'Unknown Art', artwork.archive ?? 'Unknown');
+        return _buildArtworkCard(
+          artwork.artworkId ?? '',
+          artwork.images,
+          artwork.title ?? 'Unknown Art',
+          artwork.archive ?? 'Unknown',
+          isSavedTab: false, // This is for the "Your Artworks" tab
+        );
       },
     );
   }
 
   /// Builds the "Saved" tab
-  Widget _buildSavedArtworks(ProfileState state) {
-    if (state.collection.isEmpty) {
-      return const Center(
-        child: Text(
-          "No saved artworks yet!",
-          style: TextStyle(
-            fontFamily: 'IM_FELL_Great_Primer',
-            fontSize: 16,
-            color: Colors.grey,
-          ),
-        ),
-      );
-    }
-
+  Widget _buildSavedArtworks(profile.ProfileState state) {
     return GridView.builder(
       padding: const EdgeInsets.all(8),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -190,22 +187,47 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
         return _buildArtworkCard(
           savedArtwork.art_id,
           savedArtwork.imageUrl,
-          savedArtwork.title ?? 'Unknown Art',
-          savedArtwork.status,
+          savedArtwork.title ?? '',
+          'Unknown',
+          isSavedTab: true,
+          isLiked: true, // Pass isLiked as true for saved artworks
         );
       },
     );
   }
 
-  /// Reusable method to build an artwork card
   Widget _buildArtworkCard(
-      String artworkId, String? imageUrl, String title, String status) {
+    String artworkId,
+    String? imageUrl,
+    String title,
+    String status, {
+    required bool isSavedTab,
+    bool isLiked = false,
+  }) {
     return GestureDetector(
       onTap: () {
-        setState(() {
-          selectedArtworkId = artworkId;
-        });
-        BlocProvider.of<ProfileBloc>(context).add(FetchArtworkById(artworkId));
+        if (isSavedTab) {
+          // For the "Saved" tab, navigate to DetailView using the event
+          context.read<profile.ProfileBloc>().add(
+                profile.NavigateToDetailView(
+                  context: context,
+                  destination: DetailView(
+                    artworkId: artworkId,
+                    buyerId: '679cb11ed81a6e1b96420af0',
+                    isLiked: isLiked,
+                    onBack: _closeDetailView, // Pass the onBack callback
+                  ),
+                ),
+              );
+        } else {
+          // For the "Your Artworks" tab, update selectedArtworkId
+          setState(() {
+            selectedArtworkId = artworkId;
+          });
+          context.read<profile.ProfileBloc>().add(
+                profile.FetchArtworkById(artworkId),
+              );
+        }
       },
       child: Card(
         child: Column(

@@ -72,35 +72,45 @@ class ArtworkBloc extends Bloc<ArtworkEvent, ArtworkState> {
             state.copyWith(isLoading: false, errorMessage: failure.message)),
         (artworks) {
       emit(state.copyWith(isLoading: false, artworks: artworks));
-
-      // Check like status for each artwork
-      for (var artwork in artworks) {
-        add(CheckArtworkStatusEvent(
-            artId: artwork.artworkId!, buyerId: '679cb11ed81a6e1b96420af0'));
-      }
     });
   }
 
   Future<void> _onCheckArtworkStatus(
       CheckArtworkStatusEvent event, Emitter<ArtworkState> emit) async {
-    final isLiked = await checkArtworkStatus(
-      artId: event.artId,
-      buyerId: event.buyerId,
-    );
-    emit(state.copyWith(likedStatuses: {
-      ...state.likedStatuses,
-      event.artId: isLiked,
-    }));
+    print(
+        "Handling CheckArtworkStatusEvent for artId: ${event.artId}, buyerId: ${event.buyerId}");
+    try {
+      final isLiked = await checkArtworkStatus(
+        artId: event.artId,
+        buyerId: event.buyerId,
+      );
+      print("Artwork like status: $isLiked");
+      emit(state.copyWith(likedStatuses: {
+        ...state.likedStatuses,
+        event.artId: isLiked,
+      }));
+    } catch (e) {
+      print("Bloc Error: $e");
+      emit(state.copyWith(errorMessage: e.toString()));
+    }
   }
 
   Future<bool> checkArtworkStatus(
       {required String artId, required String buyerId}) async {
-    final params = CheckArtworkStatusParams(artId: artId, buyerId: buyerId);
-    final result = await _checkArtworkStatusUsecase.call(params);
-    return result.fold(
-      (failure) => false,
-      (isLiked) => isLiked,
-    );
+    try {
+      final params = CheckArtworkStatusParams(artId: artId, buyerId: buyerId);
+      final result = await _checkArtworkStatusUsecase.call(params);
+      return result.fold(
+        (failure) {
+          print("Failed to check artwork status: ${failure.message}");
+          return false; // Default to unliked if the API call fails
+        },
+        (isLiked) => isLiked,
+      );
+    } catch (e) {
+      print("Error checking artwork status: $e");
+      return false; // Default to unliked if an exception occurs
+    }
   }
 
   Future<void> _onSaveArtwork(
@@ -132,9 +142,10 @@ class ArtworkBloc extends Bloc<ArtworkEvent, ArtworkState> {
     result.fold(
       (failure) => emit(state.copyWith(errorMessage: failure.message)),
       (_) {
+        // Update the likedStatuses map to reflect the unliked state
         emit(state.copyWith(likedStatuses: {
           ...state.likedStatuses,
-          event.artId: false,
+          event.artId: false, // Set isLiked to false
         }));
       },
     );

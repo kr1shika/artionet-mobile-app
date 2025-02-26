@@ -48,6 +48,7 @@ class SaveArtworkRemoteRepository implements ISaveArtsRepository {
       final isLiked = await remoteDatasource.checkStatus(artId, buyerId);
       return Right(isLiked);
     } catch (e) {
+      print("Repository Error: $e");
       return Left(ApiFailure(message: e.toString()));
     }
   }

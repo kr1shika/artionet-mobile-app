@@ -85,6 +85,7 @@ _initProfileDependencies() async {
         getArtworkByIdUsecase: getIt<GetArtworkByIdUsecase>(),
         deleteArtworkByIdUseCase: getIt<DeleteArtworkByIdUseCase>(),
         getSavedCollectionUsecase: getIt<GetSavedCollectionUsecase>(),
+        artwork_bloc: getIt<ArtworkBloc>(),
       ));
 }
 
@@ -289,7 +290,7 @@ _initOnboardDependencies() async {
 _initArtistOnboardDependencies() async {
   getIt.registerFactory<OnboardingCubit>(
     () => OnboardingCubit(
-      getIt<PageController>(), // Reuse the existing PageController
+      getIt<PageController>(),
     ),
   );
 }
