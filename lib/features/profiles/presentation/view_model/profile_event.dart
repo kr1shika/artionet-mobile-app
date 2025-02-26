@@ -161,3 +161,12 @@ class UpdateArtworkEvent extends ProfileEvent {
         context,
       ];
 }
+
+class FetchNotificationsByUserId extends ProfileEvent {
+  final String userId;
+
+  const FetchNotificationsByUserId({required this.userId});
+
+  @override
+  List<Object?> get props => [userId];
+}

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tryproject/features/profiles/view_model/profile_bloc.dart';
+import 'package:tryproject/features/profiles/presentation/view_model/profile_bloc.dart';
 
 class PurchasesOrdersView extends StatefulWidget {
   final String userId;
@@ -27,14 +27,10 @@ class PurchasesOrdersViewState extends State<PurchasesOrdersView> {
         child: DefaultTabController(
           length: 2, // Number of tabs
           child: SingleChildScrollView(
-            // Make the entire page scrollable
             child: Column(
               children: [
-                // Profile UI components
 
                 const SizedBox(height: 4),
-
-                // TabBar
                 const TabBar(
                   labelColor: Colors.black,
                   unselectedLabelColor: Colors.grey,

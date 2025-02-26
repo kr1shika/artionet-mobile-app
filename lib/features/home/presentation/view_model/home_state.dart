@@ -5,10 +5,10 @@ import 'package:tryproject/app/di/di.dart';
 import 'package:tryproject/features/artwork/presentation/view/search_view.dart';
 import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
 import 'package:tryproject/features/home/presentation/view/buyer/pages/dashboard_view.dart';
-import 'package:tryproject/features/home/presentation/view/buyer/pages/notification_view.dart';
-import 'package:tryproject/features/profiles/view/customerProfileView.dart';
-import 'package:tryproject/features/profiles/view/orders/purchases_orders_view.dart';
-import 'package:tryproject/features/profiles/view_model/profile_bloc.dart';
+import 'package:tryproject/features/profiles/presentation/view/customerProfileView.dart';
+import 'package:tryproject/features/profiles/presentation/view/notificationView.dart';
+import 'package:tryproject/features/profiles/presentation/view/orders/purchases_orders_view.dart';
+import 'package:tryproject/features/profiles/presentation/view_model/profile_bloc.dart';
 
 class HomeState extends Equatable {
   final int selectedIndex;
@@ -35,7 +35,12 @@ class HomeState extends Equatable {
             userId: '679cb11ed81a6e1b96420af0',
           ),
         ),
-        const NotificationsView(),
+        BlocProvider(
+          create: (context) => getIt<ProfileBloc>(),
+          child: const NotificationsView(
+            userId: '679cb11ed81a6e1b96420af0',
+          ),
+        ),
         BlocProvider(
           create: (context) => getIt<ProfileBloc>(),
           child: const PurchasesOrdersView(
