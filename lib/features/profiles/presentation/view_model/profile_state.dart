@@ -11,16 +11,18 @@ class ProfileState extends Equatable {
   final ArtworkEntity? selectedArtwork;
 
   final String errorMessage;
-  
+  final List<NotificationEntity> notifications; 
 
-  const ProfileState(
-      {required this.isLoading,
-      required this.purchases,
-      required this.errorMessage,
-      required this.isSuccess,
-      required this.artworks,
-      this.selectedArtwork,
-      required this.collection});
+  const ProfileState({
+    required this.isLoading,
+    required this.purchases,
+    required this.errorMessage,
+    required this.isSuccess,
+    required this.artworks,
+    this.selectedArtwork,
+    required this.collection,
+    required this.notifications,
+  });
 
   // Initial state of the ProfileBloc
   factory ProfileState.initial() {
@@ -31,6 +33,7 @@ class ProfileState extends Equatable {
         isSuccess: false,
         artworks: [],
         selectedArtwork: null,
+        notifications: [],
         collection: []);
   }
 
@@ -43,6 +46,7 @@ class ProfileState extends Equatable {
     bool? isSuccess,
     ArtworkEntity? selectedArtwork,
     List<SaveArtworkEntity>? collection,
+    List<NotificationEntity>? notifications,
   }) {
     return ProfileState(
       isLoading: isLoading ?? this.isLoading,
@@ -52,6 +56,7 @@ class ProfileState extends Equatable {
       isSuccess: isSuccess ?? this.isSuccess,
       selectedArtwork: selectedArtwork ?? this.selectedArtwork,
       collection: collection ?? this.collection,
+      notifications: notifications ?? this.notifications,
     );
   }
 
@@ -63,6 +68,7 @@ class ProfileState extends Equatable {
         isSuccess,
         artworks,
         selectedArtwork,
-        collection
+        collection,
+        notifications
       ];
 }

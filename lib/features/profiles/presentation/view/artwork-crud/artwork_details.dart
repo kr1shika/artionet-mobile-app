@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tryproject/features/profiles/view_model/profile_bloc.dart';
+import 'package:tryproject/features/profiles/presentation/view_model/profile_bloc.dart';
 
 class ArtworkDetailView extends StatefulWidget {
   final String artworkId;

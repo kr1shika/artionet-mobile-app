@@ -12,11 +12,13 @@ import 'package:tryproject/features/artwork/domain/use_case/get_artwork_usecase.
 import 'package:tryproject/features/artwork/domain/use_case/get_artworks_by_userId.dart';
 import 'package:tryproject/features/artwork/domain/use_case/update_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
-import 'package:tryproject/features/profiles/view_model/upload_edit/artwork_crud_bloc.dart';
+import 'package:tryproject/features/profiles/presentation/view_model/upload_edit/artwork_crud_bloc.dart';
 import 'package:tryproject/features/purchases/domain/entity/purchase_entity.dart';
 import 'package:tryproject/features/purchases/domain/use_case/GetPurchasesByUserIdUsecase.dart';
 import 'package:tryproject/features/saved_artwork/domain/entity/save_artwork_entity.dart';
 import 'package:tryproject/features/saved_artwork/domain/use_case/fetch_saved_artwork_by_userid.dart';
+import 'package:tryproject/features/user-notification/domain/entity/notification_entity.dart';
+import 'package:tryproject/features/user-notification/domain/usecase/get_notification_usecase.dart';
 
 part 'profile_event.dart';
 part 'profile_state.dart';
@@ -30,6 +32,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final GetSavedCollectionUsecase _getSavedCollectionUsecase;
   final ArtworkBloc _artworkBloc;
   final UpdateArtworkUsecase _updateArtworkUsecase;
+  final GetNotificationsByUserIdUsecase _getNotificationsByUserIdUsecase;
 
   ProfileBloc({
     required ArtworkBloc artwork_bloc,
@@ -40,6 +43,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required DeleteArtworkByIdUseCase deleteArtworkByIdUseCase,
     required GetSavedCollectionUsecase getSavedCollectionUsecase,
     required UpdateArtworkUsecase updateArtworkUsecase,
+    required GetNotificationsByUserIdUsecase getNotificationsByUserIdUsecase,
   })  : _getPurchasesByUserIdUsecase = getPurchasesByUserIdUsecase,
         _artworkCrudBloc = artworkCrudBloc,
         _getArtworksByUseridUsecase = getArtworksByUseridUsecase,
@@ -48,6 +52,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         _getSavedCollectionUsecase = getSavedCollectionUsecase,
         _updateArtworkUsecase = updateArtworkUsecase,
         _artworkBloc = artwork_bloc,
+        _getNotificationsByUserIdUsecase = getNotificationsByUserIdUsecase,
         super(ProfileState.initial()) {
     on<FetchPurchasesByUserId>(_onFetchPurchasesByUserId);
     on<GetCollection>(_onGetCollection);
@@ -56,6 +61,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<FetchArtworkByUserID>(_onFetchArtworksByUserId);
     on<FetchArtworkById>(_onFetchArtworkById);
     on<DeleteArtworkById>(_onDeleteArtworkById);
+    on<FetchNotificationsByUserId>(_onFetchNotificationsByUserId);
 
     on<NavigateToUpload>((event, emit) {
       Navigator.push(
@@ -130,7 +136,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         emit(state.copyWith(
           isLoading: false,
           isSuccess: true,
-          selectedArtwork: artworkEntity, // Add this line
+          selectedArtwork: artworkEntity,
         ));
         showMySnackBar(
             context: event.context, message: "Artwork updated successfully!");
@@ -227,6 +233,27 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
             .where((artwork) => artwork.artworkId != event.artworkId)
             .toList();
         emit(state.copyWith(isLoading: false, artworks: updatedArtworks));
+      },
+    );
+  }
+
+  Future<void> _onFetchNotificationsByUserId(
+    FetchNotificationsByUserId event,
+    Emitter<ProfileState> emit,
+  ) async {
+    emit(state.copyWith(isLoading: true));
+
+    final result = await _getNotificationsByUserIdUsecase.call(event.userId);
+
+    result.fold(
+      (failure) {
+        emit(state.copyWith(
+            isLoading: false,
+            notifications: [],
+            errorMessage: failure.message));
+      },
+      (notifications) {
+        emit(state.copyWith(isLoading: false, notifications: notifications));
       },
     );
   }

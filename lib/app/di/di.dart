@@ -26,8 +26,8 @@ import 'package:tryproject/features/auth/presentation/view_model/signup/register
 import 'package:tryproject/features/home/presentation/view_model/home_cubit.dart';
 import 'package:tryproject/features/onboard/presentation/view_model/buyer_onboard/artist_onboard_cubit.dart';
 import 'package:tryproject/features/onboard/presentation/view_model/buyer_onboard/onboard_cubit.dart';
-import 'package:tryproject/features/profiles/view_model/profile_bloc.dart';
-import 'package:tryproject/features/profiles/view_model/upload_edit/artwork_crud_bloc.dart';
+import 'package:tryproject/features/profiles/presentation/view_model/profile_bloc.dart';
+import 'package:tryproject/features/profiles/presentation/view_model/upload_edit/artwork_crud_bloc.dart';
 import 'package:tryproject/features/purchases/data/data_source/purchase_remote_datasource.dart';
 import 'package:tryproject/features/purchases/data/repository/purchase_remote_repository.dart';
 import 'package:tryproject/features/purchases/domain/use_case/GetPurchasesByUserIdUsecase.dart';
@@ -40,6 +40,9 @@ import 'package:tryproject/features/saved_artwork/domain/use_case/fetch_saved_ar
 import 'package:tryproject/features/saved_artwork/domain/use_case/remove_saved_artwork_usecase.dart';
 import 'package:tryproject/features/saved_artwork/domain/use_case/save_artwork_usecase.dart';
 import 'package:tryproject/features/splash/presentation/view_model/splash_cubit.dart';
+import 'package:tryproject/features/user-notification/data/datasource/notification_remote_datasource.dart';
+import 'package:tryproject/features/user-notification/data/repository/notification_remote_repository.dart';
+import 'package:tryproject/features/user-notification/domain/usecase/get_notification_usecase.dart';
 
 final getIt = GetIt.instance;
 
@@ -59,6 +62,7 @@ Future<void> initDependencies() async {
   await _initProfileDependencies();
   await _initArtworkCrudDependencies();
   await _initSaveArtsDependencies();
+  await _initNotificationDependencies();
 }
 
 _initApiService() {
@@ -89,7 +93,23 @@ _initProfileDependencies() async {
         getSavedCollectionUsecase: getIt<GetSavedCollectionUsecase>(),
         artwork_bloc: getIt<ArtworkBloc>(),
         updateArtworkUsecase: getIt<UpdateArtworkUsecase>(),
+        getNotificationsByUserIdUsecase:
+            getIt<GetNotificationsByUserIdUsecase>(),
       ));
+}
+
+_initNotificationDependencies() async {
+  getIt.registerFactory<NotificationRemoteDatasource>(
+      () => NotificationRemoteDatasource(dio: getIt<Dio>()));
+
+  getIt.registerLazySingleton(() => NotificationRemoteRepository(
+      remoteDatasource: getIt<NotificationRemoteDatasource>()));
+
+  getIt.registerLazySingleton<GetNotificationsByUserIdUsecase>(
+    () => GetNotificationsByUserIdUsecase(
+      notificationRepository: getIt<NotificationRemoteRepository>(),
+    ),
+  );
 }
 
 _initSaveArtsDependencies() async {

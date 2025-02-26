@@ -32,7 +32,8 @@ class NotificationApiModel extends Equatable {
       userId: json['userId'],
       title: json['title'],
       message: json['message'],
-      createdAt: json['createdAt'],
+      createdAt:
+          DateTime.parse(json['createdAt']), // Parse the string into DateTime
       read: json['read'],
       deleted: json['deleted'],
     );
@@ -41,10 +42,12 @@ class NotificationApiModel extends Equatable {
   /// Convert `NotificationApiModel` to JSON
   Map<String, dynamic> toJson() {
     return {
+      '_id': notificationId,
       'userId': userId,
       'title': title,
       'message': message,
-      'createdAt': createdAt,
+      'createdAt':
+          createdAt.toIso8601String(), // Convert DateTime to ISO 8601 string
       'read': read,
       'deleted': deleted,
     };

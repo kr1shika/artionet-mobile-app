@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tryproject/features/artwork/presentation/view/details_view.dart';
 import 'package:tryproject/features/artwork/presentation/view/upload_artwork_view.dart';
-import 'package:tryproject/features/profiles/view/artwork-crud/artwork_details.dart';
-import 'package:tryproject/features/profiles/view_model/profile_bloc.dart'
+import 'package:tryproject/features/profiles/presentation/view/artwork-crud/artwork_details.dart';
+import 'package:tryproject/features/profiles/presentation/view_model/profile_bloc.dart'
     as profile;
 
 class CustomerProfileView extends StatefulWidget {
