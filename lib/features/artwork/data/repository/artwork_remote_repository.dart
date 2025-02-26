@@ -72,12 +72,30 @@ class ArtworkRemoteRepository implements IArtworkRepository {
     }
   }
 
-    @override
-  Future<Either<Failure, ArtworkEntity>> updateArtwork(ArtworkEntity artwork) async {
+  @override
+  Future<Either<Failure, ArtworkEntity>> updateArtwork(
+      ArtworkEntity artwork) async {
     try {
+      // Debugging: Print artwork values before making the request
+      print('--- DEBUG: updateArtwork called ---');
+      print('Artwork ID: ${artwork.artworkId}');
+      print('Title: ${artwork.title}');
+      print('Dimensions: ${artwork.dimensions}');
+      print('Price: ${artwork.price}');
+      print('Medium Used: ${artwork.medium_used}');
+      print('Categories: ${artwork.categories}');
+      print('Creators Note: ${artwork.creatorsNote}');
+      print('Images: ${artwork.images}');
+
       final updatedArtwork = await remoteDataSource.updateArtwork(artwork);
+
+      print('--- DEBUG: updateArtwork response received ---');
+      print(updatedArtwork);
+
       return Right(updatedArtwork);
     } catch (e) {
+      print('--- DEBUG: updateArtwork ERROR ---');
+      print(e.toString());
       return Left(ApiFailure(message: e.toString()));
     }
   }

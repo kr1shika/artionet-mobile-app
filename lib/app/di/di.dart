@@ -10,6 +10,7 @@ import 'package:tryproject/features/artwork/domain/use_case/deleteArtworkByIdUse
 import 'package:tryproject/features/artwork/domain/use_case/get_all_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_artworks_by_userId.dart';
+import 'package:tryproject/features/artwork/domain/use_case/update_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/upload_artwork_image_usecase.dart';
 import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
 import 'package:tryproject/features/auth/data/data_source/local_data_source/auth_local_datasource.dart';
@@ -74,6 +75,7 @@ _initArtworkCrudDependencies() async {
   getIt.registerFactory<ArtworkCrudBloc>(() => ArtworkCrudBloc(
         createArtworkUsecase: getIt<CreateArtworkUsecase>(),
         uploadArtworkimageusecase: getIt<UploadArtworkUsecase>(),
+        updateArtworkUsecase: getIt<UpdateArtworkUsecase>(),
       ));
 }
 
@@ -86,6 +88,7 @@ _initProfileDependencies() async {
         deleteArtworkByIdUseCase: getIt<DeleteArtworkByIdUseCase>(),
         getSavedCollectionUsecase: getIt<GetSavedCollectionUsecase>(),
         artwork_bloc: getIt<ArtworkBloc>(),
+        updateArtworkUsecase: getIt<UpdateArtworkUsecase>(),
       ));
 }
 
@@ -174,6 +177,12 @@ _initArtworkDependencies() async {
 
   getIt.registerLazySingleton<UploadArtworkUsecase>(
     () => UploadArtworkUsecase(
+      getIt<ArtworkRemoteRepository>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<UpdateArtworkUsecase>(
+    () => UpdateArtworkUsecase(
       getIt<ArtworkRemoteRepository>(),
     ),
   );

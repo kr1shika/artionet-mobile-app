@@ -150,6 +150,8 @@ class ArtworkRemoteDatasource implements IArtworkDataSource {
         'creators_note': artwork.creatorsNote,
         'images': artwork.images,
       });
+      print('from DATASOURC3');
+      print(artwork.title);
 
       Response response = await _dio.patch(
         '${ApiEndpoints.updateArtwork}/${artwork.artworkId}',

@@ -105,6 +105,16 @@ class NavigateToUpload extends ProfileEvent {
   });
 }
 
+class NavigateToEdit extends ProfileEvent {
+  final BuildContext context;
+  final Widget destination;
+
+  const NavigateToEdit({
+    required this.context,
+    required this.destination,
+  });
+}
+
 class NavigateToDetailView extends ProfileEvent {
   final BuildContext context;
   final Widget destination;
@@ -113,4 +123,41 @@ class NavigateToDetailView extends ProfileEvent {
     required this.context,
     required this.destination,
   });
+}
+
+class UpdateArtworkEvent extends ProfileEvent {
+  final String artworkId;
+  final String title;
+  final String dimensions;
+  final String price;
+  final String mediumUsed;
+  final String categories;
+  final String? creatorsNote;
+  final String? images;
+  final BuildContext context;
+
+  const UpdateArtworkEvent({
+    required this.artworkId,
+    required this.title,
+    required this.dimensions,
+    required this.price,
+    required this.mediumUsed,
+    required this.categories,
+    this.creatorsNote,
+    this.images,
+    required this.context,
+  });
+
+  @override
+  List<Object?> get props => [
+        artworkId,
+        title,
+        dimensions,
+        price,
+        mediumUsed,
+        categories,
+        creatorsNote,
+        images,
+        context,
+      ];
 }

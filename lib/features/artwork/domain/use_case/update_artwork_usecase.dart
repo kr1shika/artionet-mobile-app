@@ -57,6 +57,8 @@ class UpdateArtworkUsecase
       creatorsNote: params.creatorsNote,
       images: params.images,
     );
+    print('from usecase101');
+    print(params.title);
     return _repository.updateArtwork(artworkEntity);
   }
 }
