@@ -31,4 +31,7 @@ class ApiEndpoints {
   static const String removeFromCollection = "saveArt/";
   static const String getCollection = "saveArt/fetchcollection1";
   static const String checkStatus = "saveArt/checkStatus";
+
+  // Notification
+  static const String getUserNotification = "user-notifications/";
 }
