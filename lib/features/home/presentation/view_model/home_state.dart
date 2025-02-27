@@ -9,6 +9,7 @@ import 'package:tryproject/features/profiles/presentation/view/customerProfileVi
 import 'package:tryproject/features/profiles/presentation/view/notificationView.dart';
 import 'package:tryproject/features/profiles/presentation/view/orders/purchases_orders_view.dart';
 import 'package:tryproject/features/profiles/presentation/view_model/profile_bloc.dart';
+import 'package:tryproject/features/purchases/presentation/view_model/purchase_bloc.dart';
 
 class HomeState extends Equatable {
   final int selectedIndex;
@@ -42,9 +43,10 @@ class HomeState extends Equatable {
           ),
         ),
         BlocProvider(
-          create: (context) => getIt<ProfileBloc>(),
+          create: (context) => getIt<PurchaseBloc>(),
           child: const PurchasesOrdersView(
             userId: '679cb11ed81a6e1b96420af0',
+            artistId: '679cb11ed81a6e1b96420af0',
           ),
         )
       ],

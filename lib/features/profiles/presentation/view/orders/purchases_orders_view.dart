@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tryproject/features/profiles/presentation/view_model/profile_bloc.dart';
+import 'package:tryproject/features/purchases/presentation/view_model/purchase_bloc.dart';
 
 class PurchasesOrdersView extends StatefulWidget {
   final String userId;
+  final String artistId;
 
-  const PurchasesOrdersView({super.key, required this.userId});
+  const PurchasesOrdersView({
+    super.key,
+    required this.userId,
+    required this.artistId,
+  });
 
   @override
   PurchasesOrdersViewState createState() => PurchasesOrdersViewState();
@@ -15,9 +20,9 @@ class PurchasesOrdersViewState extends State<PurchasesOrdersView> {
   @override
   void initState() {
     super.initState();
-    context
-        .read<ProfileBloc>()
-        .add(FetchPurchasesByUserId(userId: widget.userId));
+    final purchaseBloc = context.read<PurchaseBloc>();
+    purchaseBloc.add(FetchPurchasesByUserId(userId: widget.userId));
+    purchaseBloc.add(FetchArtistSales(artistId: widget.artistId));
   }
 
   @override
@@ -25,148 +30,133 @@ class PurchasesOrdersViewState extends State<PurchasesOrdersView> {
     return Scaffold(
       body: SafeArea(
         child: DefaultTabController(
-          length: 2, // Number of tabs
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
+          length: 2,
+          child: Column(
+            children: [
+              const SizedBox(height: 4),
+              const TabBar(
+                labelColor: Colors.black,
+                unselectedLabelColor: Colors.grey,
+                indicatorColor: Colors.black,
+                tabs: [
+                  Tab(text: "Your Orders"),
+                  Tab(text: "Your Sales"),
+                ],
+              ),
+              Expanded(
+                child: BlocBuilder<PurchaseBloc, PurchaseState>(
+                  builder: (context, state) {
+                    if (state.isLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-                const SizedBox(height: 4),
-                const TabBar(
-                  labelColor: Colors.black,
-                  unselectedLabelColor: Colors.grey,
-                  indicatorColor: Colors.black,
-                  tabs: [
-                    Tab(text: "Your Orders"),
-                    Tab(text: "Your Purchases"),
-                  ],
+                    return TabBarView(
+                      children: [
+                        _buildPurchasesTab(state),
+                        _buildSalesTab(state),
+                      ],
+                    );
+                  },
                 ),
-
-                SizedBox(
-                  height: MediaQuery.of(context).size.height *
-                      1.1, // Adjust height as needed
-                  child: BlocBuilder<ProfileBloc, ProfileState>(
-                    builder: (context, state) {
-                      if (state.isLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (state.errorMessage.isNotEmpty) {
-                        return Center(
-                          child: Text(
-                            state.errorMessage,
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 16,
-                            ),
-                          ),
-                        );
-                      } else if (state.purchases.isEmpty) {
-                        return const Center(
-                          child: Text(
-                            "No orders made yet!",
-                            style: TextStyle(
-                              fontFamily: 'IM_FELL_Great_Primer',
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        );
-                      } else {
-                        return TabBarView(
-                          children: [
-                            // Your Orders Tab
-                            ListView.builder(
-                              itemCount: state.purchases.length,
-                              itemBuilder: (context, index) {
-                                final purchase = state.purchases[index];
-                                return Card(
-                                  margin: const EdgeInsets.all(8),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      // Image at the top
-                                      ClipRRect(
-                                        borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(4),
-                                          topRight: Radius.circular(4),
-                                        ),
-                                        child: purchase.imageUrl != null
-                                            ? Image.network(
-                                                purchase.imageUrl!,
-                                                height: 150,
-                                                width: double.infinity,
-                                                fit: BoxFit.cover,
-                                              )
-                                            : Container(
-                                                height: 150,
-                                                color: Colors.grey[300],
-                                                child: const Icon(
-                                                  Icons.image_not_supported,
-                                                  size: 50,
-                                                  color: Colors.grey,
-                                                ),
-                                              ),
-                                      ),
-                                      // Title, Status, and Price
-                                      Padding(
-                                        padding: const EdgeInsets.all(12),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              purchase.title ?? 'Unknown Art',
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              'Status: ${purchase.status}',
-                                              style: const TextStyle(
-                                                color: Colors.green,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              'Price: \$${purchase.totalAmount}',
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-
-                            // Saved Tab
-                            const Center(
-                              child: Text(
-                                "No saved posts yet!",
-                                style: TextStyle(
-                                  fontFamily: 'IM_FELL_Great_Primer',
-                                  fontSize: 16,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      }
-                    },
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildPurchasesTab(PurchaseState state) {
+    final activePurchases =
+        state.purchases?.where((p) => p.status != 'Completed').toList() ?? [];
+    final historyPurchases =
+        state.purchases?.where((p) => p.status == 'Completed').toList() ?? [];
+
+    return Column(
+      children: [
+        _buildSectionedList("Active", activePurchases, false),
+        _buildSectionedList("History", historyPurchases, false),
+      ],
+    );
+  }
+
+  Widget _buildSalesTab(PurchaseState state) {
+    final activeSales =
+        state.artistSales?.where((s) => s.status != 'Completed').toList() ?? [];
+    final historySales =
+        state.artistSales?.where((s) => s.status == 'Completed').toList() ?? [];
+
+    return Column(
+      children: [
+        _buildSectionedList("Active", activeSales, true),
+        _buildSectionedList("History", historySales, true),
+      ],
+    );
+  }
+
+  Widget _buildSectionedList(String title, List<dynamic> items, bool isSales) {
+    if (items.isEmpty) return const SizedBox();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(title,
+              style:
+                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        ),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            final item = items[index];
+            return Card(
+              margin: const EdgeInsets.all(8),
+              child: Column(
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(4),
+                      topRight: Radius.circular(4),
+                    ),
+                    child: item.imageUrl != null
+                        ? Image.network(
+                            item.imageUrl!,
+                            height: 150,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          )
+                        : Container(
+                            height: 150,
+                            color: Colors.grey[300],
+                            child: const Icon(
+                              Icons.image_not_supported,
+                              size: 50,
+                              color: Colors.grey,
+                            ),
+                          ),
+                  ),
+                  ListTile(
+                    title: Text(item.title ?? 'Unknown Art'),
+                    subtitle: Text('Status: ${item.status}'),
+                    trailing: isSales && item.status != 'Completed'
+                        ? ElevatedButton(
+                            onPressed: () {
+                              // Implement update status event here
+                            },
+                            child: const Text('Update Status'),
+                          )
+                        : Text('\$${item.totalAmount}',
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }

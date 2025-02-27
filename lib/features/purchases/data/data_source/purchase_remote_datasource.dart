@@ -52,4 +52,23 @@ class PurchaseRemoteDatasource implements IPurchaseDataSource {
       throw Exception(e);
     }
   }
+
+  Future<List<PurchaseEntity>> getArtistSales(String artistId) async {
+  try {
+    final response = await _dio.get('${ApiEndpoints.getArtistSales}/$artistId');
+    if (response.statusCode == 200) {
+      // Parse the response using the DTO
+      PurchaseWithArtworkResponseDTO responseDTO =
+          PurchaseWithArtworkResponseDTO.fromJson(response.data);
+      return responseDTO.data
+          .map((item) => PurchaseApiModel.fromJson(item.toJson()).toEntity())
+          .toList();
+    } else {
+      throw Exception('Failed to load artist sales');
+    }
+  } on DioException catch (e) {
+    throw Exception(e);
+  }
+}
+
 }

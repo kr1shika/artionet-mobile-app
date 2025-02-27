@@ -5,6 +5,7 @@ import 'package:tryproject/features/artwork/domain/use_case/get_artwork_usecase.
 import 'package:tryproject/features/purchases/domain/entity/purchase_entity.dart';
 import 'package:tryproject/features/purchases/domain/use_case/GetPurchasesByUserIdUsecase.dart';
 import 'package:tryproject/features/purchases/domain/use_case/create_purchase_usecase.dart';
+import 'package:tryproject/features/purchases/domain/use_case/getArtist_sales_usecase.dart';
 
 part 'purchase_event.dart';
 part 'purchase_state.dart';
@@ -13,18 +14,38 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
   final CreatePurchaseUsecase _createPurchaseUsecase;
   final GetPurchasesByUserIdUsecase _getPurchasesByUserIdUsecase;
   final GetArtworkByIdUsecase _getArtworkByIdUsecase;
+  final GetArtistSalesUsecase _getArtistSalesUsecase;
 
   PurchaseBloc({
     required CreatePurchaseUsecase createPurchaseUsecase,
     required GetPurchasesByUserIdUsecase getPurchasesByUserIdUsecase,
     required GetArtworkByIdUsecase getArtworkByIdUsecase,
+    required GetArtistSalesUsecase getArtistSalesUsecase,
   })  : _createPurchaseUsecase = createPurchaseUsecase,
         _getPurchasesByUserIdUsecase = getPurchasesByUserIdUsecase,
         _getArtworkByIdUsecase = getArtworkByIdUsecase,
+        _getArtistSalesUsecase = getArtistSalesUsecase,
         super(PurchaseState.initial()) {
     on<CreatePurchaseEvent>(_onCreatePurchase);
     on<FetchPurchasesByUserId>(_onFetchPurchasesByUserId);
     on<FetchArtworkById>(_onFetchArtworkById);
+    on<FetchArtistSales>(_onFetchArtistSales);
+  }
+
+  // Fetch artist sales
+  Future<void> _onFetchArtistSales(
+    FetchArtistSales event,
+    Emitter<PurchaseState> emit,
+  ) async {
+    emit(state.copyWith(isLoading: true));
+
+    final result = await _getArtistSalesUsecase.call(event.artistId);
+
+    result.fold(
+      (failure) =>
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (sales) => emit(state.copyWith(isLoading: false, artistSales: sales)),
+    );
   }
 
   // Fetch purchases by user ID
@@ -37,10 +58,16 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     final result = await _getPurchasesByUserIdUsecase.call(event.userId);
 
     result.fold(
-        (failure) => emit(
-            state.copyWith(isLoading: false, errorMessage: failure.message)),
-        (purchases) =>
-            emit(state.copyWith(isLoading: false, purchases: purchases)));
+      (failure) {
+        print("API Error: ${failure.message}");
+
+        emit(state.copyWith(
+            isLoading: false, purchases: [], errorMessage: failure.message));
+      },
+      (purchases) {
+        emit(state.copyWith(isLoading: false, purchases: purchases));
+      },
+    );
   }
 
   // Fetch artwork details when the event is triggered

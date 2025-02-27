@@ -52,3 +52,12 @@ class FetchArtworkById extends PurchaseEvent {
   @override
   List<Object> get props => [id];
 }
+
+class FetchArtistSales extends PurchaseEvent {
+  final String artistId;
+
+  const FetchArtistSales({required this.artistId});
+
+  @override
+  List<Object> get props => [artistId];
+}

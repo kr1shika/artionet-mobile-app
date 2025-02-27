@@ -32,6 +32,7 @@ import 'package:tryproject/features/purchases/data/data_source/purchase_remote_d
 import 'package:tryproject/features/purchases/data/repository/purchase_remote_repository.dart';
 import 'package:tryproject/features/purchases/domain/use_case/GetPurchasesByUserIdUsecase.dart';
 import 'package:tryproject/features/purchases/domain/use_case/create_purchase_usecase.dart';
+import 'package:tryproject/features/purchases/domain/use_case/getArtist_sales_usecase.dart';
 import 'package:tryproject/features/purchases/presentation/view_model/purchase_bloc.dart';
 import 'package:tryproject/features/saved_artwork/data/data_source/save_artwork_remote_datasource.dart';
 import 'package:tryproject/features/saved_artwork/data/repository/save_artwork_remote_repository.dart';
@@ -85,7 +86,6 @@ _initArtworkCrudDependencies() async {
 
 _initProfileDependencies() async {
   getIt.registerFactory<ProfileBloc>(() => ProfileBloc(
-        getPurchasesByUserIdUsecase: getIt<GetPurchasesByUserIdUsecase>(),
         artworkCrudBloc: getIt<ArtworkCrudBloc>(),
         getArtworksByUseridUsecase: getIt<GetArtworksByUseridUsecase>(),
         getArtworkByIdUsecase: getIt<GetArtworkByIdUsecase>(),
@@ -163,11 +163,18 @@ _initPurchaseDependencies() async {
     ),
   );
 
+  getIt.registerLazySingleton<GetArtistSalesUsecase>(
+    () => GetArtistSalesUsecase(
+      purchaseRepository: getIt<PurchaseRemoteRepository>(),
+    ),
+  );
+
   // purchase bloc
   getIt.registerFactory<PurchaseBloc>(() => PurchaseBloc(
         createPurchaseUsecase: getIt<CreatePurchaseUsecase>(),
         getArtworkByIdUsecase: getIt(),
         getPurchasesByUserIdUsecase: getIt<GetPurchasesByUserIdUsecase>(),
+        getArtistSalesUsecase: getIt<GetArtistSalesUsecase>(),
       ));
 }
 

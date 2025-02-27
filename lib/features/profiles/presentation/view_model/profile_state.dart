@@ -11,7 +11,7 @@ class ProfileState extends Equatable {
   final ArtworkEntity? selectedArtwork;
 
   final String errorMessage;
-  final List<NotificationEntity> notifications; 
+  final List<NotificationEntity> notifications;
 
   const ProfileState({
     required this.isLoading,
