@@ -42,9 +42,7 @@ class PurchaseRemoteDatasource implements IPurchaseDataSource {
         // Parse the response using the DTO
         PurchaseWithArtworkResponseDTO responseDTO =
             PurchaseWithArtworkResponseDTO.fromJson(response.data);
-        return responseDTO.data
-            .map((item) => PurchaseApiModel.fromJson(item.toJson()).toEntity())
-            .toList();
+        return PurchaseApiModel.toEntityList(responseDTO.data);
       } else {
         throw Exception('Failed to load purchases');
       }
@@ -62,9 +60,7 @@ class PurchaseRemoteDatasource implements IPurchaseDataSource {
         // Parse the response using the DTO
         PurchaseWithArtworkResponseDTO responseDTO =
             PurchaseWithArtworkResponseDTO.fromJson(response.data);
-        return responseDTO.data
-            .map((item) => PurchaseApiModel.fromJson(item.toJson()).toEntity())
-            .toList();
+        return PurchaseApiModel.toEntityList(responseDTO.data);
       } else {
         throw Exception('Failed to load artist sales');
       }

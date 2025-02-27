@@ -17,10 +17,7 @@ class SaveArtworkRemoteDatasource implements ISaveArtsDataSource {
       if (response.statusCode == 200) {
         getUserCollectionDTO responseDTO =
             getUserCollectionDTO.fromJson(response.data);
-        return responseDTO.data
-            .map((item) =>
-                SaveArtworkApiModel.fromJson(item.toJson()).toEntity())
-            .toList();
+        return SaveArtworkApiModel.toEntityList(responseDTO.data);
       } else {
         throw Exception('Failed to load asaved artworks for thi user');
       }
@@ -43,7 +40,6 @@ class SaveArtworkRemoteDatasource implements ISaveArtsDataSource {
           "Content-Type": "application/json",
         }),
       );
-
       if (response.statusCode != 200) {
         throw Exception(response.statusMessage);
       }
@@ -63,10 +59,6 @@ class SaveArtworkRemoteDatasource implements ISaveArtsDataSource {
           "art_id": collection.art_id,
           "buyer_id": collection.buyer_id,
         },
-        // options: Options(headers: {
-        //   "Accept": "application/json",
-        //   "Content-Type": "application/json",
-        // }),
       );
 
       if (response.statusCode == 201) {

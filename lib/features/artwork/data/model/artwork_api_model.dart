@@ -35,7 +35,6 @@ class ArtworkApiModel extends Equatable {
   factory ArtworkApiModel.fromJson(Map<String, dynamic> json) {
     String? imageUrl = json['images'];
     if (imageUrl != null && !imageUrl.startsWith('http')) {
-      // Prepend your server's base URL if it's a relative path
       imageUrl = 'http://10.0.2.2:5055/$imageUrl';
     }
     return _$ArtworkApiModelFromJson(json)..images = imageUrl;

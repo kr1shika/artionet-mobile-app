@@ -57,3 +57,10 @@ class NavigateToPurchase extends ArtworkEvent {
     required this.destination,
   });
 }
+
+class SearchArtworksEvent extends ArtworkEvent {
+  final String query;
+  const SearchArtworksEvent(this.query);
+  @override
+  List<Object> get props => [query];
+}

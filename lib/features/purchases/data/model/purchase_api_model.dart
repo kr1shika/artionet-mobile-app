@@ -34,16 +34,18 @@ class PurchaseApiModel extends Equatable {
   });
 
   factory PurchaseApiModel.fromJson(Map<String, dynamic> json) {
+    print("Raw API Response: $json");
+    print(
+        "Mapping JSON to PurchaseApiModel: title=${json['title']}, purchaseId=${json['_id']}");
     String? imageUrl = json['imageUrl']; // Get image URL
 
     // If the image URL is not a full URL, prepend the server base URL (if required)
     if (imageUrl != null && !imageUrl.startsWith('http')) {
-      imageUrl =
-          'http://10.0.2.2:5055/$imageUrl'; 
+      imageUrl = 'http://10.0.2.2:5055/$imageUrl';
     }
 
     return PurchaseApiModel(
-      purchaseId: json['purchaseId'],
+      purchaseId: json['_id'] as String?,
       art_id: json['art_id'],
       buyer_id: json['buyer_id'],
       address: json['address'],
@@ -55,7 +57,7 @@ class PurchaseApiModel extends Equatable {
       orderDate:
           json['orderDate'] != null ? DateTime.parse(json['orderDate']) : null,
       totalAmount: json['totalAmount'],
-      title: json['title'],
+      title: json['title'] as String? ?? 'Untitled',
       imageUrl: imageUrl,
     );
   }
@@ -97,7 +99,8 @@ class PurchaseApiModel extends Equatable {
       otp_expiration: otp_expiration,
       orderDate: orderDate,
       totalAmount: totalAmount,
-      imageUrl: imageUrl);
+      imageUrl: imageUrl,
+      title: title);
 
   static List<PurchaseEntity> toEntityList(List<PurchaseApiModel> models) =>
       models.map((model) => model.toEntity()).toList();

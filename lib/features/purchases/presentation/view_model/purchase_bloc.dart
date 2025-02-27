@@ -16,11 +16,10 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
   final GetPurchasesByUserIdUsecase _getPurchasesByUserIdUsecase;
   final GetArtworkByIdUsecase _getArtworkByIdUsecase;
   final GetArtistSalesUsecase _getArtistSalesUsecase;
-    final UpdatePurchaseStatusUseCase _updatePurchaseStatusUseCase;
+  final UpdatePurchaseStatusUseCase _updatePurchaseStatusUseCase;
 
   PurchaseBloc({
-        required UpdatePurchaseStatusUseCase updatePurchaseStatusUseCase,
-
+    required UpdatePurchaseStatusUseCase updatePurchaseStatusUseCase,
     required CreatePurchaseUsecase createPurchaseUsecase,
     required GetPurchasesByUserIdUsecase getPurchasesByUserIdUsecase,
     required GetArtworkByIdUsecase getArtworkByIdUsecase,
@@ -29,15 +28,13 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
         _getPurchasesByUserIdUsecase = getPurchasesByUserIdUsecase,
         _getArtworkByIdUsecase = getArtworkByIdUsecase,
         _getArtistSalesUsecase = getArtistSalesUsecase,
-                _updatePurchaseStatusUseCase = updatePurchaseStatusUseCase,
-
+        _updatePurchaseStatusUseCase = updatePurchaseStatusUseCase,
         super(PurchaseState.initial()) {
     on<CreatePurchaseEvent>(_onCreatePurchase);
     on<FetchPurchasesByUserId>(_onFetchPurchasesByUserId);
     on<FetchArtworkById>(_onFetchArtworkById);
     on<FetchArtistSales>(_onFetchArtistSales);
-        on<UpdatePurchaseStatusEvent>(_onUpdatePurchaseStatus);
-
+    on<UpdatePurchaseStatusEvent>(_onUpdatePurchaseStatus);
   }
 
   // Fetch artist sales
@@ -73,6 +70,12 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
             isLoading: false, purchases: [], errorMessage: failure.message));
       },
       (purchases) {
+        print("Purchases fetched: ${purchases.length}");
+        for (var purchase in purchases) {
+          print(
+              "Purchase ID: ${purchase.purchaseId}, Title: ${purchase.title}");
+        }
+
         emit(state.copyWith(isLoading: false, purchases: purchases));
       },
     );
@@ -131,17 +134,40 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     );
   }
 
-    Future<void> _onUpdatePurchaseStatus(
+  Future<void> _onUpdatePurchaseStatus(
     UpdatePurchaseStatusEvent event,
     Emitter<PurchaseState> emit,
   ) async {
     emit(state.copyWith(isLoading: true));
 
-    final result = await _updatePurchaseStatusUseCase.call(event.purchaseId, event.status);
+    final result =
+        await _updatePurchaseStatusUseCase.call(event.purchaseId, event.status);
 
     result.fold(
-      (failure) => emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
-      (_) => emit(state.copyWith(isLoading: false, isSuccess: true)),
+      (failure) =>
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (_) {
+        // Update the purchase in the list
+        final updatedPurchases = state.purchases?.map((purchase) {
+          if (purchase.purchaseId == event.purchaseId) {
+            return purchase.copyWith(status: event.status);
+          }
+          return purchase;
+        }).toList();
+
+        final updatedSales = state.artistSales?.map((sale) {
+          if (sale.purchaseId == event.purchaseId) {
+            return sale.copyWith(status: event.status);
+          }
+          return sale;
+        }).toList();
+
+        emit(state.copyWith(
+          isLoading: false,
+          purchases: updatedPurchases,
+          artistSales: updatedSales,
+        ));
+      },
     );
   }
 }

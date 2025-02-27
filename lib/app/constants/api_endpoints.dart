@@ -21,13 +21,13 @@ class ApiEndpoints {
   static const String getArtworksbyUserId = "artwork/users-art";
   static const String deleteArtworkbyId = "artwork/delete";
   static const String updateArtwork = 'artwork/update1';
+  static const String searchArtworks = 'artwork/search';
 
   // purchase
   static const String getPurchasesByUserId = "purchases/getpurchases";
   static const String createPurchase = "purchases/create";
   static const String getArtistSales = "purchases/getSales";
-    static const String updateStatus = "purchases/status";
-
+  static const String updateStatus = "purchases/status";
 
   // save artworks [saveArt]
   static const String save = "saveArt/save";

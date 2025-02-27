@@ -20,46 +20,52 @@ class PurchasesOrdersViewState extends State<PurchasesOrdersView> {
   @override
   void initState() {
     super.initState();
-    final purchaseBloc = context.read<PurchaseBloc>();
-    purchaseBloc.add(FetchPurchasesByUserId(userId: widget.userId));
-    purchaseBloc.add(FetchArtistSales(artistId: widget.artistId));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final purchaseBloc = context.read<PurchaseBloc>();
+      purchaseBloc.add(FetchPurchasesByUserId(userId: widget.userId));
+      purchaseBloc.add(FetchArtistSales(artistId: widget.artistId));
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: DefaultTabController(
-          length: 2,
-          child: Column(
-            children: [
-              const SizedBox(height: 4),
-              const TabBar(
-                labelColor: Colors.black,
-                unselectedLabelColor: Colors.grey,
-                indicatorColor: Colors.black,
-                tabs: [
-                  Tab(text: "Your Orders"),
-                  Tab(text: "Your Sales"),
-                ],
-              ),
-              Expanded(
-                child: BlocBuilder<PurchaseBloc, PurchaseState>(
-                  builder: (context, state) {
-                    if (state.isLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    return TabBarView(
-                      children: [
-                        SingleChildScrollView(child: _buildPurchasesTab(state)),
-                        SingleChildScrollView(child: _buildSalesTab(state)),
-                      ],
-                    );
-                  },
+    return BlocProvider<PurchaseBloc>.value(
+      value: context.read<PurchaseBloc>(),
+      child: Scaffold(
+        body: SafeArea(
+          child: DefaultTabController(
+            length: 2,
+            child: Column(
+              children: [
+                const SizedBox(height: 4),
+                const TabBar(
+                  labelColor: Colors.black,
+                  unselectedLabelColor: Colors.grey,
+                  indicatorColor: Colors.black,
+                  tabs: [
+                    Tab(text: "Your Orders"),
+                    Tab(text: "Your Sales"),
+                  ],
                 ),
-              ),
-            ],
+                Expanded(
+                  child: BlocBuilder<PurchaseBloc, PurchaseState>(
+                    builder: (context, state) {
+                      if (state.isLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      return TabBarView(
+                        children: [
+                          SingleChildScrollView(
+                              child: _buildPurchasesTab(state)),
+                          SingleChildScrollView(child: _buildSalesTab(state)),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -115,35 +121,32 @@ class PurchasesOrdersViewState extends State<PurchasesOrdersView> {
               margin: const EdgeInsets.all(8),
               child: Column(
                 children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(4),
-                      topRight: Radius.circular(4),
-                    ),
-                    child: item.imageUrl != null
-                        ? Image.network(
-                            item.imageUrl!,
-                            height: 150,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          )
-                        : Container(
-                            height: 150,
-                            color: Colors.grey[300],
-                            child: const Icon(
-                              Icons.image_not_supported,
-                              size: 50,
-                              color: Colors.grey,
-                            ),
+                  item.imageUrl != null
+                      ? Image.network(
+                          item.imageUrl!,
+                          height: 150,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        )
+                      : Container(
+                          height: 150,
+                          color: Colors.grey[300],
+                          child: const Icon(
+                            Icons.image_not_supported,
+                            size: 50,
+                            color: Colors.grey,
                           ),
-                  ),
+                        ),
                   ListTile(
                     title: Text(item.title ?? 'Unknown Art'),
                     subtitle: Text('Status: ${item.status}'),
                     trailing: isSales && item.status != 'Completed'
                         ? ElevatedButton(
                             onPressed: () {
-                              // Implement update status event here
+                              if (item.purchaseId != null) {
+                                _showStatusUpdateDialog(
+                                    context, item.purchaseId!);
+                              }
                             },
                             child: const Text('Update Status'),
                           )
@@ -157,6 +160,49 @@ class PurchasesOrdersViewState extends State<PurchasesOrdersView> {
           },
         ),
       ],
+    );
+  }
+
+  void _showStatusUpdateDialog(BuildContext context, String purchaseId) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text("Update Order Status"),
+          content: const Text("Select the new status for this order."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text("Cancel"),
+            ),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (String status in [
+                  "Order Confirmed",
+                  "Order Processing",
+                  "Shipped",
+                  "Completed",
+                  "Cancelled",
+                  "Refunded"
+                ])
+                  ListTile(
+                    title: Text(status),
+                    onTap: () {
+                      context.read<PurchaseBloc>().add(
+                            UpdatePurchaseStatusEvent(
+                              purchaseId: purchaseId,
+                              status: status,
+                            ),
+                          );
+                      Navigator.pop(dialogContext);
+                    },
+                  ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 }
