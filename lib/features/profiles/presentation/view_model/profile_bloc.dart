@@ -56,6 +56,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<FetchArtworkById>(_onFetchArtworkById);
     on<DeleteArtworkById>(_onDeleteArtworkById);
     on<FetchNotificationsByUserId>(_onFetchNotificationsByUserId);
+
     on<NavigateToUpload>((event, emit) {
       Navigator.push(
           event.context,

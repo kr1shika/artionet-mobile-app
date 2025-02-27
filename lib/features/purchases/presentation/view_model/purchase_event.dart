@@ -61,3 +61,14 @@ class FetchArtistSales extends PurchaseEvent {
   @override
   List<Object> get props => [artistId];
 }
+
+class UpdatePurchaseStatusEvent extends PurchaseEvent {
+  final String purchaseId;
+  final String status;
+
+  const UpdatePurchaseStatusEvent(
+      {required this.purchaseId, required this.status});
+
+  @override
+  List<Object> get props => [purchaseId, status];
+}

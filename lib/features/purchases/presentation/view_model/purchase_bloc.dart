@@ -6,6 +6,7 @@ import 'package:tryproject/features/purchases/domain/entity/purchase_entity.dart
 import 'package:tryproject/features/purchases/domain/use_case/GetPurchasesByUserIdUsecase.dart';
 import 'package:tryproject/features/purchases/domain/use_case/create_purchase_usecase.dart';
 import 'package:tryproject/features/purchases/domain/use_case/getArtist_sales_usecase.dart';
+import 'package:tryproject/features/purchases/domain/use_case/update_status_usecase.dart';
 
 part 'purchase_event.dart';
 part 'purchase_state.dart';
@@ -15,8 +16,11 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
   final GetPurchasesByUserIdUsecase _getPurchasesByUserIdUsecase;
   final GetArtworkByIdUsecase _getArtworkByIdUsecase;
   final GetArtistSalesUsecase _getArtistSalesUsecase;
+    final UpdatePurchaseStatusUseCase _updatePurchaseStatusUseCase;
 
   PurchaseBloc({
+        required UpdatePurchaseStatusUseCase updatePurchaseStatusUseCase,
+
     required CreatePurchaseUsecase createPurchaseUsecase,
     required GetPurchasesByUserIdUsecase getPurchasesByUserIdUsecase,
     required GetArtworkByIdUsecase getArtworkByIdUsecase,
@@ -25,11 +29,15 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
         _getPurchasesByUserIdUsecase = getPurchasesByUserIdUsecase,
         _getArtworkByIdUsecase = getArtworkByIdUsecase,
         _getArtistSalesUsecase = getArtistSalesUsecase,
+                _updatePurchaseStatusUseCase = updatePurchaseStatusUseCase,
+
         super(PurchaseState.initial()) {
     on<CreatePurchaseEvent>(_onCreatePurchase);
     on<FetchPurchasesByUserId>(_onFetchPurchasesByUserId);
     on<FetchArtworkById>(_onFetchArtworkById);
     on<FetchArtistSales>(_onFetchArtistSales);
+        on<UpdatePurchaseStatusEvent>(_onUpdatePurchaseStatus);
+
   }
 
   // Fetch artist sales
@@ -120,6 +128,20 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
           isOtpSent: true,
         ));
       },
+    );
+  }
+
+    Future<void> _onUpdatePurchaseStatus(
+    UpdatePurchaseStatusEvent event,
+    Emitter<PurchaseState> emit,
+  ) async {
+    emit(state.copyWith(isLoading: true));
+
+    final result = await _updatePurchaseStatusUseCase.call(event.purchaseId, event.status);
+
+    result.fold(
+      (failure) => emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (_) => emit(state.copyWith(isLoading: false, isSuccess: true)),
     );
   }
 }

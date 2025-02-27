@@ -33,6 +33,7 @@ import 'package:tryproject/features/purchases/data/repository/purchase_remote_re
 import 'package:tryproject/features/purchases/domain/use_case/GetPurchasesByUserIdUsecase.dart';
 import 'package:tryproject/features/purchases/domain/use_case/create_purchase_usecase.dart';
 import 'package:tryproject/features/purchases/domain/use_case/getArtist_sales_usecase.dart';
+import 'package:tryproject/features/purchases/domain/use_case/update_status_usecase.dart';
 import 'package:tryproject/features/purchases/presentation/view_model/purchase_bloc.dart';
 import 'package:tryproject/features/saved_artwork/data/data_source/save_artwork_remote_datasource.dart';
 import 'package:tryproject/features/saved_artwork/data/repository/save_artwork_remote_repository.dart';
@@ -169,12 +170,19 @@ _initPurchaseDependencies() async {
     ),
   );
 
+  getIt.registerLazySingleton<UpdatePurchaseStatusUseCase>(
+    () => UpdatePurchaseStatusUseCase(
+      getIt<PurchaseRemoteRepository>(),
+    ),
+  );
+
   // purchase bloc
   getIt.registerFactory<PurchaseBloc>(() => PurchaseBloc(
         createPurchaseUsecase: getIt<CreatePurchaseUsecase>(),
         getArtworkByIdUsecase: getIt(),
         getPurchasesByUserIdUsecase: getIt<GetPurchasesByUserIdUsecase>(),
         getArtistSalesUsecase: getIt<GetArtistSalesUsecase>(),
+        updatePurchaseStatusUseCase: getIt<UpdatePurchaseStatusUseCase>(),
       ));
 }
 

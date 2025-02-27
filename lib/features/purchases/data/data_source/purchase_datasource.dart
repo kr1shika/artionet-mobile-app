@@ -4,4 +4,6 @@ abstract interface class IPurchaseDataSource {
   Future<List<PurchaseEntity>> getPurchasesByUserId(String id);
   Future<String?> createPurchase(PurchaseEntity purchase);
   Future<List<PurchaseEntity>> getArtistSales(String artistId);
+    Future<bool> updateStatus(String purchaseId, String status);
+
 }

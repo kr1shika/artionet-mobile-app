@@ -52,8 +52,8 @@ class PurchasesOrdersViewState extends State<PurchasesOrdersView> {
 
                     return TabBarView(
                       children: [
-                        _buildPurchasesTab(state),
-                        _buildSalesTab(state),
+                        SingleChildScrollView(child: _buildPurchasesTab(state)),
+                        SingleChildScrollView(child: _buildSalesTab(state)),
                       ],
                     );
                   },

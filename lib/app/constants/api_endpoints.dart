@@ -26,6 +26,8 @@ class ApiEndpoints {
   static const String getPurchasesByUserId = "purchases/getpurchases";
   static const String createPurchase = "purchases/create";
   static const String getArtistSales = "purchases/getSales";
+    static const String updateStatus = "purchases/status";
+
 
   // save artworks [saveArt]
   static const String save = "saveArt/save";
