@@ -65,9 +65,20 @@ class _SearchViewState extends State<SearchView> {
               if (selectedArtworkId == null) ...[
                 TextFormField(
                   controller: searchController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Search Artwork',
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.search),
+                      onPressed: () {
+                        if (_searchFormKey.currentState!.validate()) {
+                          // Dispatch the SearchArtworksEvent with the query
+                          context.read<ArtworkBloc>().add(
+                                SearchArtworksEvent(searchController.text),
+                              );
+                        }
+                      },
+                    ),
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -83,11 +94,13 @@ class _SearchViewState extends State<SearchView> {
                       if (state.isLoading) {
                         return const Center(child: CircularProgressIndicator());
                       } else if (state.errorMessage != null) {
-                        return Center(
+                        return const Center(
                           child: Text(
-                            state.errorMessage!,
-                            style: const TextStyle(
-                                color: Colors.red, fontSize: 16),
+                            // state.errorMessage!,
+                            "No artwork available",
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 4, 0, 7),
+                                fontSize: 16),
                             textAlign: TextAlign.center,
                           ),
                         );

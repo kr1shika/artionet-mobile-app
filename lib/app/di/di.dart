@@ -10,6 +10,7 @@ import 'package:tryproject/features/artwork/domain/use_case/deleteArtworkByIdUse
 import 'package:tryproject/features/artwork/domain/use_case/get_all_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_artworks_by_userId.dart';
+import 'package:tryproject/features/artwork/domain/use_case/search_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/update_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/upload_artwork_image_usecase.dart';
 import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
@@ -52,6 +53,9 @@ Future<void> initDependencies() async {
   // First initialize hive service
   await _initHiveService();
   await _initApiService();
+  // await _initLightSensor();
+  // await _initThemeBloc();
+
   await _initHomeDependencies();
   await _initRegisterDependencies();
   await _initLoginDependencies();
@@ -76,6 +80,18 @@ _initApiService() {
 _initHiveService() {
   getIt.registerLazySingleton<HiveService>(() => HiveService());
 }
+
+// _initLightSensor() {
+//   getIt.registerLazySingleton<LightSensorRepository>(
+//       () => LightSensorRepositoryImpl());
+//   getIt.registerLazySingleton<GetThemeModeBySensorUseCase>(
+//       () => GetThemeModeBySensorUseCase(getIt<LightSensorRepository>()));
+// }
+
+// _initThemeBloc() {
+//   getIt.registerLazySingleton<ThemeBloc>(
+//       () => ThemeBloc(getIt<GetThemeModeBySensorUseCase>()));
+// }
 
 _initArtworkCrudDependencies() async {
   getIt.registerFactory<ArtworkCrudBloc>(() => ArtworkCrudBloc(
@@ -230,6 +246,12 @@ _initArtworkDependencies() async {
     () => CreateArtworkUsecase(getIt<ArtworkRemoteRepository>()),
   );
 
+  getIt.registerLazySingleton<SearchArtworksUsecase>(
+    () => SearchArtworksUsecase(
+      artworkRepository: getIt<ArtworkRemoteRepository>(),
+    ),
+  );
+
   getIt.registerFactory<ArtworkBloc>(() => ArtworkBloc(
         getAllArtworkUsecase: getIt<GetAllArtworkUsecase>(),
         getArtworkByIdUsecase: getIt<GetArtworkByIdUsecase>(),
@@ -237,6 +259,7 @@ _initArtworkDependencies() async {
         saveArtworkUsecase: getIt<SaveArtworkUsecase>(),
         removeSavedArtworkUsecase: getIt<RemoveSavedArtworkUsecase>(),
         checkArtworkStatusUsecase: getIt<CheckArtworkStatusUsecase>(),
+        searchArtworksUsecase: getIt<SearchArtworksUsecase>(),
       ));
 }
 

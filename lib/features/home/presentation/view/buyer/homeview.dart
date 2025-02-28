@@ -12,18 +12,6 @@ class HomeView extends StatelessWidget {
       create: (_) => HomeCubit(),
       child: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
-          // final homeCubit = context.read<HomeCubit>();
-
-          // final List<Widget> pages = [
-          //   const HomeScreen(),
-          //   const SearchView(),
-          //   const CustomerProfileView(
-          //     userId: '679cb11ed81a6e1b96420af0',
-          //   ),
-          //   const NotificationsView(),
-          //   const PurchasesOrdersView(userId: '679cb11ed81a6e1b96420af0')
-          // ];
-
           return Scaffold(
             backgroundColor: const Color(0xFFFFFFF7),
             body: BlocBuilder<HomeCubit, HomeState>(builder: (context, state) {

@@ -81,11 +81,21 @@ class ArtworkBloc extends Bloc<ArtworkEvent, ArtworkState> {
 
   Future<void> _onSearchArtworks(
       SearchArtworksEvent event, Emitter<ArtworkState> emit) async {
-    emit(state.copyWith(isLoading: true));
+    emit(state.copyWith(isLoading: true, errorMessage: null));
+
     final result = await _searchArtworksUsecase.call(event.query);
+
     result.fold(
-      (failure) =>
-          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (failure) {
+        // Check if API returned a 404 with "No matching artworks found."
+        if (failure.message.contains("No matching artworks found")) {
+          emit(state.copyWith(
+              isLoading: false,
+              artworks: [])); // Set empty list instead of error
+        } else {
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message));
+        }
+      },
       (artworks) => emit(state.copyWith(isLoading: false, artworks: artworks)),
     );
   }
