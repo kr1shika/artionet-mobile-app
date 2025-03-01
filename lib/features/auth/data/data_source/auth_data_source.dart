@@ -11,4 +11,6 @@ abstract interface class IAuthDataSource {
   Future<AuthEntity> getCurrentUser();
 
   Future<String> uploadProfilePicture(File file);
+
+  Future<AuthEntity> updateProfile(AuthEntity artist);
 }

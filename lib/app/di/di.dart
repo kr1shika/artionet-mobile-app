@@ -23,11 +23,9 @@ import 'package:tryproject/features/auth/data/repository/auth_remote_repository/
 import 'package:tryproject/features/auth/domain/use_case/login_usecase.dart';
 import 'package:tryproject/features/auth/domain/use_case/register_user_usecase.dart';
 import 'package:tryproject/features/auth/domain/use_case/upload_image.dart';
-import 'package:tryproject/features/auth/presentation/view_model/artist_signup/artist_register_bloc.dart';
 import 'package:tryproject/features/auth/presentation/view_model/login/login_bloc.dart';
 import 'package:tryproject/features/auth/presentation/view_model/signup/register_bloc.dart';
 import 'package:tryproject/features/home/presentation/view_model/home_cubit.dart';
-import 'package:tryproject/features/onboard/presentation/view_model/buyer_onboard/artist_onboard_cubit.dart';
 import 'package:tryproject/features/onboard/presentation/view_model/buyer_onboard/onboard_cubit.dart';
 import 'package:tryproject/features/profiles/presentation/view_model/profile_bloc.dart';
 import 'package:tryproject/features/profiles/presentation/view_model/upload_edit/artwork_crud_bloc.dart';
@@ -64,8 +62,7 @@ Future<void> initDependencies() async {
   await _initLoginDependencies();
   await _initSplashScreenDependencies();
   await _initOnboardDependencies();
-  await _initArtistRegisterDependencies();
-  await _initArtistOnboardDependencies();
+  // await _initArtistRegisterDependencies();
   await _initArtworkDependencies();
   await _initPurchaseDependencies();
   await _initProfileDependencies();
@@ -318,15 +315,15 @@ _initRegisterDependencies() {
   );
 }
 
-_initArtistRegisterDependencies() {
-  getIt.registerFactory<ArtistRegisterBloc>(
-    () => ArtistRegisterBloc(
-      registerUseCase:
-          getIt(), // Already registered in _initRegisterDependencies
-      loginBloc: getIt<LoginBloc>(),
-    ),
-  );
-}
+// _initArtistRegisterDependencies() {
+//   getIt.registerFactory<ArtistRegisterBloc>(
+//     () => ArtistRegisterBloc(
+//       registerUseCase:
+//           getIt(), // Already registered in _initRegisterDependencies
+//       loginBloc: getIt<LoginBloc>(),
+//     ),
+//   );
+// }
 
 _initHomeDependencies() async {
   getIt.registerFactory<HomeCubit>(
@@ -370,10 +367,10 @@ _initOnboardDependencies() async {
   );
 }
 
-_initArtistOnboardDependencies() async {
-  getIt.registerFactory<OnboardingCubit>(
-    () => OnboardingCubit(
-      getIt<PageController>(),
-    ),
-  );
-}
+// _initArtistOnboardDependencies() async {
+//   getIt.registerFactory<OnboardingCubit>(
+//     () => OnboardingCubit(
+//       getIt<PageController>(),
+//     ),
+//   );
+// }

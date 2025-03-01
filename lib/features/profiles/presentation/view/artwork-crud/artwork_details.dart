@@ -53,12 +53,34 @@ class _ArtworkDetailViewState extends State<ArtworkDetailView> {
     });
   }
 
+  // for input decoration
+  InputDecoration _getMinimalInputDecoration(String label, String? hintText) {
+    return InputDecoration(
+      labelText: label,
+      hintText: hintText,
+      hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
+      enabledBorder: const UnderlineInputBorder(
+        // Only bottom border
+        borderSide: BorderSide(color: Colors.black, width: 1),
+      ),
+      focusedBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.blue, width: 2),
+      ),
+      errorBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.red, width: 1),
+      ),
+      focusedErrorBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.red, width: 2),
+      ),
+      contentPadding: EdgeInsets.zero, // Removes extra padding
+    );
+  }
+
   void _saveChanges(BuildContext context, ProfileState state) {
     final artwork = state.selectedArtwork;
     if (artwork != null) {
       context.read<ProfileBloc>().add(
             UpdateArtworkEvent(
-              
               artworkId: artwork.artworkId!,
               title: titleController.text.trim().isNotEmpty
                   ? titleController.text
@@ -75,7 +97,6 @@ class _ArtworkDetailViewState extends State<ArtworkDetailView> {
               images: artwork.images,
               context: context,
             ),
-            
           );
     }
     // print(update title);
@@ -223,10 +244,8 @@ class _ArtworkDetailViewState extends State<ArtworkDetailView> {
                 isEditMode
                     ? TextFormField(
                         controller: titleController,
-                        decoration: InputDecoration(
-                          labelText: 'Title',
-                          hintText: artwork.title,
-                        ),
+                        decoration:
+                            _getMinimalInputDecoration('Title', artwork.title),
                       )
                     : Text(
                         artwork.title,
@@ -239,28 +258,44 @@ class _ArtworkDetailViewState extends State<ArtworkDetailView> {
                 isEditMode
                     ? TextFormField(
                         controller: mediumController,
-                        decoration: InputDecoration(
-                          labelText: 'Medium',
-                          hintText: artwork.medium_used,
-                        ),
+                        decoration: _getMinimalInputDecoration(
+                            'Medium', artwork.medium_used),
                       )
                     : Text('Medium: ${artwork.medium_used}'),
+                const SizedBox(height: 10),
                 isEditMode
                     ? TextFormField(
                         controller: priceController,
-                        decoration: InputDecoration(
-                          labelText: 'Price',
-                          hintText: artwork.price,
-                        ),
+                        decoration:
+                            _getMinimalInputDecoration('Price', artwork.price),
                       )
                     : Text('Price: ${artwork.price}'),
                 isEditMode
-                    ? TextFormField(
-                        controller: archiveController,
-                        decoration: InputDecoration(
-                          labelText: 'Archive Status',
-                          hintText: artwork.archive ?? 'N/A',
-                        ),
+                    ? DropdownButtonFormField<String>(
+                        value: archiveController.text.isNotEmpty
+                            ? archiveController.text[0].toUpperCase() +
+                                archiveController.text
+                                    .substring(1)
+                                    .toLowerCase()
+                            : 'Private', // Ensure value matches available options
+                        decoration:
+                            _getMinimalInputDecoration('Archive Status', null),
+                        items: const [
+                          DropdownMenuItem(
+                            value: 'Private',
+                            child: Text('Private'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Public',
+                            child: Text('Public'),
+                          ),
+                        ],
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            archiveController.text =
+                                newValue ?? 'Private'; // Update value safely
+                          });
+                        },
                       )
                     : Text('Archive Status: ${artwork.archive}'),
               ],

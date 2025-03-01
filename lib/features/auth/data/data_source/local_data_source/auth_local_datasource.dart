@@ -49,4 +49,10 @@ class AuthLocalDatasource implements IAuthDataSource {
     // TODO: implement uploadProfilePicture
     throw UnimplementedError();
   }
+
+  @override
+  Future<AuthEntity> updateProfile(AuthEntity artist) {
+    // TODO: implement updateProfile
+    throw UnimplementedError();
+  }
 }

@@ -128,4 +128,13 @@ Future<String> loginUser(String email, String password) async {
       throw Exception(e);
     }
   }
+  
+  @override
+  Future<AuthEntity> updateProfile(AuthEntity artist) {
+    // TODO: implement updateProfile
+    throw UnimplementedError();
+  }
+
+
+
 }
