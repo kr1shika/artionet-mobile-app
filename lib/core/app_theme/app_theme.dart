@@ -21,6 +21,36 @@ ThemeData getApplicationTheme({required bool isDarkMode}) {
             ? ThemeConstant.lightPrimaryColor
             : ThemeConstant.darkPrimaryColor,
       )),
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: isDarkMode
+            ? ThemeConstant.darkPrimaryColor
+            : ThemeConstant.lightPrimaryColor,
+        selectedItemColor: isDarkMode
+            ? ThemeConstant.lightPrimaryColor
+            : ThemeConstant.darkPrimaryColor,
+        unselectedItemColor: isDarkMode
+            ? Colors.white.withOpacity(0.7)
+            : Colors.black.withOpacity(0.7),
+        selectedIconTheme: IconThemeData(
+          size: 28, // Custom size for selected icons
+          color: isDarkMode
+              ? ThemeConstant.lightPrimaryColor
+              : ThemeConstant.darkPrimaryColor,
+        ),
+        unselectedIconTheme: IconThemeData(
+          size: 24, // Custom size for unselected icons
+          color: isDarkMode
+              ? Colors.white.withOpacity(0.7)
+              : Colors.black.withOpacity(0.7),
+        ),
+        elevation: 8.0,
+        showUnselectedLabels: true, // Show unselected labels
+        selectedLabelStyle: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 14, // Customize label size
+        ),
+      ),
+    
       inputDecorationTheme: InputDecorationTheme(
           hintStyle: const TextStyle(color: Colors.grey, fontSize: 13),
           contentPadding: const EdgeInsets.symmetric(horizontal: 20),

@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tryproject/app/shared_prefs/token_shared_prefs.dart';
 import 'package:tryproject/core/network/api_service.dart';
 import 'package:tryproject/core/network/hive_service.dart';
 import 'package:tryproject/features/artwork/data/data_source/artwork_remote_datasource.dart';
@@ -55,6 +57,7 @@ Future<void> initDependencies() async {
   await _initApiService();
   // await _initLightSensor();
   // await _initThemeBloc();
+  await _initSharedPrefs();
 
   await _initHomeDependencies();
   await _initRegisterDependencies();
@@ -79,6 +82,14 @@ _initApiService() {
 
 _initHiveService() {
   getIt.registerLazySingleton<HiveService>(() => HiveService());
+}
+
+Future<void> _initSharedPrefs() async {
+  final sharedPreferences = await SharedPreferences.getInstance();
+  getIt.registerLazySingleton(() => sharedPreferences);
+
+  getIt.registerLazySingleton(
+      () => TokenSharedPrefs(getIt<SharedPreferences>()));
 }
 
 // _initLightSensor() {
@@ -270,7 +281,11 @@ _initRegisterDependencies() {
   );
 
   getIt.registerLazySingleton<AuthRemoteDatasource>(
-      () => AuthRemoteDatasource(getIt<Dio>()));
+    () => AuthRemoteDatasource(
+      getIt<Dio>(),
+      getIt<TokenSharedPrefs>(), // ✅ Inject TokenSharedPrefs here
+    ),
+  );
 
   // init local repository
   getIt.registerLazySingleton(
@@ -315,7 +330,8 @@ _initArtistRegisterDependencies() {
 
 _initHomeDependencies() async {
   getIt.registerFactory<HomeCubit>(
-    () => HomeCubit(),
+    () =>
+        HomeCubit(getIt<TokenSharedPrefs>()), // Pass TokenSharedPrefs instance
   );
 }
 

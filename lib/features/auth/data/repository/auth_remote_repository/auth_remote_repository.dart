@@ -25,8 +25,8 @@ class AuthRemoteRepository implements IAuthRepository {
       String email, String password) async {
     // TODO: implement loginUser
     try {
-      final token = await _authRemoteDatasource.loginUser(email, password);
-      return Right(token);
+      final userId = await _authRemoteDatasource.loginUser(email, password);
+      return Right(userId);
     } catch (e) {
       return Left(ApiFailure(message: e.toString()));
     }

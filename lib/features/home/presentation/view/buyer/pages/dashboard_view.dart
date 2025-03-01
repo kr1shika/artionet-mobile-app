@@ -399,10 +399,19 @@ class HomeScreen extends StatelessWidget {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              themeProvider.toggleTheme();
+              themeProvider.toggleTheme(); // Toggle theme on button press
             },
+            backgroundColor: themeProvider.isDarkMode
+                ? const Color(0xFF1E1E1E) // Dark color when dark mode
+                : const Color(0xFFE1E1D5),
+            // Light color when light mode
             child: Icon(
-              themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+              themeProvider.isDarkMode
+                  ? Icons.dark_mode // Dark mode icon
+                  : Icons.light_mode, // Light mode icon
+              color: themeProvider.isDarkMode
+                  ? Colors.white
+                  : Colors.black, // Icon color
             ),
           ),
         );

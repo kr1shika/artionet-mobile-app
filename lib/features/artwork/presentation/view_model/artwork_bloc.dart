@@ -71,11 +71,16 @@ class ArtworkBloc extends Bloc<ArtworkEvent, ArtworkState> {
   Future<void> _onFetchAllArtworks(
       FetchAllArtworks event, Emitter<ArtworkState> emit) async {
     emit(state.copyWith(isLoading: true));
+
     final result = await _getAllArtworkUsecase.call();
+
     result.fold(
       (failure) =>
           emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
-      (artworks) => emit(state.copyWith(isLoading: false, artworks: artworks)),
+      (artworks) {
+        print("Fetched Artworks: ${artworks.length}"); // Debugging log
+        emit(state.copyWith(isLoading: false, artworks: artworks));
+      },
     );
   }
 

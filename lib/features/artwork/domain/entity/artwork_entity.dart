@@ -13,18 +13,19 @@ class ArtworkEntity extends Equatable {
   final String? creatorsNote;
   final bool? isLiked;
 
-  const ArtworkEntity(
-      {this.artworkId,
-      this.artistId,
-      required this.title,
-      required this.dimensions,
-      this.images,
-      this.isLiked,
-      this.archive,
-      required this.price,
-      required this.medium_used,
-      required this.categories,
-      this.creatorsNote});
+  const ArtworkEntity({
+    this.artworkId,
+    this.artistId,
+    required this.title,
+    required this.dimensions,
+    this.images,
+    this.isLiked,
+    this.archive,
+    required this.price,
+    required this.medium_used,
+    required this.categories,
+    this.creatorsNote,
+  });
 
   const ArtworkEntity.empty()
       : artworkId = '_empty.artworkId',
@@ -51,6 +52,6 @@ class ArtworkEntity extends Equatable {
         medium_used,
         categories,
         creatorsNote,
-        isLiked
+        isLiked,
       ];
 }

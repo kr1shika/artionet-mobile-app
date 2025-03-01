@@ -13,7 +13,7 @@ class AuthEntity extends Equatable {
   final String? artistname;
 
   const AuthEntity(
-      {this.userId,
+     {this.userId,
       required this.full_name,
       required this.contact_no,
       required this.password,
@@ -21,7 +21,7 @@ class AuthEntity extends Equatable {
       required this.email,
       this.desc,
       this.profilepic,
-      this.artistname});
+      this.artistname}); 
 
   const AuthEntity.empty()
       : userId = '_empty.userId',

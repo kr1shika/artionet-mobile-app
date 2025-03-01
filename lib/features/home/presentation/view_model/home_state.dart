@@ -13,55 +13,58 @@ import 'package:tryproject/features/purchases/presentation/view_model/purchase_b
 
 class HomeState extends Equatable {
   final int selectedIndex;
+  final String? userId;
   final List<Widget> views;
 
   const HomeState({
     required this.selectedIndex,
     required this.views,
+    this.userId,
   });
 
   static HomeState initial() {
-    return HomeState(
+    return const HomeState(
       selectedIndex: 0,
+      views: [],
+      userId: null, // Initially null, to be updated later
+    );
+  }
+
+  HomeState copyWith({
+    int? selectedIndex,
+    String? userId,
+  }) {
+    return HomeState(
+      selectedIndex: selectedIndex ?? this.selectedIndex,
       views: [
         const HomeScreen(),
         BlocProvider(
           create: (context) => getIt<ArtworkBloc>(),
           child: const SearchView(),
         ),
-        // Pass the PurchaseBloc here
         BlocProvider(
           create: (context) => getIt<ProfileBloc>(),
-          child: const CustomerProfileView(
-            userId: '679cb11ed81a6e1b96420af0',
-          ),
+          child: CustomerProfileView(
+              userId: (userId ?? this.userId) ?? 'defaultUserId'),
         ),
         BlocProvider(
           create: (context) => getIt<ProfileBloc>(),
-          child: const NotificationsView(
-            userId: '679cb11ed81a6e1b96420af0',
-          ),
+          child: NotificationsView(
+              userId: (userId ?? this.userId) ?? 'defaultUserId'),
         ),
         BlocProvider(
           create: (context) => getIt<PurchaseBloc>(),
-          child: const PurchasesOrdersView(
-            userId: '679cb11ed81a6e1b96420af0',
-            artistId: '679cb11ed81a6e1b96420af0',
+          child: PurchasesOrdersView(
+            userId: (userId ?? this.userId) ?? 'defaultUserId',
+            artistId: (userId ?? this.userId) ??
+                'defaultArtistId', // Assuming artistId is also the same
           ),
-        )
+        ),
       ],
-    );
-  }
-
-  HomeState copyWith({
-    int? selectedIndex,
-  }) {
-    return HomeState(
-      selectedIndex: selectedIndex ?? this.selectedIndex,
-      views: views,
+      userId: userId ?? this.userId,
     );
   }
 
   @override
-  List<Object?> get props => [selectedIndex, views];
+  List<Object?> get props => [selectedIndex, userId, views];
 }

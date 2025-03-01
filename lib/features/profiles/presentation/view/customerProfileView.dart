@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tryproject/app/di/di.dart';
+import 'package:tryproject/app/shared_prefs/token_shared_prefs.dart';
 import 'package:tryproject/features/artwork/presentation/view/details_view.dart';
 import 'package:tryproject/features/artwork/presentation/view/upload_artwork_view.dart';
 import 'package:tryproject/features/profiles/presentation/view/artwork-crud/artwork_details.dart';
@@ -17,10 +19,22 @@ class CustomerProfileView extends StatefulWidget {
 
 class CustomerProfileViewState extends State<CustomerProfileView> {
   String? selectedArtworkId;
+  String? userId;
+
+  Future<void> _loadUserId() async {
+    final tokenSharedPrefs =
+        getIt<TokenSharedPrefs>(); // ✅ Get instance from DI
+    String? storedUserId = tokenSharedPrefs.getUserId(); // ✅ Retrieve userId
+    setState(() {
+      userId = storedUserId;
+    });
+    print(" CUstomer view page User ID: $userId"); // ✅ Debugging
+  }
 
   @override
   void initState() {
     super.initState();
+    _loadUserId();
     final profileBloc = context.read<profile.ProfileBloc>();
 
     // Fetch uploaded and saved artworks when the profile screen loads
@@ -216,15 +230,14 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
     return GestureDetector(
       onTap: () {
         if (isSavedTab) {
-          // For the "Saved" tab, navigate to DetailView using the event
           context.read<profile.ProfileBloc>().add(
                 profile.NavigateToDetailView(
                   context: context,
                   destination: DetailView(
                     artworkId: artworkId,
-                    buyerId: '679cb11ed81a6e1b96420af0',
+                    buyerId: userId ?? '',
                     isLiked: isLiked,
-                    onBack: _closeDetailView, // Pass the onBack callback
+                    showAppBar: true,
                   ),
                 ),
               );

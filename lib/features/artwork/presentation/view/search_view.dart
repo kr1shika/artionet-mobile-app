@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tryproject/app/di/di.dart';
+import 'package:tryproject/app/shared_prefs/token_shared_prefs.dart';
 import 'package:tryproject/core/common/snackbar/my_snackbar.dart';
 import 'package:tryproject/features/artwork/presentation/view/details_view.dart';
 import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
@@ -17,12 +19,29 @@ class _SearchViewState extends State<SearchView> {
   final _searchFormKey = GlobalKey<FormState>();
   String? selectedArtworkId;
   final Set<String> likedArtworks = {};
+  String? userId;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserId(); // ✅ Fetch userId when the widget initializes
+  }
+
+  Future<void> _loadUserId() async {
+    final tokenSharedPrefs =
+        getIt<TokenSharedPrefs>(); // ✅ Get instance from DI
+    String? storedUserId = tokenSharedPrefs.getUserId(); // ✅ Retrieve userId
+    setState(() {
+      userId = storedUserId;
+    });
+    print(" User ID: $userId"); // ✅ Debugging
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFFFFFFF7),
+        // backgroundColor: const Color(0xFFFFFFF7),
         centerTitle: true,
         title: selectedArtworkId == null
             ? Image.asset(
@@ -203,8 +222,7 @@ class _SearchViewState extends State<SearchView> {
                                                         RemoveSavedArtworkEvent(
                                                           artId: artwork
                                                               .artworkId!,
-                                                          buyerId:
-                                                              '679cb11ed81a6e1b96420af0', // Replace with actual buyer ID
+                                                          buyerId: userId ?? '',
                                                         ),
                                                       );
                                                 } else {
@@ -216,8 +234,7 @@ class _SearchViewState extends State<SearchView> {
                                                         SaveArtworkEvent(
                                                           artId: artwork
                                                               .artworkId!,
-                                                          buyerId:
-                                                              '679cb11ed81a6e1b96420af0',
+                                                          buyerId: userId ?? '',
                                                         ),
                                                       );
                                                 }
@@ -242,6 +259,7 @@ class _SearchViewState extends State<SearchView> {
                   child: DetailView(
                     artworkId: selectedArtworkId!,
                     buyerId: '',
+                    showAppBar: false,
                   ),
                 ),
               ],

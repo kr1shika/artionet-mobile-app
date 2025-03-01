@@ -4,6 +4,7 @@ class PurchaseState extends Equatable {
   final bool isLoading;
   final bool isSuccess;
   final bool isOtpSent;
+
   final String? purchaseId;
   final String? artworkTitle;
   final double? artworkPrice;
