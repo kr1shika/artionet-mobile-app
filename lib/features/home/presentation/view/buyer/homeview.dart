@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tryproject/app/di/di.dart';
+import 'package:tryproject/app/shared_prefs/token_shared_prefs.dart';
 import 'package:tryproject/features/home/presentation/view_model/home_cubit.dart';
 import 'package:tryproject/features/home/presentation/view_model/home_state.dart';
 
@@ -9,21 +11,9 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => HomeCubit(),
+      create: (_) => HomeCubit(getIt<TokenSharedPrefs>())..loadUserId(),
       child: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
-          // final homeCubit = context.read<HomeCubit>();
-
-          // final List<Widget> pages = [
-          //   const HomeScreen(),
-          //   const SearchView(),
-          //   const CustomerProfileView(
-          //     userId: '679cb11ed81a6e1b96420af0',
-          //   ),
-          //   const NotificationsView(),
-          //   const PurchasesOrdersView(userId: '679cb11ed81a6e1b96420af0')
-          // ];
-
           return Scaffold(
             backgroundColor: const Color(0xFFFFFFF7),
             body: BlocBuilder<HomeCubit, HomeState>(builder: (context, state) {
@@ -56,7 +46,7 @@ class HomeView extends StatelessWidget {
                   ],
                   currentIndex: state.selectedIndex,
                   selectedItemColor: const Color.fromARGB(255, 133, 139, 144),
-                  unselectedItemColor: const Color.fromARGB(255, 255, 255, 255),
+                  // unselectedItemColor: const Color.fromARGB(255, 255, 255, 255),
                   onTap: (index) {
                     context.read<HomeCubit>().onTabTapped(index);
                   },

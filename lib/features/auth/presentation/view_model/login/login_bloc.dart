@@ -43,12 +43,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<LoginUserEvent>(
       (event, emit) async {
         emit(state.copyWith(isLoading: true));
+
         final result = await _loginUseCase(
           LoginParams(
             email: event.email,
             password: event.password,
           ),
         );
+
         result.fold(
           (failure) {
             emit(state.copyWith(isLoading: false, isSuccess: false));
@@ -58,20 +60,21 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
               color: Colors.red,
             );
           },
-          (token) async {
+          (userId) async {
+            // ✅ `userId` returned from loginUseCase
             emit(state.copyWith(isLoading: false, isSuccess: true));
+
+            // ✅ Retrieve userId from SharedPreferences
             final prefs = await SharedPreferences.getInstance();
-            // await prefs.setString('email',user.email);
-            await prefs.setString('auth_token', token);
-            String? savedToken = prefs.getString('auth_token');
-            print('Saved Token: $savedToken');
+            String? savedUserId = prefs.getString('userId');
+            print('Saved User ID: $savedUserId'); // ✅ Debugging
+
             add(
               NavigateHomeScreenEvent(
                 context: event.context,
                 destination: const HomeView(),
               ),
             );
-            // _homeCubit.setToken(token);
           },
         );
       },

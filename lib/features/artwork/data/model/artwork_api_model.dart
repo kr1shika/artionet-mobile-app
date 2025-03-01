@@ -19,23 +19,23 @@ class ArtworkApiModel extends Equatable {
   final String categories;
   final String? creatorsNote;
 
-  ArtworkApiModel(
-      {this.id,
-      required this.artistId,
-      required this.title,
-      required this.dimensions,
-      required this.images,
-      required this.archive,
-      required this.price,
-      required this.medium_used,
-      this.creatorsNote,
-      this.isLiked,
-      required this.categories});
+  ArtworkApiModel({
+    this.id,
+    required this.artistId,
+    required this.title,
+    required this.dimensions,
+    required this.images,
+    required this.archive,
+    required this.price,
+    required this.medium_used,
+    this.creatorsNote,
+    this.isLiked,
+    required this.categories,
+  });
 
   factory ArtworkApiModel.fromJson(Map<String, dynamic> json) {
     String? imageUrl = json['images'];
     if (imageUrl != null && !imageUrl.startsWith('http')) {
-      // Prepend your server's base URL if it's a relative path
       imageUrl = 'http://10.0.2.2:5055/$imageUrl';
     }
     return _$ArtworkApiModelFromJson(json)..images = imageUrl;
@@ -45,30 +45,32 @@ class ArtworkApiModel extends Equatable {
 
   ArtworkEntity toEntity() {
     return ArtworkEntity(
-        artworkId: id,
-        title: title,
-        dimensions: dimensions,
-        price: price,
-        medium_used: medium_used,
-        categories: categories,
-        artistId: artistId,
-        images: images,
-        creatorsNote: creatorsNote,
-        archive: archive,
-        isLiked: isLiked);
+      artworkId: id,
+      title: title,
+      dimensions: dimensions,
+      price: price,
+      medium_used: medium_used,
+      categories: categories,
+      artistId: artistId,
+      images: images,
+      creatorsNote: creatorsNote,
+      archive: archive,
+      isLiked: isLiked,
+    );
   }
 
   factory ArtworkApiModel.fromEntity(ArtworkEntity entity) {
     return ArtworkApiModel(
-        title: entity.title,
-        dimensions: entity.dimensions,
-        price: entity.price,
-        medium_used: entity.medium_used,
-        categories: entity.categories,
-        artistId: entity.artistId,
-        images: entity.images,
-        archive: entity.archive,
-        creatorsNote: entity.creatorsNote);
+      title: entity.title,
+      dimensions: entity.dimensions,
+      price: entity.price,
+      medium_used: entity.medium_used,
+      categories: entity.categories,
+      artistId: entity.artistId,
+      images: entity.images,
+      archive: entity.archive,
+      creatorsNote: entity.creatorsNote,
+    );
   }
 
   static List<ArtworkEntity> toEntityList(List<ArtworkApiModel> models) =>
@@ -85,6 +87,6 @@ class ArtworkApiModel extends Equatable {
         artistId,
         images,
         archive,
-        isLiked
+        isLiked,
       ];
 }

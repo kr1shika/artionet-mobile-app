@@ -59,4 +59,8 @@ class SaveArtworkApiModel extends Equatable {
   // TODO: implement props
   List<Object?> get props =>
       [art_id, buyer_id, status, title, imageUrl, savedId];
+
+  static List<SaveArtworkEntity> toEntityList(
+          List<SaveArtworkApiModel> models) =>
+      models.map((model) => model.toEntity()).toList();
 }

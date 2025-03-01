@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tryproject/app/shared_prefs/token_shared_prefs.dart';
 import 'package:tryproject/core/network/api_service.dart';
 import 'package:tryproject/core/network/hive_service.dart';
 import 'package:tryproject/features/artwork/data/data_source/artwork_remote_datasource.dart';
@@ -10,6 +12,7 @@ import 'package:tryproject/features/artwork/domain/use_case/deleteArtworkByIdUse
 import 'package:tryproject/features/artwork/domain/use_case/get_all_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_artworks_by_userId.dart';
+import 'package:tryproject/features/artwork/domain/use_case/search_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/update_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/upload_artwork_image_usecase.dart';
 import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
@@ -20,11 +23,9 @@ import 'package:tryproject/features/auth/data/repository/auth_remote_repository/
 import 'package:tryproject/features/auth/domain/use_case/login_usecase.dart';
 import 'package:tryproject/features/auth/domain/use_case/register_user_usecase.dart';
 import 'package:tryproject/features/auth/domain/use_case/upload_image.dart';
-import 'package:tryproject/features/auth/presentation/view_model/artist_signup/artist_register_bloc.dart';
 import 'package:tryproject/features/auth/presentation/view_model/login/login_bloc.dart';
 import 'package:tryproject/features/auth/presentation/view_model/signup/register_bloc.dart';
 import 'package:tryproject/features/home/presentation/view_model/home_cubit.dart';
-import 'package:tryproject/features/onboard/presentation/view_model/buyer_onboard/artist_onboard_cubit.dart';
 import 'package:tryproject/features/onboard/presentation/view_model/buyer_onboard/onboard_cubit.dart';
 import 'package:tryproject/features/profiles/presentation/view_model/profile_bloc.dart';
 import 'package:tryproject/features/profiles/presentation/view_model/upload_edit/artwork_crud_bloc.dart';
@@ -32,6 +33,8 @@ import 'package:tryproject/features/purchases/data/data_source/purchase_remote_d
 import 'package:tryproject/features/purchases/data/repository/purchase_remote_repository.dart';
 import 'package:tryproject/features/purchases/domain/use_case/GetPurchasesByUserIdUsecase.dart';
 import 'package:tryproject/features/purchases/domain/use_case/create_purchase_usecase.dart';
+import 'package:tryproject/features/purchases/domain/use_case/getArtist_sales_usecase.dart';
+import 'package:tryproject/features/purchases/domain/use_case/update_status_usecase.dart';
 import 'package:tryproject/features/purchases/presentation/view_model/purchase_bloc.dart';
 import 'package:tryproject/features/saved_artwork/data/data_source/save_artwork_remote_datasource.dart';
 import 'package:tryproject/features/saved_artwork/data/repository/save_artwork_remote_repository.dart';
@@ -50,13 +53,16 @@ Future<void> initDependencies() async {
   // First initialize hive service
   await _initHiveService();
   await _initApiService();
+  // await _initLightSensor();
+  // await _initThemeBloc();
+  await _initSharedPrefs();
+
   await _initHomeDependencies();
   await _initRegisterDependencies();
   await _initLoginDependencies();
   await _initSplashScreenDependencies();
   await _initOnboardDependencies();
-  await _initArtistRegisterDependencies();
-  await _initArtistOnboardDependencies();
+  // await _initArtistRegisterDependencies();
   await _initArtworkDependencies();
   await _initPurchaseDependencies();
   await _initProfileDependencies();
@@ -75,6 +81,26 @@ _initHiveService() {
   getIt.registerLazySingleton<HiveService>(() => HiveService());
 }
 
+Future<void> _initSharedPrefs() async {
+  final sharedPreferences = await SharedPreferences.getInstance();
+  getIt.registerLazySingleton(() => sharedPreferences);
+
+  getIt.registerLazySingleton(
+      () => TokenSharedPrefs(getIt<SharedPreferences>()));
+}
+
+// _initLightSensor() {
+//   getIt.registerLazySingleton<LightSensorRepository>(
+//       () => LightSensorRepositoryImpl());
+//   getIt.registerLazySingleton<GetThemeModeBySensorUseCase>(
+//       () => GetThemeModeBySensorUseCase(getIt<LightSensorRepository>()));
+// }
+
+// _initThemeBloc() {
+//   getIt.registerLazySingleton<ThemeBloc>(
+//       () => ThemeBloc(getIt<GetThemeModeBySensorUseCase>()));
+// }
+
 _initArtworkCrudDependencies() async {
   getIt.registerFactory<ArtworkCrudBloc>(() => ArtworkCrudBloc(
         createArtworkUsecase: getIt<CreateArtworkUsecase>(),
@@ -85,7 +111,6 @@ _initArtworkCrudDependencies() async {
 
 _initProfileDependencies() async {
   getIt.registerFactory<ProfileBloc>(() => ProfileBloc(
-        getPurchasesByUserIdUsecase: getIt<GetPurchasesByUserIdUsecase>(),
         artworkCrudBloc: getIt<ArtworkCrudBloc>(),
         getArtworksByUseridUsecase: getIt<GetArtworksByUseridUsecase>(),
         getArtworkByIdUsecase: getIt<GetArtworkByIdUsecase>(),
@@ -163,11 +188,25 @@ _initPurchaseDependencies() async {
     ),
   );
 
+  getIt.registerLazySingleton<GetArtistSalesUsecase>(
+    () => GetArtistSalesUsecase(
+      purchaseRepository: getIt<PurchaseRemoteRepository>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<UpdatePurchaseStatusUseCase>(
+    () => UpdatePurchaseStatusUseCase(
+      getIt<PurchaseRemoteRepository>(),
+    ),
+  );
+
   // purchase bloc
   getIt.registerFactory<PurchaseBloc>(() => PurchaseBloc(
         createPurchaseUsecase: getIt<CreatePurchaseUsecase>(),
         getArtworkByIdUsecase: getIt(),
         getPurchasesByUserIdUsecase: getIt<GetPurchasesByUserIdUsecase>(),
+        getArtistSalesUsecase: getIt<GetArtistSalesUsecase>(),
+        updatePurchaseStatusUseCase: getIt<UpdatePurchaseStatusUseCase>(),
       ));
 }
 
@@ -215,6 +254,12 @@ _initArtworkDependencies() async {
     () => CreateArtworkUsecase(getIt<ArtworkRemoteRepository>()),
   );
 
+  getIt.registerLazySingleton<SearchArtworksUsecase>(
+    () => SearchArtworksUsecase(
+      artworkRepository: getIt<ArtworkRemoteRepository>(),
+    ),
+  );
+
   getIt.registerFactory<ArtworkBloc>(() => ArtworkBloc(
         getAllArtworkUsecase: getIt<GetAllArtworkUsecase>(),
         getArtworkByIdUsecase: getIt<GetArtworkByIdUsecase>(),
@@ -222,6 +267,7 @@ _initArtworkDependencies() async {
         saveArtworkUsecase: getIt<SaveArtworkUsecase>(),
         removeSavedArtworkUsecase: getIt<RemoveSavedArtworkUsecase>(),
         checkArtworkStatusUsecase: getIt<CheckArtworkStatusUsecase>(),
+        searchArtworksUsecase: getIt<SearchArtworksUsecase>(),
       ));
 }
 
@@ -232,7 +278,11 @@ _initRegisterDependencies() {
   );
 
   getIt.registerLazySingleton<AuthRemoteDatasource>(
-      () => AuthRemoteDatasource(getIt<Dio>()));
+    () => AuthRemoteDatasource(
+      getIt<Dio>(),
+      getIt<TokenSharedPrefs>(), // ✅ Inject TokenSharedPrefs here
+    ),
+  );
 
   // init local repository
   getIt.registerLazySingleton(
@@ -265,19 +315,20 @@ _initRegisterDependencies() {
   );
 }
 
-_initArtistRegisterDependencies() {
-  getIt.registerFactory<ArtistRegisterBloc>(
-    () => ArtistRegisterBloc(
-      registerUseCase:
-          getIt(), // Already registered in _initRegisterDependencies
-      loginBloc: getIt<LoginBloc>(),
-    ),
-  );
-}
+// _initArtistRegisterDependencies() {
+//   getIt.registerFactory<ArtistRegisterBloc>(
+//     () => ArtistRegisterBloc(
+//       registerUseCase:
+//           getIt(), // Already registered in _initRegisterDependencies
+//       loginBloc: getIt<LoginBloc>(),
+//     ),
+//   );
+// }
 
 _initHomeDependencies() async {
   getIt.registerFactory<HomeCubit>(
-    () => HomeCubit(),
+    () =>
+        HomeCubit(getIt<TokenSharedPrefs>()), // Pass TokenSharedPrefs instance
   );
 }
 
@@ -316,10 +367,10 @@ _initOnboardDependencies() async {
   );
 }
 
-_initArtistOnboardDependencies() async {
-  getIt.registerFactory<OnboardingCubit>(
-    () => OnboardingCubit(
-      getIt<PageController>(),
-    ),
-  );
-}
+// _initArtistOnboardDependencies() async {
+//   getIt.registerFactory<OnboardingCubit>(
+//     () => OnboardingCubit(
+//       getIt<PageController>(),
+//     ),
+//   );
+// }

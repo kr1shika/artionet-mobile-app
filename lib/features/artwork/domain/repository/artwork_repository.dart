@@ -13,4 +13,5 @@ abstract interface class IArtworkRepository {
   Future<Either<Failure, List<ArtworkEntity>>> getArtworksbyUserId(String id);
   Future<Either<Failure, void>> deleteArtworkbyId(String id);
   Future<Either<Failure, ArtworkEntity>> updateArtwork(ArtworkEntity artwork);
+  Future<Either<Failure, List<ArtworkEntity>>> searchArtworks(String query);
 }

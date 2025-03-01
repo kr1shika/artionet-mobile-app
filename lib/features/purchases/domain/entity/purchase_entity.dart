@@ -26,6 +26,28 @@ class PurchaseEntity extends Equatable {
       this.imageUrl,
       this.title});
 
+  PurchaseEntity copyWith({
+    String? purchaseId,
+    String? art_id,
+    String? buyer_id,
+    String? address,
+    String? status,
+    String? title,
+    String? imageUrl,
+    String? totalAmount,
+  }) {
+    return PurchaseEntity(
+      purchaseId: purchaseId ?? this.purchaseId,
+      art_id: art_id ?? this.art_id,
+      buyer_id: buyer_id ?? this.buyer_id,
+      address: address ?? this.address,
+      status: status ?? this.status,
+      title: title ?? this.title,
+      imageUrl: imageUrl ?? this.imageUrl,
+      totalAmount: totalAmount ?? this.totalAmount,
+    );
+  }
+
   const PurchaseEntity.empty()
       : purchaseId = '_empty.purchaseId',
         art_id = '_empty.art_id',

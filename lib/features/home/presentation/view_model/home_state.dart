@@ -5,61 +5,66 @@ import 'package:tryproject/app/di/di.dart';
 import 'package:tryproject/features/artwork/presentation/view/search_view.dart';
 import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
 import 'package:tryproject/features/home/presentation/view/buyer/pages/dashboard_view.dart';
-import 'package:tryproject/features/profiles/presentation/view/customerProfileView.dart';
+import 'package:tryproject/features/profiles/presentation/view/artistProfileView.dart';
 import 'package:tryproject/features/profiles/presentation/view/notificationView.dart';
 import 'package:tryproject/features/profiles/presentation/view/orders/purchases_orders_view.dart';
 import 'package:tryproject/features/profiles/presentation/view_model/profile_bloc.dart';
+import 'package:tryproject/features/purchases/presentation/view_model/purchase_bloc.dart';
 
 class HomeState extends Equatable {
   final int selectedIndex;
+  final String? userId;
   final List<Widget> views;
 
   const HomeState({
     required this.selectedIndex,
     required this.views,
+    this.userId,
   });
 
   static HomeState initial() {
-    return HomeState(
+    return const HomeState(
       selectedIndex: 0,
+      views: [],
+      userId: null, // Initially null, to be updated later
+    );
+  }
+
+  HomeState copyWith({
+    int? selectedIndex,
+    String? userId,
+  }) {
+    return HomeState(
+      selectedIndex: selectedIndex ?? this.selectedIndex,
       views: [
         const HomeScreen(),
         BlocProvider(
           create: (context) => getIt<ArtworkBloc>(),
           child: const SearchView(),
         ),
-        // Pass the PurchaseBloc here
         BlocProvider(
           create: (context) => getIt<ProfileBloc>(),
-          child: const CustomerProfileView(
-            userId: '679cb11ed81a6e1b96420af0',
-          ),
+          child: CustomerProfileView(
+              userId: (userId ?? this.userId) ?? 'defaultUserId'),
         ),
         BlocProvider(
           create: (context) => getIt<ProfileBloc>(),
-          child: const NotificationsView(
-            userId: '679cb11ed81a6e1b96420af0',
-          ),
+          child: NotificationsView(
+              userId: (userId ?? this.userId) ?? 'defaultUserId'),
         ),
         BlocProvider(
-          create: (context) => getIt<ProfileBloc>(),
-          child: const PurchasesOrdersView(
-            userId: '679cb11ed81a6e1b96420af0',
+          create: (context) => getIt<PurchaseBloc>(),
+          child: PurchasesOrdersView(
+            userId: (userId ?? this.userId) ?? 'defaultUserId',
+            artistId: (userId ?? this.userId) ??
+                'defaultArtistId', // Assuming artistId is also the same
           ),
-        )
+        ),
       ],
-    );
-  }
-
-  HomeState copyWith({
-    int? selectedIndex,
-  }) {
-    return HomeState(
-      selectedIndex: selectedIndex ?? this.selectedIndex,
-      views: views,
+      userId: userId ?? this.userId,
     );
   }
 
   @override
-  List<Object?> get props => [selectedIndex, views];
+  List<Object?> get props => [selectedIndex, userId, views];
 }

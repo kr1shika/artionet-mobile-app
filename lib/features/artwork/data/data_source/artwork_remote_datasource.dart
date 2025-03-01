@@ -173,4 +173,21 @@ class ArtworkRemoteDatasource implements IArtworkDataSource {
       throw Exception(e.toString());
     }
   }
+
+  Future<List<ArtworkEntity>> searchArtworks(String query) async {
+  try {
+    var response = await _dio.get("${ApiEndpoints.searchArtworks}?query=$query");
+    if (response.statusCode == 200) {
+      GetAllArtworkDTO artworkDTO = GetAllArtworkDTO.fromJson(response.data);
+      return ArtworkApiModel.toEntityList(artworkDTO.data);
+    } else {
+      throw Exception(response.statusMessage);
+    }
+  } on DioException catch (e) {
+    throw Exception(e.message);
+  } catch (e) {
+    throw Exception(e.toString());
+  }
+}
+
 }

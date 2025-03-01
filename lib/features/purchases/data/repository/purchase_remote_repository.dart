@@ -30,4 +30,26 @@ class PurchaseRemoteRepository implements IPurchaseRepository {
       return Left(ApiFailure(message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, List<PurchaseEntity>>> getArtistSales(
+      String artistId) async {
+    try {
+      final sales = await remoteDatasource.getArtistSales(artistId);
+      return Right(sales);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> updateStatus(
+      String purchaseId, String status) async {
+    try {
+      final success = await remoteDatasource.updateStatus(purchaseId, status);
+      return Right(success);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
+  }
 }

@@ -5,6 +5,8 @@ import 'package:tryproject/features/artwork/domain/use_case/get_artwork_usecase.
 import 'package:tryproject/features/purchases/domain/entity/purchase_entity.dart';
 import 'package:tryproject/features/purchases/domain/use_case/GetPurchasesByUserIdUsecase.dart';
 import 'package:tryproject/features/purchases/domain/use_case/create_purchase_usecase.dart';
+import 'package:tryproject/features/purchases/domain/use_case/getArtist_sales_usecase.dart';
+import 'package:tryproject/features/purchases/domain/use_case/update_status_usecase.dart';
 
 part 'purchase_event.dart';
 part 'purchase_state.dart';
@@ -13,18 +15,42 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
   final CreatePurchaseUsecase _createPurchaseUsecase;
   final GetPurchasesByUserIdUsecase _getPurchasesByUserIdUsecase;
   final GetArtworkByIdUsecase _getArtworkByIdUsecase;
+  final GetArtistSalesUsecase _getArtistSalesUsecase;
+  final UpdatePurchaseStatusUseCase _updatePurchaseStatusUseCase;
 
   PurchaseBloc({
+    required UpdatePurchaseStatusUseCase updatePurchaseStatusUseCase,
     required CreatePurchaseUsecase createPurchaseUsecase,
     required GetPurchasesByUserIdUsecase getPurchasesByUserIdUsecase,
     required GetArtworkByIdUsecase getArtworkByIdUsecase,
+    required GetArtistSalesUsecase getArtistSalesUsecase,
   })  : _createPurchaseUsecase = createPurchaseUsecase,
         _getPurchasesByUserIdUsecase = getPurchasesByUserIdUsecase,
         _getArtworkByIdUsecase = getArtworkByIdUsecase,
+        _getArtistSalesUsecase = getArtistSalesUsecase,
+        _updatePurchaseStatusUseCase = updatePurchaseStatusUseCase,
         super(PurchaseState.initial()) {
     on<CreatePurchaseEvent>(_onCreatePurchase);
     on<FetchPurchasesByUserId>(_onFetchPurchasesByUserId);
     on<FetchArtworkById>(_onFetchArtworkById);
+    on<FetchArtistSales>(_onFetchArtistSales);
+    on<UpdatePurchaseStatusEvent>(_onUpdatePurchaseStatus);
+  }
+
+  // Fetch artist sales
+  Future<void> _onFetchArtistSales(
+    FetchArtistSales event,
+    Emitter<PurchaseState> emit,
+  ) async {
+    emit(state.copyWith(isLoading: true));
+
+    final result = await _getArtistSalesUsecase.call(event.artistId);
+
+    result.fold(
+      (failure) =>
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (sales) => emit(state.copyWith(isLoading: false, artistSales: sales)),
+    );
   }
 
   // Fetch purchases by user ID
@@ -37,10 +63,22 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     final result = await _getPurchasesByUserIdUsecase.call(event.userId);
 
     result.fold(
-        (failure) => emit(
-            state.copyWith(isLoading: false, errorMessage: failure.message)),
-        (purchases) =>
-            emit(state.copyWith(isLoading: false, purchases: purchases)));
+      (failure) {
+        print("API Error: ${failure.message}");
+
+        emit(state.copyWith(
+            isLoading: false, purchases: [], errorMessage: failure.message));
+      },
+      (purchases) {
+        print("Purchases fetched: ${purchases.length}");
+        for (var purchase in purchases) {
+          print(
+              "Purchase ID: ${purchase.purchaseId}, Title: ${purchase.title}");
+        }
+
+        emit(state.copyWith(isLoading: false, purchases: purchases));
+      },
+    );
   }
 
   // Fetch artwork details when the event is triggered
@@ -91,6 +129,43 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
           isSuccess: true,
           purchaseId: purchaseId,
           isOtpSent: true,
+        ));
+      },
+    );
+  }
+
+  Future<void> _onUpdatePurchaseStatus(
+    UpdatePurchaseStatusEvent event,
+    Emitter<PurchaseState> emit,
+  ) async {
+    emit(state.copyWith(isLoading: true));
+
+    final result =
+        await _updatePurchaseStatusUseCase.call(event.purchaseId, event.status);
+
+    result.fold(
+      (failure) =>
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (_) {
+        // Update the purchase in the list
+        final updatedPurchases = state.purchases?.map((purchase) {
+          if (purchase.purchaseId == event.purchaseId) {
+            return purchase.copyWith(status: event.status);
+          }
+          return purchase;
+        }).toList();
+
+        final updatedSales = state.artistSales?.map((sale) {
+          if (sale.purchaseId == event.purchaseId) {
+            return sale.copyWith(status: event.status);
+          }
+          return sale;
+        }).toList();
+
+        emit(state.copyWith(
+          isLoading: false,
+          purchases: updatedPurchases,
+          artistSales: updatedSales,
         ));
       },
     );

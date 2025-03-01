@@ -14,7 +14,6 @@ import 'package:tryproject/features/artwork/domain/use_case/update_artwork_useca
 import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
 import 'package:tryproject/features/profiles/presentation/view_model/upload_edit/artwork_crud_bloc.dart';
 import 'package:tryproject/features/purchases/domain/entity/purchase_entity.dart';
-import 'package:tryproject/features/purchases/domain/use_case/GetPurchasesByUserIdUsecase.dart';
 import 'package:tryproject/features/saved_artwork/domain/entity/save_artwork_entity.dart';
 import 'package:tryproject/features/saved_artwork/domain/use_case/fetch_saved_artwork_by_userid.dart';
 import 'package:tryproject/features/user-notification/domain/entity/notification_entity.dart';
@@ -24,7 +23,6 @@ part 'profile_event.dart';
 part 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  final GetPurchasesByUserIdUsecase _getPurchasesByUserIdUsecase;
   final ArtworkCrudBloc _artworkCrudBloc;
   final GetArtworksByUseridUsecase _getArtworksByUseridUsecase;
   final GetArtworkByIdUsecase _getArtworkByIdUsecase;
@@ -39,13 +37,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required GetArtworksByUseridUsecase getArtworksByUseridUsecase,
     required ArtworkCrudBloc artworkCrudBloc,
     required GetArtworkByIdUsecase getArtworkByIdUsecase,
-    required GetPurchasesByUserIdUsecase getPurchasesByUserIdUsecase,
     required DeleteArtworkByIdUseCase deleteArtworkByIdUseCase,
     required GetSavedCollectionUsecase getSavedCollectionUsecase,
     required UpdateArtworkUsecase updateArtworkUsecase,
     required GetNotificationsByUserIdUsecase getNotificationsByUserIdUsecase,
-  })  : _getPurchasesByUserIdUsecase = getPurchasesByUserIdUsecase,
-        _artworkCrudBloc = artworkCrudBloc,
+  })  : _artworkCrudBloc = artworkCrudBloc,
         _getArtworksByUseridUsecase = getArtworksByUseridUsecase,
         _getArtworkByIdUsecase = getArtworkByIdUsecase,
         _deleteArtworkByIdUseCase = deleteArtworkByIdUseCase,
@@ -54,10 +50,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         _artworkBloc = artwork_bloc,
         _getNotificationsByUserIdUsecase = getNotificationsByUserIdUsecase,
         super(ProfileState.initial()) {
-    on<FetchPurchasesByUserId>(_onFetchPurchasesByUserId);
     on<GetCollection>(_onGetCollection);
     on<UpdateArtworkEvent>(_onUpdateArtworkEvent);
-
     on<FetchArtworkByUserID>(_onFetchArtworksByUserId);
     on<FetchArtworkById>(_onFetchArtworkById);
     on<DeleteArtworkById>(_onDeleteArtworkById);
@@ -177,28 +171,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       },
       (collection) {
         emit(state.copyWith(isLoading: false, collection: collection));
-      },
-    );
-  }
-
-  // Fetch purchases by user ID
-  Future<void> _onFetchPurchasesByUserId(
-    FetchPurchasesByUserId event,
-    Emitter<ProfileState> emit,
-  ) async {
-    emit(state.copyWith(isLoading: true));
-
-    final result = await _getPurchasesByUserIdUsecase.call(event.userId);
-
-    result.fold(
-      (failure) {
-        print("API Error: ${failure.message}");
-
-        emit(state.copyWith(
-            isLoading: false, purchases: [], errorMessage: failure.message));
-      },
-      (purchases) {
-        emit(state.copyWith(isLoading: false, purchases: purchases));
       },
     );
   }

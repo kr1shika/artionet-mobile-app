@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tryproject/app/di/di.dart';
+import 'package:tryproject/app/shared_prefs/token_shared_prefs.dart';
 import 'package:tryproject/features/artwork/presentation/view/details_view.dart';
 import 'package:tryproject/features/artwork/presentation/view/upload_artwork_view.dart';
 import 'package:tryproject/features/profiles/presentation/view/artwork-crud/artwork_details.dart';
@@ -17,10 +19,21 @@ class CustomerProfileView extends StatefulWidget {
 
 class CustomerProfileViewState extends State<CustomerProfileView> {
   String? selectedArtworkId;
+  String? userId;
+
+  Future<void> _loadUserId() async {
+    final tokenSharedPrefs = getIt<TokenSharedPrefs>();
+    String? storedUserId = tokenSharedPrefs.getUserId();
+    setState(() {
+      userId = storedUserId;
+    });
+    print(" CUstomer view page User ID: $userId");
+  }
 
   @override
   void initState() {
     super.initState();
+    _loadUserId();
     final profileBloc = context.read<profile.ProfileBloc>();
 
     // Fetch uploaded and saved artworks when the profile screen loads
@@ -37,6 +50,16 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white, // Adjust color if needed
+        elevation: 0, // Removes shadow for a clean look
+        title: const Text(
+          "Profile",
+          style: TextStyle(color: Colors.black, fontSize: 20),
+        ),
+        centerTitle: true,
+        actions: [_buildSettingsMenu()], // Add the settings button here
+      ),
       body: SafeArea(
         child: selectedArtworkId == null
             ? DefaultTabController(
@@ -63,12 +86,12 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                     const SizedBox(height: 3),
                     ElevatedButton(
                       onPressed: () {
-                        context
-                            .read<profile.ProfileBloc>()
-                            .add(profile.NavigateToUpload(
-                              context: context,
-                              destination: const UploadPage(),
-                            ));
+                        context.read<profile.ProfileBloc>().add(
+                              profile.NavigateToUpload(
+                                context: context,
+                                destination: const UploadPage(),
+                              ),
+                            );
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
@@ -132,6 +155,42 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
               ),
       ),
     );
+  }
+
+  /// Settings Button in App Bar
+  Widget _buildSettingsMenu() {
+    return PopupMenuButton<String>(
+      icon: const Icon(Icons.settings, size: 28, color: Colors.black),
+      onSelected: (String value) {
+        if (value == 'Update Profile') {
+          _updateProfile();
+        } else if (value == 'Delete Profile') {
+          _deleteProfile();
+        }
+      },
+      itemBuilder: (BuildContext context) => [
+        const PopupMenuItem<String>(
+          value: 'Update Profile',
+          child: Text('Update Profile'),
+        ),
+        const PopupMenuItem<String>(
+          value: 'Delete Profile',
+          child: Text('Delete Profile'),
+        ),
+      ],
+    );
+  }
+
+  /// Function to handle updating profile
+  void _updateProfile() {
+    print("Navigate to Update Profile Screen");
+    // TODO: Implement navigation to profile update screen
+  }
+
+  /// Function to handle deleting profile
+  void _deleteProfile() {
+    print("Trigger Delete Profile Action");
+    // TODO: Implement delete profile functionality
   }
 
   /// Builds the "Your Artworks" tab
@@ -216,15 +275,14 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
     return GestureDetector(
       onTap: () {
         if (isSavedTab) {
-          // For the "Saved" tab, navigate to DetailView using the event
           context.read<profile.ProfileBloc>().add(
                 profile.NavigateToDetailView(
                   context: context,
                   destination: DetailView(
                     artworkId: artworkId,
-                    buyerId: '679cb11ed81a6e1b96420af0',
+                    buyerId: userId ?? '',
                     isLiked: isLiked,
-                    onBack: _closeDetailView, // Pass the onBack callback
+                    showAppBar: true,
                   ),
                 ),
               );

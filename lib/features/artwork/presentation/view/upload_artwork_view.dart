@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:tryproject/app/di/di.dart';
+import 'package:tryproject/app/shared_prefs/token_shared_prefs.dart';
 import 'package:tryproject/features/profiles/presentation/view_model/upload_edit/artwork_crud_bloc.dart';
 
 class UploadPage extends StatefulWidget {
@@ -25,6 +27,23 @@ class _UploadPageState extends State<UploadPage> {
 
   File? _image;
   String? _uploadedImageName;
+
+  String? userId;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserId();
+  }
+
+  Future<void> _loadUserId() async {
+    final tokenSharedPrefs = getIt<TokenSharedPrefs>();
+    String? storedUserId = tokenSharedPrefs.getUserId();
+    setState(() {
+      userId = storedUserId;
+    });
+    print("Fetched User ID: $userId");
+  }
 
   Future<void> _checkCameraPermission() async {
     if (await Permission.camera.request().isRestricted ||
@@ -50,7 +69,13 @@ class _UploadPageState extends State<UploadPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Upload Artwork')),
+      appBar: AppBar(
+        title: const Center(child: Text('Upload Artwork')), // Centered title
+        backgroundColor: Colors.white, // AppBar background color
+        elevation: 0, // Remove shadow
+        iconTheme:
+            const IconThemeData(color: Colors.black), // Back button color
+      ),
       body: BlocListener<ArtworkCrudBloc, ArtworkCrudState>(
         listener: (context, state) {
           if (state.isSuccess && state.imageName != null) {
@@ -59,10 +84,11 @@ class _UploadPageState extends State<UploadPage> {
             });
           }
         },
-        child: Padding(
+        child: SingleChildScrollView(
+          // Make the page scrollable
           padding: const EdgeInsets.all(16.0),
           child: Form(
-            key: _artkey, // ✅ Form added and key assigned
+            key: _artkey,
             child: Column(
               children: [
                 InkWell(
@@ -93,34 +119,79 @@ class _UploadPageState extends State<UploadPage> {
                       ),
                     );
                   },
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundImage: _image != null
-                        ? FileImage(_image!)
-                        : const AssetImage('assets/images/placeholder.png')
-                            as ImageProvider,
+                  child: Container(
+                    width: 250,
+                    height: 270,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Colors.grey[200], // Light grey background
+                    ),
+                    child: _image == null
+                        ? const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.cloud_upload,
+                                  size: 50, color: Colors.grey), // Upload icon
+                              SizedBox(height: 10),
+                              Text(
+                                'Upload an image here',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          )
+                        : Image.file(_image!,
+                            fit: BoxFit.cover), // Display uploaded image
                   ),
                 ),
+                const SizedBox(height: 20),
                 TextFormField(
-                    controller: _titleController,
-                    decoration: const InputDecoration(labelText: 'Title')),
+                  controller: _titleController,
+                  decoration: const InputDecoration(
+                    labelText: 'Title',
+                    border: OutlineInputBorder(), // Add border
+                  ),
+                  autofocus: true, // Focus on input when clicked
+                ),
+                const SizedBox(height: 10),
                 TextFormField(
-                    controller: _dimensionsController,
-                    decoration: const InputDecoration(labelText: 'Dimensions')),
+                  controller: _dimensionsController,
+                  decoration: const InputDecoration(
+                    labelText: 'Dimensions',
+                    border: OutlineInputBorder(), // Add border
+                  ),
+                ),
+                const SizedBox(height: 10),
                 TextFormField(
-                    controller: _priceController,
-                    decoration: const InputDecoration(labelText: 'Price')),
+                  controller: _priceController,
+                  decoration: const InputDecoration(
+                    labelText: 'Price',
+                    border: OutlineInputBorder(), // Add border
+                  ),
+                ),
+                const SizedBox(height: 10),
                 TextFormField(
-                    controller: _mediumUsedController,
-                    decoration:
-                        const InputDecoration(labelText: 'Medium Used')),
+                  controller: _mediumUsedController,
+                  decoration: const InputDecoration(
+                    labelText: 'Medium Used',
+                    border: OutlineInputBorder(), // Add border
+                  ),
+                ),
+                const SizedBox(height: 10),
                 TextFormField(
-                    controller: _categoriesController,
-                    decoration: const InputDecoration(labelText: 'Categories')),
+                  controller: _categoriesController,
+                  decoration: const InputDecoration(
+                    labelText: 'Categories',
+                    border: OutlineInputBorder(), // Add border
+                  ),
+                ),
+                const SizedBox(height: 10),
                 TextFormField(
-                    controller: _creatorsNoteController,
-                    decoration:
-                        const InputDecoration(labelText: 'Creators Note')),
+                  controller: _creatorsNoteController,
+                  decoration: const InputDecoration(
+                    labelText: 'Creators Note',
+                    border: OutlineInputBorder(), // Add border
+                  ),
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
@@ -135,7 +206,7 @@ class _UploadPageState extends State<UploadPage> {
                               dimensions: _dimensionsController.text,
                               price: _priceController.text,
                               mediumUsed: _mediumUsedController.text,
-                              artistId: '679cb11ed81a6e1b96420af0',
+                              artistId: userId,
                               categories: 'Painting',
                               creatorsNote: _creatorsNoteController.text,
                               images: imageName,
@@ -146,16 +217,16 @@ class _UploadPageState extends State<UploadPage> {
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 42,
-                      vertical: 4,
+                      vertical: 16, // Increased vertical padding
                     ),
-                    backgroundColor: const Color.fromARGB(255, 27, 29, 30),
-                    foregroundColor: const Color(0xFFFFFFF7),
+                    backgroundColor: Colors.black, // Button background color
+                    foregroundColor: Colors.white, // Button text color
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   child: const Text(
-                    'Upload ARtwork',
+                    'Upload Artwork',
                     style: TextStyle(
                         fontFamily: 'IM_FELL_Great_Primer', fontSize: 18),
                   ),

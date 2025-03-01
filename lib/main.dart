@@ -11,9 +11,6 @@ void main() async {
 
   await initDependencies();
 
-  // var box = await Hive.openBox('userBox'); // Replace with your box name
-  // print(box.toMap());
-
   runApp(
     const App(),
   );

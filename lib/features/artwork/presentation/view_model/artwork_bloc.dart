@@ -6,6 +6,7 @@ import 'package:tryproject/core/error/failure.dart';
 import 'package:tryproject/features/artwork/domain/entity/artwork_entity.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_all_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_artwork_usecase.dart';
+import 'package:tryproject/features/artwork/domain/use_case/search_artwork_usecase.dart';
 import 'package:tryproject/features/purchases/presentation/view_model/purchase_bloc.dart';
 import 'package:tryproject/features/saved_artwork/domain/use_case/check_artwork_status_usecase.dart';
 import 'package:tryproject/features/saved_artwork/domain/use_case/remove_saved_artwork_usecase.dart';
@@ -21,12 +22,14 @@ class ArtworkBloc extends Bloc<ArtworkEvent, ArtworkState> {
   final SaveArtworkUsecase _saveArtworkUsecase;
   final RemoveSavedArtworkUsecase _removeSavedArtworkUsecase;
   final CheckArtworkStatusUsecase _checkArtworkStatusUsecase;
+  final SearchArtworksUsecase _searchArtworksUsecase;
 
   ArtworkBloc({
     required PurchaseBloc purchaseBloc,
     required GetAllArtworkUsecase getAllArtworkUsecase,
     required GetArtworkByIdUsecase getArtworkByIdUsecase,
     required SaveArtworkUsecase saveArtworkUsecase,
+    required SearchArtworksUsecase searchArtworksUsecase,
     required RemoveSavedArtworkUsecase removeSavedArtworkUsecase,
     required CheckArtworkStatusUsecase checkArtworkStatusUsecase,
   })  : _getAllArtworkUsecase = getAllArtworkUsecase,
@@ -35,10 +38,12 @@ class ArtworkBloc extends Bloc<ArtworkEvent, ArtworkState> {
         _saveArtworkUsecase = saveArtworkUsecase,
         _removeSavedArtworkUsecase = removeSavedArtworkUsecase,
         _checkArtworkStatusUsecase = checkArtworkStatusUsecase,
+        _searchArtworksUsecase = searchArtworksUsecase,
         super(ArtworkState.initial()) {
     on<FetchAllArtworks>(_onFetchAllArtworks);
     on<FetchArtworkById>(_onFetchArtworkById);
     on<SaveArtworkEvent>(_onSaveArtwork);
+    on<SearchArtworksEvent>(_onSearchArtworks);
 
     on<RemoveSavedArtworkEvent>(_onRemoveSavedArtwork);
     on<CheckArtworkStatusEvent>(_onCheckArtworkStatus);
@@ -66,13 +71,38 @@ class ArtworkBloc extends Bloc<ArtworkEvent, ArtworkState> {
   Future<void> _onFetchAllArtworks(
       FetchAllArtworks event, Emitter<ArtworkState> emit) async {
     emit(state.copyWith(isLoading: true));
+
     final result = await _getAllArtworkUsecase.call();
+
     result.fold(
-        (failure) => emit(
-            state.copyWith(isLoading: false, errorMessage: failure.message)),
-        (artworks) {
-      emit(state.copyWith(isLoading: false, artworks: artworks));
-    });
+      (failure) =>
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (artworks) {
+        print("Fetched Artworks: ${artworks.length}"); // Debugging log
+        emit(state.copyWith(isLoading: false, artworks: artworks));
+      },
+    );
+  }
+
+  Future<void> _onSearchArtworks(
+      SearchArtworksEvent event, Emitter<ArtworkState> emit) async {
+    emit(state.copyWith(isLoading: true, errorMessage: null));
+
+    final result = await _searchArtworksUsecase.call(event.query);
+
+    result.fold(
+      (failure) {
+        // Check if API returned a 404 with "No matching artworks found."
+        if (failure.message.contains("No matching artworks found")) {
+          emit(state.copyWith(
+              isLoading: false,
+              artworks: [])); // Set empty list instead of error
+        } else {
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message));
+        }
+      },
+      (artworks) => emit(state.copyWith(isLoading: false, artworks: artworks)),
+    );
   }
 
   Future<void> _onCheckArtworkStatus(

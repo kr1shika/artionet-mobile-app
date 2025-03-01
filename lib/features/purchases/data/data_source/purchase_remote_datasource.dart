@@ -42,11 +42,48 @@ class PurchaseRemoteDatasource implements IPurchaseDataSource {
         // Parse the response using the DTO
         PurchaseWithArtworkResponseDTO responseDTO =
             PurchaseWithArtworkResponseDTO.fromJson(response.data);
-        return responseDTO.data
-            .map((item) => PurchaseApiModel.fromJson(item.toJson()).toEntity())
-            .toList();
+        return PurchaseApiModel.toEntityList(responseDTO.data);
       } else {
         throw Exception('Failed to load purchases');
+      }
+    } on DioException catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  @override
+  Future<List<PurchaseEntity>> getArtistSales(String artistId) async {
+    try {
+      final response =
+          await _dio.get('${ApiEndpoints.getArtistSales}/$artistId');
+      if (response.statusCode == 200) {
+        // Parse the response using the DTO
+        PurchaseWithArtworkResponseDTO responseDTO =
+            PurchaseWithArtworkResponseDTO.fromJson(response.data);
+        return PurchaseApiModel.toEntityList(responseDTO.data);
+      } else {
+        throw Exception('Failed to load artist sales');
+      }
+    } on DioException catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  @override
+  Future<bool> updateStatus(String purchaseId, String status) async {
+    try {
+      final response = await _dio.put(
+        ApiEndpoints.updateStatus,
+        data: {
+          "purchaseId": purchaseId,
+          "status": status,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception('Failed to update purchase status');
       }
     } on DioException catch (e) {
       throw Exception(e);

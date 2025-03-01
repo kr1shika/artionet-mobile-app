@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tryproject/app/di/di.dart';
+import 'package:tryproject/app/shared_prefs/token_shared_prefs.dart';
 import 'package:tryproject/core/common/snackbar/my_snackbar.dart';
 import 'package:tryproject/features/artwork/presentation/view/details_view.dart';
 import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
@@ -17,12 +19,29 @@ class _SearchViewState extends State<SearchView> {
   final _searchFormKey = GlobalKey<FormState>();
   String? selectedArtworkId;
   final Set<String> likedArtworks = {};
+  String? userId;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserId(); // ✅ Fetch userId when the widget initializes
+  }
+
+  Future<void> _loadUserId() async {
+    final tokenSharedPrefs =
+        getIt<TokenSharedPrefs>(); // ✅ Get instance from DI
+    String? storedUserId = tokenSharedPrefs.getUserId(); // ✅ Retrieve userId
+    setState(() {
+      userId = storedUserId;
+    });
+    print(" User ID: $userId"); // ✅ Debugging
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFFFFFFF7),
+        // backgroundColor: const Color(0xFFFFFFF7),
         centerTitle: true,
         title: selectedArtworkId == null
             ? Image.asset(
@@ -65,9 +84,20 @@ class _SearchViewState extends State<SearchView> {
               if (selectedArtworkId == null) ...[
                 TextFormField(
                   controller: searchController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Search Artwork',
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.search),
+                      onPressed: () {
+                        if (_searchFormKey.currentState!.validate()) {
+                          // Dispatch the SearchArtworksEvent with the query
+                          context.read<ArtworkBloc>().add(
+                                SearchArtworksEvent(searchController.text),
+                              );
+                        }
+                      },
+                    ),
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -83,11 +113,13 @@ class _SearchViewState extends State<SearchView> {
                       if (state.isLoading) {
                         return const Center(child: CircularProgressIndicator());
                       } else if (state.errorMessage != null) {
-                        return Center(
+                        return const Center(
                           child: Text(
-                            state.errorMessage!,
-                            style: const TextStyle(
-                                color: Colors.red, fontSize: 16),
+                            // state.errorMessage!,
+                            "No artwork available",
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 4, 0, 7),
+                                fontSize: 16),
                             textAlign: TextAlign.center,
                           ),
                         );
@@ -190,8 +222,7 @@ class _SearchViewState extends State<SearchView> {
                                                         RemoveSavedArtworkEvent(
                                                           artId: artwork
                                                               .artworkId!,
-                                                          buyerId:
-                                                              '679cb11ed81a6e1b96420af0', // Replace with actual buyer ID
+                                                          buyerId: userId ?? '',
                                                         ),
                                                       );
                                                 } else {
@@ -203,8 +234,7 @@ class _SearchViewState extends State<SearchView> {
                                                         SaveArtworkEvent(
                                                           artId: artwork
                                                               .artworkId!,
-                                                          buyerId:
-                                                              '679cb11ed81a6e1b96420af0',
+                                                          buyerId: userId ?? '',
                                                         ),
                                                       );
                                                 }
@@ -229,6 +259,7 @@ class _SearchViewState extends State<SearchView> {
                   child: DetailView(
                     artworkId: selectedArtworkId!,
                     buyerId: '',
+                    showAppBar: false,
                   ),
                 ),
               ],
