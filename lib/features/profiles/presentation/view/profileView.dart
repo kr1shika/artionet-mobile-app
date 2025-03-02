@@ -5,6 +5,7 @@ import 'package:tryproject/app/shared_prefs/token_shared_prefs.dart';
 import 'package:tryproject/features/artwork/presentation/view/details_view.dart';
 import 'package:tryproject/features/artwork/presentation/view/upload_artwork_view.dart';
 import 'package:tryproject/features/profiles/presentation/view/artwork-crud/artwork_details.dart';
+import 'package:tryproject/features/profiles/presentation/view/edit_profile_form.dart'; // Import the EditProfileForm
 import 'package:tryproject/features/profiles/presentation/view_model/profile_bloc.dart'
     as profile;
 
@@ -27,7 +28,7 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
     setState(() {
       userId = storedUserId;
     });
-    print(" CUstomer view page User ID: $userId");
+    print("Customer view page User ID: $userId");
   }
 
   @override
@@ -201,9 +202,43 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
   }
 
   /// Function to handle updating profile
+  // void _updateProfile() {
+  //   final profileState = context.read<profile.ProfileBloc>().state;
+  //   if (profileState.selectedUser != null) {
+  //     showDialog(
+  //       context: context,
+  //       builder: (context) {
+  //         return EditProfileForm(
+  //           userId: profileState.selectedUser!.userId ?? '',
+  //           fullName: profileState.selectedUser!.full_name,
+  //           email: profileState.selectedUser!.email ?? '',
+  //           contactNo: profileState.selectedUser!.contact_no ?? '',
+  //           profilePic: profileState.selectedUser!.profilepic,
+  //         );
+  //       },
+  //     );
+  //   }
+  // }
+
   void _updateProfile() {
-    print("Navigate to Update Profile Screen");
-    // TODO: Implement navigation to profile update screen
+    final profileState = context.read<profile.ProfileBloc>().state;
+    if (profileState.selectedUser != null) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return BlocProvider.value(
+            value: context.read<profile.ProfileBloc>(),
+            child: EditProfileForm(
+              userId: profileState.selectedUser!.userId ?? '',
+              fullName: profileState.selectedUser!.full_name,
+              email: profileState.selectedUser!.email ?? '',
+              contactNo: profileState.selectedUser!.contact_no ?? '',
+              profilePic: profileState.selectedUser!.profilepic,
+            ),
+          );
+        },
+      );
+    }
   }
 
   /// Function to handle deleting profile

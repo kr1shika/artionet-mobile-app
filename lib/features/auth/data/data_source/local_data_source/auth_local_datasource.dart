@@ -36,7 +36,6 @@ class AuthLocalDatasource implements IAuthDataSource {
     try {
       // Convert AuthEntity to AuthHiveModel
       final authHiveModel = AuthHiveModel.fromEntity(user);
-
       await _hiveService.register(authHiveModel);
       return Future.value();
     } catch (e) {

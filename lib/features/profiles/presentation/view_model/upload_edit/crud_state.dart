@@ -1,4 +1,4 @@
-part of 'artwork_crud_bloc.dart';
+part of 'crud_bloc.dart';
 
 @immutable
 class ArtworkCrudState extends Equatable {

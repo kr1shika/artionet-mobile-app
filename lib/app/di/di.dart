@@ -30,7 +30,7 @@ import 'package:tryproject/features/auth/presentation/view_model/signup/register
 import 'package:tryproject/features/home/presentation/view_model/home_cubit.dart';
 import 'package:tryproject/features/onboard/presentation/view_model/buyer_onboard/onboard_cubit.dart';
 import 'package:tryproject/features/profiles/presentation/view_model/profile_bloc.dart';
-import 'package:tryproject/features/profiles/presentation/view_model/upload_edit/artwork_crud_bloc.dart';
+import 'package:tryproject/features/profiles/presentation/view_model/upload_edit/crud_bloc.dart';
 import 'package:tryproject/features/purchases/data/data_source/purchase_remote_datasource.dart';
 import 'package:tryproject/features/purchases/data/repository/purchase_remote_repository.dart';
 import 'package:tryproject/features/purchases/domain/use_case/GetPurchasesByUserIdUsecase.dart';
@@ -123,6 +123,8 @@ _initProfileDependencies() async {
         getNotificationsByUserIdUsecase:
             getIt<GetNotificationsByUserIdUsecase>(),
         getUserByIdUsecase: getIt<GetUserByIdUsecase>(),
+        updateProfileUseCase: getIt<UpdateProfileUseCase>(),
+        uploadImageUsecase: getIt<UploadImageUsecase>(),
       ));
 
   getIt.registerLazySingleton<GetUserByIdUsecase>(

@@ -8,8 +8,8 @@ import 'package:tryproject/features/artwork/domain/use_case/create_artwork_useca
 import 'package:tryproject/features/artwork/domain/use_case/update_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/upload_artwork_image_usecase.dart';
 
-part 'artwork_crud_event.dart';
-part 'artwork_crud_state.dart';
+part 'crud_event.dart';
+part 'crud_state.dart';
 
 class ArtworkCrudBloc extends Bloc<ArtworkCrudEvent, ArtworkCrudState> {
   final CreateArtworkUsecase _createArtworkUsecase;

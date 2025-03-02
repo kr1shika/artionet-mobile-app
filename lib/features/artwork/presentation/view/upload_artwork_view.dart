@@ -6,7 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tryproject/app/di/di.dart';
 import 'package:tryproject/app/shared_prefs/token_shared_prefs.dart';
-import 'package:tryproject/features/profiles/presentation/view_model/upload_edit/artwork_crud_bloc.dart';
+import 'package:tryproject/features/profiles/presentation/view_model/upload_edit/crud_bloc.dart';
 
 class UploadPage extends StatefulWidget {
   const UploadPage({super.key});

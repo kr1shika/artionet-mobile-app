@@ -14,7 +14,9 @@ import 'package:tryproject/features/artwork/domain/use_case/update_artwork_useca
 import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
 import 'package:tryproject/features/auth/domain/entity/auth_entity.dart';
 import 'package:tryproject/features/auth/domain/use_case/GetCurrentUserUseCase.dart';
-import 'package:tryproject/features/profiles/presentation/view_model/upload_edit/artwork_crud_bloc.dart';
+import 'package:tryproject/features/auth/domain/use_case/update_profile_usecase.dart';
+import 'package:tryproject/features/auth/domain/use_case/upload_image.dart';
+import 'package:tryproject/features/profiles/presentation/view_model/upload_edit/crud_bloc.dart';
 import 'package:tryproject/features/purchases/domain/entity/purchase_entity.dart';
 import 'package:tryproject/features/saved_artwork/domain/entity/save_artwork_entity.dart';
 import 'package:tryproject/features/saved_artwork/domain/use_case/fetch_saved_artwork_by_userid.dart';
@@ -34,9 +36,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final UpdateArtworkUsecase _updateArtworkUsecase;
   final GetNotificationsByUserIdUsecase _getNotificationsByUserIdUsecase;
   final GetUserByIdUsecase _getUserByIdUsecase;
+  final UpdateProfileUseCase _updateProfileUseCase;
+  final UploadImageUsecase _uploadImageUsecase;
 
   ProfileBloc({
     required ArtworkBloc artwork_bloc,
+    required UploadImageUsecase uploadImageUsecase,
+    required UpdateProfileUseCase updateProfileUseCase,
     required GetArtworksByUseridUsecase getArtworksByUseridUsecase,
     required ArtworkCrudBloc artworkCrudBloc,
     required GetArtworkByIdUsecase getArtworkByIdUsecase,
@@ -46,21 +52,25 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required GetNotificationsByUserIdUsecase getNotificationsByUserIdUsecase,
     required GetUserByIdUsecase getUserByIdUsecase,
   })  : _artworkCrudBloc = artworkCrudBloc,
+        _updateProfileUseCase = updateProfileUseCase,
+        _getUserByIdUsecase = getUserByIdUsecase,
         _getArtworksByUseridUsecase = getArtworksByUseridUsecase,
         _getArtworkByIdUsecase = getArtworkByIdUsecase,
         _deleteArtworkByIdUseCase = deleteArtworkByIdUseCase,
         _getSavedCollectionUsecase = getSavedCollectionUsecase,
         _updateArtworkUsecase = updateArtworkUsecase,
         _artworkBloc = artwork_bloc,
+        _uploadImageUsecase = uploadImageUsecase,
         _getNotificationsByUserIdUsecase = getNotificationsByUserIdUsecase,
-        _getUserByIdUsecase = getUserByIdUsecase,
         super(ProfileState.initial()) {
-    on<FetchUserById>(_onFetchUserById);
+    on<UploadProfileImage>(_onUploadProfileImage);
 
     on<GetCollection>(_onGetCollection);
     on<UpdateArtworkEvent>(_onUpdateArtworkEvent);
     on<FetchArtworkByUserID>(_onFetchArtworksByUserId);
     on<FetchArtworkById>(_onFetchArtworkById);
+    on<UpdateUserProfile>(_onUpdateProfileEvent);
+    on<FetchUserById>(_onFetchUserById);
     on<DeleteArtworkById>(_onDeleteArtworkById);
     on<FetchNotificationsByUserId>(_onFetchNotificationsByUserId);
 
@@ -99,17 +109,57 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     );
   }
 
-    Future<void> _onFetchUserById(
-    FetchUserById event,
+  Future<void> _onUploadProfileImage(
+    UploadProfileImage event,
     Emitter<ProfileState> emit,
   ) async {
     emit(state.copyWith(isLoading: true));
-    final Either<Failure, AuthEntity> result =
-        await _getUserByIdUsecase.call(event.userId);
+
+    final result =
+        await _uploadImageUsecase.call(uploadImageParams(file: event.file));
+
     result.fold(
-        (failure) =>
-            emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
-        (user) => emit(state.copyWith(isLoading: false, selectedUser: user)));
+      (failure) =>
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (imageName) =>
+          emit(state.copyWith(isLoading: false, uploadedImageName: imageName)),
+    );
+  }
+
+  Future<void> _onUpdateProfileEvent(
+    UpdateUserProfile event,
+    Emitter<ProfileState> emit,
+  ) async {
+    emit(state.copyWith(isLoading: true));
+
+    final result = await _updateProfileUseCase.call(UpdateProfileParams(
+      userId: event.userId,
+      fullName: event.fullName,
+      email: event.email ?? '',
+      contactNo: event.contactNo,
+      profilePic: event.profilePic,
+    ));
+
+    result.fold(
+      (failure) {
+        emit(state.copyWith(isLoading: false, errorMessage: failure.message));
+        showMySnackBar(
+          context: event.context,
+          message: "Profile update failed",
+        );
+      },
+      (updatedUser) {
+        emit(state.copyWith(
+          isLoading: false,
+          selectedUser: updatedUser,
+          isSuccess: true,
+        ));
+        showMySnackBar(
+          context: event.context,
+          message: "Profile updated successfully!",
+        );
+      },
+    );
   }
 
   void _onUpdateArtworkEvent(
@@ -248,5 +298,18 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         emit(state.copyWith(isLoading: false, notifications: notifications));
       },
     );
+  }
+
+  Future<void> _onFetchUserById(
+    FetchUserById event,
+    Emitter<ProfileState> emit,
+  ) async {
+    emit(state.copyWith(isLoading: true));
+    final Either<Failure, AuthEntity> result =
+        await _getUserByIdUsecase.call(event.userId);
+    result.fold(
+        (failure) => emit(
+            state.copyWith(isLoading: false, errorMessage: failure.message)),
+        (user) => emit(state.copyWith(isLoading: false, selectedUser: user)));
   }
 }
