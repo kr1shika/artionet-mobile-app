@@ -20,8 +20,10 @@ import 'package:tryproject/features/auth/data/data_source/local_data_source/auth
 import 'package:tryproject/features/auth/data/data_source/remote_data_source/auth_remote_datasource.dart';
 import 'package:tryproject/features/auth/data/repository/auth_local_repository/auth_local_repository.dart';
 import 'package:tryproject/features/auth/data/repository/auth_remote_repository/auth_remote_repository.dart';
+import 'package:tryproject/features/auth/domain/use_case/GetCurrentUserUseCase.dart';
 import 'package:tryproject/features/auth/domain/use_case/login_usecase.dart';
 import 'package:tryproject/features/auth/domain/use_case/register_user_usecase.dart';
+import 'package:tryproject/features/auth/domain/use_case/update_profile_usecase.dart';
 import 'package:tryproject/features/auth/domain/use_case/upload_image.dart';
 import 'package:tryproject/features/auth/presentation/view_model/login/login_bloc.dart';
 import 'package:tryproject/features/auth/presentation/view_model/signup/register_bloc.dart';
@@ -120,7 +122,20 @@ _initProfileDependencies() async {
         updateArtworkUsecase: getIt<UpdateArtworkUsecase>(),
         getNotificationsByUserIdUsecase:
             getIt<GetNotificationsByUserIdUsecase>(),
+        getUserByIdUsecase: getIt<GetUserByIdUsecase>(),
       ));
+
+  getIt.registerLazySingleton<GetUserByIdUsecase>(
+    () => GetUserByIdUsecase(
+      authRepository: getIt<AuthRemoteRepository>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<UpdateProfileUseCase>(
+    () => UpdateProfileUseCase(
+      getIt<AuthRemoteRepository>(),
+    ),
+  );
 }
 
 _initNotificationDependencies() async {

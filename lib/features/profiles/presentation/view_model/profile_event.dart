@@ -170,3 +170,13 @@ class FetchNotificationsByUserId extends ProfileEvent {
   @override
   List<Object?> get props => [userId];
 }
+
+// Adding FetchUserById event
+class FetchUserById extends ProfileEvent {
+  final String userId;
+
+  const FetchUserById(this.userId);
+
+  @override
+  List<Object> get props => [userId];
+}

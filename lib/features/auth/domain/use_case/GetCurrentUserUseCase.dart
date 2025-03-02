@@ -4,13 +4,13 @@ import 'package:tryproject/core/error/failure.dart';
 import 'package:tryproject/features/auth/domain/entity/auth_entity.dart';
 import 'package:tryproject/features/auth/domain/repository/auth_repository.dart';
 
-class GetCurrentUserUseCase implements UsecaseWithoutParams<AuthEntity> {
-  final IAuthRepository repository;
+class GetUserByIdUsecase implements UsecaseWithParams<AuthEntity, String> {
+  final IAuthRepository authRepository;
 
-  GetCurrentUserUseCase(this.repository);
+  GetUserByIdUsecase({required this.authRepository});
 
   @override
-  Future<Either<Failure, AuthEntity>> call() {
-    return repository.getCurrentUser();
+  Future<Either<Failure, AuthEntity>> call(String id) {
+    return authRepository.getCurrentUser();
   }
 }

@@ -9,11 +9,13 @@ class ProfileState extends Equatable {
 
   final List<ArtworkEntity> artworks;
   final ArtworkEntity? selectedArtwork;
+  final AuthEntity? selectedUser;
 
   final String errorMessage;
   final List<NotificationEntity> notifications;
 
   const ProfileState({
+    this.selectedUser,
     required this.isLoading,
     required this.purchases,
     required this.errorMessage,
@@ -33,6 +35,7 @@ class ProfileState extends Equatable {
         isSuccess: false,
         artworks: [],
         selectedArtwork: null,
+        selectedUser: null,
         notifications: [],
         collection: []);
   }
@@ -42,6 +45,7 @@ class ProfileState extends Equatable {
     bool? isLoading,
     List<PurchaseEntity>? purchases,
     List<ArtworkEntity>? artworks,
+    AuthEntity? selectedUser,
     String? errorMessage,
     bool? isSuccess,
     ArtworkEntity? selectedArtwork,
@@ -52,6 +56,7 @@ class ProfileState extends Equatable {
       isLoading: isLoading ?? this.isLoading,
       purchases: purchases ?? this.purchases,
       artworks: artworks ?? this.artworks,
+      selectedUser: selectedUser ?? this.selectedUser,
       errorMessage: errorMessage ?? this.errorMessage,
       isSuccess: isSuccess ?? this.isSuccess,
       selectedArtwork: selectedArtwork ?? this.selectedArtwork,
@@ -69,6 +74,7 @@ class ProfileState extends Equatable {
         artworks,
         selectedArtwork,
         collection,
-        notifications
+        notifications,
+        selectedUser
       ];
 }

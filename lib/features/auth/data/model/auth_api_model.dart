@@ -12,12 +12,13 @@ class AuthApiModel extends Equatable {
   final String contact_no;
   final String? password;
   final String role;
-  final String? profilepic;
+  late String? profilepic;
   final String? artistname;
   final String? desc;
   final String email;
+  final List<String>? followers;
 
-  const AuthApiModel(
+  AuthApiModel(
       {this.id,
       required this.full_name,
       required this.contact_no,
@@ -26,21 +27,29 @@ class AuthApiModel extends Equatable {
       required this.profilepic,
       required this.artistname,
       required this.desc,
-      required this.email});
+      required this.email,
+      this.followers});
 
-  factory AuthApiModel.fromJson(Map<String, dynamic> json) =>
-      _$AuthApiModelFromJson(json);
+  factory AuthApiModel.fromJson(Map<String, dynamic> json) {
+    String? profilePicUrl = json['profilepic'];
+    if (profilePicUrl != null && !profilePicUrl.startsWith('http')) {
+      profilePicUrl = 'http://10.0.2.2:5055/$profilePicUrl';
+    }
+    return _$AuthApiModelFromJson(json)..profilepic = profilePicUrl;
+  }
 
   Map<String, dynamic> toJson() => _$AuthApiModelToJson(this);
 
   AuthEntity toEntity() {
     return AuthEntity(
+        profilepic: profilepic,
         userId: id,
         full_name: full_name,
         contact_no: contact_no,
         password: password ?? '',
         role: role,
-        email: email);
+        email: email,
+        followers: followers ?? []);
   }
 
   factory AuthApiModel.fromEntity(AuthEntity entity) {
@@ -52,7 +61,8 @@ class AuthApiModel extends Equatable {
         profilepic: entity.profilepic,
         artistname: entity.artistname,
         desc: entity.desc,
-        email: entity.email);
+        email: entity.email,
+        followers: entity.followers);
   }
 
   @override
@@ -64,5 +74,7 @@ class AuthApiModel extends Equatable {
         email,
         password,
         role,
+        followers,
+        profilepic,
       ];
 }
