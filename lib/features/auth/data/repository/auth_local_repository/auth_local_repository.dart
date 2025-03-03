@@ -55,4 +55,10 @@ class AuthLocalRepository implements IAuthRepository {
     // TODO: implement updateProfile
     throw UnimplementedError();
   }
+
+  @override
+  Future<Either<Failure, void>> deleteUser(String userId) {
+    // TODO: implement deleteUser
+    throw UnimplementedError();
+  }
 }

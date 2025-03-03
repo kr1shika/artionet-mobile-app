@@ -54,4 +54,10 @@ class AuthLocalDatasource implements IAuthDataSource {
     // TODO: implement updateProfile
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> deleteUser(String userId) {
+    // TODO: implement deleteUser
+    throw UnimplementedError();
+  }
 }

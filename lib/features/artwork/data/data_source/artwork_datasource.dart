@@ -11,4 +11,5 @@ abstract interface class IArtworkDataSource {
   Future<void> deleteArtworkbyId(String id);
   Future<ArtworkEntity> updateArtwork(ArtworkEntity artwork);
   Future<List<ArtworkEntity>> searchArtworks(String query);
+  Future<void> saveAllArtworks(List<ArtworkEntity> artworks);
 }

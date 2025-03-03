@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tryproject/features/profiles/presentation/view_model/upload_edit/crud_bloc.dart';
+import 'package:tryproject/main.dart';
 
 class EditProfileForm extends StatefulWidget {
   final String userId;
@@ -57,18 +58,28 @@ class _EditProfileFormState extends State<EditProfileForm> {
       setState(() {
         _selectedImage = File(pickedFile.path);
       });
+
+      // Upload the image using the UploadProfileImage event
+      context.read<ArtworkCrudBloc>().add(
+            UploadProfileImage(file: _selectedImage!),
+          );
     }
   }
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
+      // Get the uploaded image name from the state
+      final state = context.read<ArtworkCrudBloc>().state;
+      final imageName = state.uploadedImageName;
+
+      // Trigger the UpdateUserProfile event
       context.read<ArtworkCrudBloc>().add(
             UpdateUserProfile(
               userId: widget.userId,
               fullName: _fullNameController.text,
               email: _emailController.text,
               contactNo: _contactNoController.text,
-              profilePic: widget.profilePic,
+              profilePic: imageName ?? widget.profilePic,
               context: context,
             ),
           );
@@ -92,6 +103,71 @@ class _EditProfileFormState extends State<EditProfileForm> {
         color: Colors.red,
       );
     }
+  }
+
+  void _showDeleteConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+            side: const BorderSide(
+              color: Colors.red, // Red border for the dialog
+              width: 1,
+            ),
+          ),
+          title: const Text(
+            "Confirm Deletion",
+            style: TextStyle(
+              color: Colors.red,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: const Text(
+            "Are you sure you want to delete your account? This action is permanent and you will lose all your data.",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text(
+                "Cancel",
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                // Dispatch the DeleteUserById event
+                widget.artworkCrudBloc.add(
+                    DeleteUserById(userId: widget.userId, context: context));
+
+                // Show confirmation snackbar
+                showMySnackBar(
+                  context: context,
+                  message: "Account deleted successfully!",
+                  color: Colors.red,
+                );
+
+                // Exit the app
+                Future.delayed(const Duration(seconds: 2), () {
+                  RestartWidget.restartApp(context);
+                });
+              },
+              child: const Text(
+                "Delete",
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -121,11 +197,10 @@ class _EditProfileFormState extends State<EditProfileForm> {
                 "Update Profile",
                 style: TextStyle(
                   fontSize: 20,
-                  // fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 25),
               GestureDetector(
                 onTap: _pickImage,
                 child: CircleAvatar(
@@ -164,6 +239,26 @@ class _EditProfileFormState extends State<EditProfileForm> {
               ElevatedButton(
                 onPressed: _submitForm,
                 child: const Text("Save Changes"),
+              ),
+              const SizedBox(height: 20),
+              // Delete Account Button
+              SizedBox(
+                width: 150, // Smaller button width
+                child: ElevatedButton(
+                  onPressed: _showDeleteConfirmationDialog,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Colors.red, // Red background for the button
+                    foregroundColor: Colors.white, // White text color
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  child: const Text(
+                    "Delete Account",
+                    style: TextStyle(
+                      fontSize: 14, // Smaller font size
+                    ),
+                  ),
+                ),
               ),
             ],
           ),

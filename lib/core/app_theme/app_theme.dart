@@ -10,10 +10,23 @@ ThemeData getApplicationTheme({required bool isDarkMode}) {
         ? ThemeConstant.darkPrimaryColor
         : ThemeConstant.lightPrimaryColor,
     fontFamily: "IM_Fell_English_SC",
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: isDarkMode
+          ? ThemeConstant.lightPrimaryColor
+          : ThemeConstant.darkPrimaryColor,
+      selectionColor: isDarkMode
+          ? ThemeConstant.lightPrimaryColor.withOpacity(0.4)
+          : ThemeConstant.darkPrimaryColor.withOpacity(0.4),
+      selectionHandleColor: isDarkMode
+          ? ThemeConstant.lightPrimaryColor
+          : ThemeConstant.darkPrimaryColor,
+    ),
     elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-      textStyle:
-          const TextStyle(fontSize: 20,fontWeight:  FontWeight.bold, fontFamily: "IM_FELL_Great_Primer"),
+      textStyle: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          fontFamily: "IM_FELL_Great_Primer"),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
       foregroundColor: isDarkMode
           ? ThemeConstant.darkPrimaryColor

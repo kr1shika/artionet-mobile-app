@@ -117,3 +117,13 @@ class UploadProfileImage extends ArtworkCrudEvent {
   @override
   List<Object?> get props => [file];
 }
+
+class DeleteUserById  extends ArtworkCrudEvent {
+  final String userId;
+  final BuildContext context;
+
+  const DeleteUserById ({required this.userId, required this.context});
+
+  @override
+  List<Object?> get props => [userId, context];
+}

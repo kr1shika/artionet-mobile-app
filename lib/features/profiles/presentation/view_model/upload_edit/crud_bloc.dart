@@ -8,6 +8,7 @@ import 'package:tryproject/features/artwork/domain/use_case/create_artwork_useca
 import 'package:tryproject/features/artwork/domain/use_case/update_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/upload_artwork_image_usecase.dart';
 import 'package:tryproject/features/auth/domain/entity/auth_entity.dart';
+import 'package:tryproject/features/auth/domain/use_case/delete_account_usecase.dart';
 import 'package:tryproject/features/auth/domain/use_case/update_profile_usecase.dart';
 import 'package:tryproject/features/auth/domain/use_case/upload_image.dart';
 
@@ -20,6 +21,7 @@ class ArtworkCrudBloc extends Bloc<ArtworkCrudEvent, ArtworkCrudState> {
   final UpdateArtworkUsecase _updateArtworkUsecase;
   final UpdateProfileUseCase _updateProfileUseCase;
   final UploadImageUsecase _uploadImageUsecase;
+  final DeleteUserByIdUseCase _deleteUserByIdUseCase;
 
   ArtworkCrudBloc({
     required UploadImageUsecase uploadImageUsecase,
@@ -27,7 +29,9 @@ class ArtworkCrudBloc extends Bloc<ArtworkCrudEvent, ArtworkCrudState> {
     required UploadArtworkUsecase uploadArtworkimageusecase,
     required CreateArtworkUsecase createArtworkUsecase,
     required UpdateArtworkUsecase updateArtworkUsecase,
+    required DeleteUserByIdUseCase deleteUserByIdUseCase,
   })  : _createArtworkUsecase = createArtworkUsecase,
+        _deleteUserByIdUseCase = deleteUserByIdUseCase,
         _uploadArtworkImageUsecase = uploadArtworkimageusecase,
         _updateArtworkUsecase = updateArtworkUsecase,
         _updateProfileUseCase = updateProfileUseCase,
@@ -35,9 +39,37 @@ class ArtworkCrudBloc extends Bloc<ArtworkCrudEvent, ArtworkCrudState> {
         super(const ArtworkCrudState.initial()) {
     on<CreateArtworkEvent>(_onCreateArtworkEvent);
     on<LoadImage>(_onLoadArtImage);
+    on<DeleteUserById>(_onDeleteUserEvent);
     on<UpdateArtworkEvent>(_onUpdateArtworkEvent);
     on<UpdateUserProfile>(_onUpdateProfileEvent);
     on<UploadProfileImage>(_onUploadProfileImage);
+  }
+  Future<void> _onDeleteUserEvent(
+    DeleteUserById event,
+    Emitter<ArtworkCrudState> emit,
+  ) async {
+    emit(state.copyWith(isLoading: true));
+
+    final result = await _deleteUserByIdUseCase.call(event.userId);
+
+    result.fold(
+      (failure) {
+        emit(state.copyWith(isLoading: false, errorMessage: failure.message));
+        showMySnackBar(
+          context: event.context,
+          message: "User deletion failed",
+        );
+      },
+      (_) {
+        emit(state.copyWith(isLoading: false, isSuccess: true));
+        showMySnackBar(
+          context: event.context,
+          message: "User deleted successfully! Logging out...",
+        );
+        Navigator.of(event.context)
+            .pushNamedAndRemoveUntil('/login', (route) => false);
+      },
+    );
   }
 
   Future<void> _onUploadProfileImage(

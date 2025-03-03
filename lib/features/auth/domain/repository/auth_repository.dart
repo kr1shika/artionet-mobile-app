@@ -15,4 +15,6 @@ abstract interface class IAuthRepository {
 
   Future<Either<Failure, AuthEntity>> getCurrentUser();
   Future<Either<Failure, AuthEntity>> updateProfile(AuthEntity artist);
+
+  Future<Either<Failure, void>> deleteUser(String userId);
 }

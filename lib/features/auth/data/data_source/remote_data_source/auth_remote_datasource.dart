@@ -164,4 +164,23 @@ class AuthRemoteDatasource implements IAuthDataSource {
       throw Exception("Unexpected error: $e");
     }
   }
+
+   @override
+  Future<void> deleteUser(String userId) async {
+    try {
+      Response response = await _dio.delete(
+        '${ApiEndpoints.deleteUser}/$userId',
+      );
+
+      if (response.statusCode == 200) {
+        return;
+      } else {
+        throw Exception("Failed to delete user: ${response.statusMessage}");
+      }
+    } on DioException catch (e) {
+      throw Exception("Dio error: ${e.message}");
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
+    }
+  }
 }

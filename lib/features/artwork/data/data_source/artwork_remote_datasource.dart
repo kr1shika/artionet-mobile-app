@@ -190,4 +190,10 @@ class ArtworkRemoteDatasource implements IArtworkDataSource {
   }
 }
 
+  @override
+  Future<void> saveAllArtworks(List<ArtworkEntity> artworks) {
+    // TODO: implement saveAllArtworks
+    throw UnimplementedError();
+  }
+
 }

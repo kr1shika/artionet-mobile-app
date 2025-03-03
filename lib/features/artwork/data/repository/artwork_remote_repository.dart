@@ -110,4 +110,10 @@ class ArtworkRemoteRepository implements IArtworkRepository {
       return Left(ApiFailure(message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> saveAllArtworks(List<ArtworkEntity> artworks) {
+    // TODO: implement saveAllArtworks
+    throw UnimplementedError();
+  }
 }

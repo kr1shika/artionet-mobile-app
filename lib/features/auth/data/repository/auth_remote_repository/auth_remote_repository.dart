@@ -61,4 +61,14 @@ class AuthRemoteRepository implements IAuthRepository {
       return Left(ApiFailure(message: e.toString()));
     }
   }
+
+    @override
+  Future<Either<Failure, void>> deleteUser(String userId) async {
+    try {
+      await _authRemoteDatasource.deleteUser(userId);
+      return const Right(null);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
+  }
 }
