@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tryproject/features/profiles/presentation/view_model/profile_bloc.dart';
+import 'package:tryproject/features/profiles/presentation/view_model/upload_edit/crud_bloc.dart';
 
 class EditProfileForm extends StatefulWidget {
   final String userId;
@@ -11,6 +11,7 @@ class EditProfileForm extends StatefulWidget {
   final String email;
   final String contactNo;
   final String? profilePic;
+  final ArtworkCrudBloc artworkCrudBloc;
 
   const EditProfileForm({
     super.key,
@@ -19,6 +20,7 @@ class EditProfileForm extends StatefulWidget {
     required this.email,
     required this.contactNo,
     this.profilePic,
+    required this.artworkCrudBloc,
   });
 
   @override
@@ -55,97 +57,133 @@ class _EditProfileFormState extends State<EditProfileForm> {
       setState(() {
         _selectedImage = File(pickedFile.path);
       });
-      context
-          .read<ProfileBloc>()
-          .add(UploadProfileImage(file: _selectedImage!));
     }
   }
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      final profileState = context.read<ProfileBloc>().state;
-      context.read<ProfileBloc>().add(
+      context.read<ArtworkCrudBloc>().add(
             UpdateUserProfile(
               userId: widget.userId,
               fullName: _fullNameController.text,
               email: _emailController.text,
               contactNo: _contactNoController.text,
-              profilePic: profileState.uploadedImageName ?? widget.profilePic,
+              profilePic: widget.profilePic,
               context: context,
             ),
           );
+
+      // Show a success snackbar
+      showMySnackBar(
+        context: context,
+        message: "Profile updated successfully!",
+        color: Colors.green,
+      );
+
+      // Navigate back after a short delay
+      Future.delayed(const Duration(seconds: 1), () {
+        Navigator.of(context).pop();
+      });
+    } else {
+      // Show an error snackbar if validation fails
+      showMySnackBar(
+        context: context,
+        message: "Please fill in all fields correctly.",
+        color: Colors.red,
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ProfileBloc, ProfileState>(
-      listener: (context, state) {
-        if (state.isSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile updated successfully!')),
-          );
-          Navigator.pop(context); // Close the dialog after successful update
-        } else if (state.errorMessage.isNotEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.errorMessage)),
-          );
-        }
-      },
-      builder: (context, state) {
-        return AlertDialog(
-          title: const Text("Update Profile"),
-          content: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  GestureDetector(
-                    onTap: _pickImage,
-                    child: CircleAvatar(
-                      radius: 50,
-                      backgroundImage: _selectedImage != null
-                          ? FileImage(_selectedImage!)
-                          : (widget.profilePic != null &&
-                                      widget.profilePic!.isNotEmpty
-                                  ? NetworkImage(widget.profilePic!)
-                                  : const AssetImage(
-                                      'assets/images/default.jpg'))
-                              as ImageProvider,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  TextFormField(
-                    controller: _fullNameController,
-                    decoration: const InputDecoration(labelText: "Full Name"),
-                    validator: (value) =>
-                        value!.isEmpty ? "Name cannot be empty" : null,
-                  ),
-                  const SizedBox(height: 10),
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(labelText: "Email"),
-                    validator: (value) =>
-                        value!.isEmpty ? "Enter a valid email" : null,
-                  ),
-                  const SizedBox(height: 10),
-                  TextFormField(
-                    controller: _contactNoController,
-                    decoration: const InputDecoration(labelText: "Contact No"),
-                    validator: (value) =>
-                        value!.isEmpty ? "Enter a valid contact number" : null,
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _submitForm,
-                    child: const Text("Save Changes"),
-                  ),
-                ],
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(25.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Image.asset(
+                'assets/images/logo.png',
+                height: 63,
+                fit: BoxFit.contain,
               ),
-            ),
+              const SizedBox(height: 4),
+              const Text(
+                "Update Profile",
+                style: TextStyle(
+                  fontSize: 20,
+                  // fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 30),
+              GestureDetector(
+                onTap: _pickImage,
+                child: CircleAvatar(
+                  radius: 80,
+                  backgroundImage: _selectedImage != null
+                      ? FileImage(_selectedImage!)
+                      : (widget.profilePic != null &&
+                                  widget.profilePic!.isNotEmpty
+                              ? NetworkImage(widget.profilePic!)
+                              : const AssetImage('assets/images/default.jpg'))
+                          as ImageProvider,
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _fullNameController,
+                decoration: const InputDecoration(labelText: "Full Name"),
+                validator: (value) =>
+                    value!.isEmpty ? "Name cannot be empty" : null,
+              ),
+              const SizedBox(height: 24),
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(labelText: "Email"),
+                validator: (value) =>
+                    value!.isEmpty ? "Enter a valid email" : null,
+              ),
+              const SizedBox(height: 24),
+              TextFormField(
+                controller: _contactNoController,
+                decoration: const InputDecoration(labelText: "Contact No"),
+                validator: (value) =>
+                    value!.isEmpty ? "Enter a valid contact number" : null,
+              ),
+              const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: _submitForm,
+                child: const Text("Save Changes"),
+              ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
+}
+
+void showMySnackBar({
+  required BuildContext context,
+  required String message,
+  Color? color,
+}) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(message),
+      backgroundColor: color ?? Colors.green,
+      duration: const Duration(seconds: 2),
+      behavior: SnackBarBehavior.floating,
+    ),
+  );
 }

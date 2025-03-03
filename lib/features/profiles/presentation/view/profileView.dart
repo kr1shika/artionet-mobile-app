@@ -5,9 +5,10 @@ import 'package:tryproject/app/shared_prefs/token_shared_prefs.dart';
 import 'package:tryproject/features/artwork/presentation/view/details_view.dart';
 import 'package:tryproject/features/artwork/presentation/view/upload_artwork_view.dart';
 import 'package:tryproject/features/profiles/presentation/view/artwork-crud/artwork_details.dart';
-import 'package:tryproject/features/profiles/presentation/view/edit_profile_form.dart'; // Import the EditProfileForm
+import 'package:tryproject/features/profiles/presentation/view/edit_profile_form.dart';
 import 'package:tryproject/features/profiles/presentation/view_model/profile_bloc.dart'
     as profile;
+import 'package:tryproject/features/profiles/presentation/view_model/upload_edit/crud_bloc.dart';
 
 class CustomerProfileView extends StatefulWidget {
   final String userId;
@@ -28,7 +29,7 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
     setState(() {
       userId = storedUserId;
     });
-    print("Customer view page User ID: $userId");
+    print(" CUstomer view page User ID: $userId");
   }
 
   @override
@@ -55,7 +56,7 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
-        actions: [_buildSettingsMenu()],
+        actions: [_buildEditProfileButton()],
         toolbarHeight: 34,
       ),
       body: SafeArea(
@@ -177,74 +178,33 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
     );
   }
 
-  /// Settings Button in App Bar
-  Widget _buildSettingsMenu() {
-    return PopupMenuButton<String>(
-      icon: const Icon(Icons.settings, size: 28, color: Colors.black),
-      onSelected: (String value) {
-        if (value == 'Update Profile') {
-          _updateProfile();
-        } else if (value == 'Delete Profile') {
-          _deleteProfile();
-        }
-      },
-      itemBuilder: (BuildContext context) => [
-        const PopupMenuItem<String>(
-          value: 'Update Profile',
-          child: Text('Update Profile'),
-        ),
-        const PopupMenuItem<String>(
-          value: 'Delete Profile',
-          child: Text('Delete Profile'),
-        ),
-      ],
+  Widget _buildEditProfileButton() {
+    return IconButton(
+      icon: const Icon(Icons.edit, size: 28, color: Colors.black),
+      onPressed: _updateProfile,
     );
   }
 
-  /// Function to handle updating profile
-  // void _updateProfile() {
-  //   final profileState = context.read<profile.ProfileBloc>().state;
-  //   if (profileState.selectedUser != null) {
-  //     showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return EditProfileForm(
-  //           userId: profileState.selectedUser!.userId ?? '',
-  //           fullName: profileState.selectedUser!.full_name,
-  //           email: profileState.selectedUser!.email ?? '',
-  //           contactNo: profileState.selectedUser!.contact_no ?? '',
-  //           profilePic: profileState.selectedUser!.profilepic,
-  //         );
-  //       },
-  //     );
-  //   }
-  // }
-
   void _updateProfile() {
     final profileState = context.read<profile.ProfileBloc>().state;
-    if (profileState.selectedUser != null) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return BlocProvider.value(
-            value: context.read<profile.ProfileBloc>(),
-            child: EditProfileForm(
+    if (profileState.selectedUser == null) return;
+
+    final artworkCrudBloc =
+        getIt<ArtworkCrudBloc>(); // Get from dependency injection
+
+    context.read<profile.ProfileBloc>().add(
+          profile.NavigateToEdit(
+            context: context,
+            destination: EditProfileForm(
               userId: profileState.selectedUser!.userId ?? '',
               fullName: profileState.selectedUser!.full_name,
               email: profileState.selectedUser!.email ?? '',
               contactNo: profileState.selectedUser!.contact_no ?? '',
               profilePic: profileState.selectedUser!.profilepic,
+              artworkCrudBloc: artworkCrudBloc, // Pass it here
             ),
-          );
-        },
-      );
-    }
-  }
-
-  /// Function to handle deleting profile
-  void _deleteProfile() {
-    print("Trigger Delete Profile Action");
-    // TODO: Implement delete profile functionality
+          ),
+        );
   }
 
   /// Builds the "Your Artworks" tab

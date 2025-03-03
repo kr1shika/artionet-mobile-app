@@ -108,6 +108,8 @@ _initArtworkCrudDependencies() async {
         createArtworkUsecase: getIt<CreateArtworkUsecase>(),
         uploadArtworkimageusecase: getIt<UploadArtworkUsecase>(),
         updateArtworkUsecase: getIt<UpdateArtworkUsecase>(),
+        uploadImageUsecase: getIt<UploadImageUsecase>(),
+        updateProfileUseCase: getIt<UpdateProfileUseCase>(),
       ));
 }
 
@@ -123,8 +125,6 @@ _initProfileDependencies() async {
         getNotificationsByUserIdUsecase:
             getIt<GetNotificationsByUserIdUsecase>(),
         getUserByIdUsecase: getIt<GetUserByIdUsecase>(),
-        updateProfileUseCase: getIt<UpdateProfileUseCase>(),
-        uploadImageUsecase: getIt<UploadImageUsecase>(),
       ));
 
   getIt.registerLazySingleton<GetUserByIdUsecase>(

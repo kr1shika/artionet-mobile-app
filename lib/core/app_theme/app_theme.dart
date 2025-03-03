@@ -9,10 +9,11 @@ ThemeData getApplicationTheme({required bool isDarkMode}) {
     scaffoldBackgroundColor: isDarkMode
         ? ThemeConstant.darkPrimaryColor
         : ThemeConstant.lightPrimaryColor,
-    fontFamily: "Inter Regular",
+    fontFamily: "IM_Fell_English_SC",
     elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-      textStyle: const TextStyle(fontSize: 18, fontFamily: "Caprasimo"),
+      textStyle:
+          const TextStyle(fontSize: 20,fontWeight:  FontWeight.bold, fontFamily: "IM_FELL_Great_Primer"),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
       foregroundColor: isDarkMode
           ? ThemeConstant.darkPrimaryColor

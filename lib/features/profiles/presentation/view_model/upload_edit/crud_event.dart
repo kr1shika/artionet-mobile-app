@@ -88,3 +88,32 @@ class LoadImage extends ArtworkCrudEvent {
     required this.file,
   });
 }
+
+class UpdateUserProfile extends ArtworkCrudEvent {
+  final String userId;
+  final String fullName;
+  final String contactNo;
+  final BuildContext context;
+  final String? profilePic;
+  final String? email;
+
+  const UpdateUserProfile(
+      {required this.userId,
+      required this.fullName,
+      required this.contactNo,
+      this.profilePic,
+      required this.context,
+      this.email});
+
+  @override
+  List<Object?> get props => [userId, fullName, contactNo, profilePic, context];
+}
+
+class UploadProfileImage extends ArtworkCrudEvent {
+  final File file;
+
+  const UploadProfileImage({required this.file});
+
+  @override
+  List<Object?> get props => [file];
+}

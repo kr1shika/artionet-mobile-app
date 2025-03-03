@@ -114,31 +114,53 @@ class AuthRemoteDatasource implements IAuthDataSource {
   @override
   Future<AuthEntity> updateProfile(AuthEntity artist) async {
     try {
-      // Get the user ID from SharedPreferences
       String? userId = _tokenSharedPrefs.getUserId();
+      print("🔍 [DEBUG] User ID from SharedPreferences: $userId");
 
-      // Prepare the data to be sent in the request
+      // Check if the profile picture is a URL (i.e., user did not update it)
+      String profilePic = artist.profilepic ?? "";
+      if (profilePic.startsWith("http://") ||
+          profilePic.startsWith("https://")) {
+        // Extract only the filename from the URL
+        Uri uri = Uri.parse(profilePic);
+        profilePic = uri.pathSegments.last; // Extracts "IMG-1738322199503.jpg"
+      }
+
       final data = {
         "full_name": artist.full_name,
         "contact_no": artist.contact_no,
         "email": artist.email,
-        "profilepic": artist.profilepic,
+        "profilepic": profilePic, // Now sending only the filename
       };
 
-      // Send the PUT request to update the user data
+      print(
+          "📤 [DEBUG] Sending request to: ${ApiEndpoints.updateProfile}/$userId");
+      print("📝 [DEBUG] Request Body: $data");
+
       Response response = await _dio.put(
         '${ApiEndpoints.updateProfile}/$userId',
         data: data,
+        options: Options(headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        }),
       );
+
+      print("✅ [DEBUG] Response Status: ${response.statusCode}");
+      print("📥 [DEBUG] Response Data: ${response.data}");
 
       if (response.statusCode == 200) {
         return AuthApiModel.fromJson(response.data).toEntity();
       } else {
-        throw Exception("Failed to update profile: ${response.statusMessage}");
+        throw Exception(
+            "❌ Failed to update profile: ${response.statusMessage}");
       }
     } on DioException catch (e) {
+      print("❌ [DEBUG] Dio Error: ${e.message}");
+      print("📥 [DEBUG] Dio Response: ${e.response?.data}");
       throw Exception("Dio error: ${e.message}");
     } catch (e) {
+      print("⚠️ [DEBUG] Unexpected Error: $e");
       throw Exception("Unexpected error: $e");
     }
   }
