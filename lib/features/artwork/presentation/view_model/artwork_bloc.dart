@@ -7,6 +7,8 @@ import 'package:tryproject/features/artwork/domain/entity/artwork_entity.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_all_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/search_artwork_usecase.dart';
+import 'package:tryproject/features/auth/domain/entity/auth_entity.dart';
+import 'package:tryproject/features/auth/domain/use_case/GetUserByIdUseCase.dart';
 import 'package:tryproject/features/purchases/presentation/view_model/purchase_bloc.dart';
 import 'package:tryproject/features/saved_artwork/domain/use_case/check_artwork_status_usecase.dart';
 import 'package:tryproject/features/saved_artwork/domain/use_case/remove_saved_artwork_usecase.dart';
@@ -23,6 +25,8 @@ class ArtworkBloc extends Bloc<ArtworkEvent, ArtworkState> {
   final RemoveSavedArtworkUsecase _removeSavedArtworkUsecase;
   final CheckArtworkStatusUsecase _checkArtworkStatusUsecase;
   final SearchArtworksUsecase _searchArtworksUsecase;
+  final GetUserByIdUsecase _getUserByIdUsecase;
+
 
   ArtworkBloc({
     required PurchaseBloc purchaseBloc,
@@ -32,6 +36,7 @@ class ArtworkBloc extends Bloc<ArtworkEvent, ArtworkState> {
     required SearchArtworksUsecase searchArtworksUsecase,
     required RemoveSavedArtworkUsecase removeSavedArtworkUsecase,
     required CheckArtworkStatusUsecase checkArtworkStatusUsecase,
+    required GetUserByIdUsecase getUserByIdUsecase, 
   })  : _getAllArtworkUsecase = getAllArtworkUsecase,
         _getArtworkByIdUsecase = getArtworkByIdUsecase,
         _purchaseBloc = purchaseBloc,
@@ -39,7 +44,10 @@ class ArtworkBloc extends Bloc<ArtworkEvent, ArtworkState> {
         _removeSavedArtworkUsecase = removeSavedArtworkUsecase,
         _checkArtworkStatusUsecase = checkArtworkStatusUsecase,
         _searchArtworksUsecase = searchArtworksUsecase,
+        _getUserByIdUsecase = getUserByIdUsecase,
         super(ArtworkState.initial()) {
+            on<FetchUserById>(_onFetchUserById); 
+
     on<FetchAllArtworks>(_onFetchAllArtworks);
     on<FetchArtworkById>(_onFetchArtworkById);
     on<SaveArtworkEvent>(_onSaveArtwork);
@@ -67,6 +75,25 @@ class ArtworkBloc extends Bloc<ArtworkEvent, ArtworkState> {
     );
     add(FetchAllArtworks());
   }
+
+  Future<void> _onFetchUserById(
+    FetchUserById event, Emitter<ArtworkState> emit) async {
+  emit(state.copyWith(isLoading: true));
+
+  final result = await _getUserByIdUsecase.call(event.userId);
+
+  result.fold(
+    (failure) => emit(state.copyWith(
+      isLoading: false,
+      errorMessage: failure.message,
+    )),
+    (user) => emit(state.copyWith(
+      isLoading: false,
+      selectedUser: user, 
+    )),
+  );
+}
+
 
   Future<void> _onFetchAllArtworks(
       FetchAllArtworks event, Emitter<ArtworkState> emit) async {

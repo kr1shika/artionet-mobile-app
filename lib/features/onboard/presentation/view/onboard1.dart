@@ -142,7 +142,7 @@ class _OnboardScreensState extends State<OnboardScreens> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'IM_FELL_DW_Pica',
-              fontSize: 25,
+              fontSize: 20,
               color: Colors.black,
             ),
           ),
@@ -173,7 +173,7 @@ class _OnboardScreensState extends State<OnboardScreens> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'IM_FELL_DW_Pica',
-              fontSize: 25,
+              fontSize: 20,
               color: Colors.black,
             ),
           ),
@@ -200,7 +200,7 @@ class _OnboardScreensState extends State<OnboardScreens> {
                 "Artionet",
                 style: TextStyle(
                   fontFamily: 'IM_FELL_DW_Pica_SC',
-                  fontSize: 35,
+                  fontSize: 25,
                   color: Colors.black,
                 ),
               ),

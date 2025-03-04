@@ -75,7 +75,7 @@ class _PurchaseViewState extends State<PurchaseView> {
                   Container(
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(3),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -84,7 +84,7 @@ class _PurchaseViewState extends State<PurchaseView> {
                             state.artworkImages!.isNotEmpty)
                           Image.network(
                             state.artworkImages!.first,
-                            height: 200,
+                            height: 270,
                             width: double.infinity,
                             fit: BoxFit.cover,
                           ),

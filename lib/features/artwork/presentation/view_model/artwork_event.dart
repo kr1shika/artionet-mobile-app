@@ -64,3 +64,12 @@ class SearchArtworksEvent extends ArtworkEvent {
   @override
   List<Object> get props => [query];
 }
+
+class FetchUserById extends ArtworkEvent {
+  final String userId;
+
+  const FetchUserById(this.userId);
+
+  @override
+  List<Object> get props => [userId];
+}

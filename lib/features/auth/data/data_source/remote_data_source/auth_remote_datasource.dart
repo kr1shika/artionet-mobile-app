@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:tryproject/app/constants/api_endpoints.dart';
 import 'package:tryproject/app/shared_prefs/token_shared_prefs.dart';
 import 'package:tryproject/features/auth/data/data_source/auth_data_source.dart';
+import 'package:tryproject/features/auth/data/dto/getArtists_dto.dart';
 import 'package:tryproject/features/auth/data/model/auth_api_model.dart';
 import 'package:tryproject/features/auth/domain/entity/auth_entity.dart';
 
@@ -165,7 +166,7 @@ class AuthRemoteDatasource implements IAuthDataSource {
     }
   }
 
-   @override
+  @override
   Future<void> deleteUser(String userId) async {
     try {
       Response response = await _dio.delete(
@@ -176,6 +177,23 @@ class AuthRemoteDatasource implements IAuthDataSource {
         return;
       } else {
         throw Exception("Failed to delete user: ${response.statusMessage}");
+      }
+    } on DioException catch (e) {
+      throw Exception("Dio error: ${e.message}");
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
+    }
+  }
+
+  @override
+  Future<List<AuthEntity>> getArtists() async {
+    try {
+      var response = await _dio.get(ApiEndpoints.getArtists);
+      if (response.statusCode == 200) {
+        GetAllArtistsDTO artistsDTO = GetAllArtistsDTO.fromJson(response.data);
+        return AuthApiModel.toEntityList(artistsDTO.data);
+      } else {
+        throw Exception("Failed to fetch artists: ${response.statusMessage}");
       }
     } on DioException catch (e) {
       throw Exception("Dio error: ${e.message}");

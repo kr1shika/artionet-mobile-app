@@ -16,6 +16,7 @@ class ApiEndpoints {
   static const String getUserById = "user/";
   static const String updateProfile = "user/update";
   static const String deleteUser = "user/delete";
+  static const String getArtists = "user/getArtists";
 
 //  ______-art work
   static const String getArtworks = "artwork/findall";

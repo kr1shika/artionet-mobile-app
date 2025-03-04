@@ -174,6 +174,7 @@ class ArtworkRemoteDatasource implements IArtworkDataSource {
     }
   }
 
+  @override
   Future<List<ArtworkEntity>> searchArtworks(String query) async {
   try {
     var response = await _dio.get("${ApiEndpoints.searchArtworks}?query=$query");

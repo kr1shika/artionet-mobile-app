@@ -13,7 +13,7 @@ import 'package:tryproject/features/artwork/domain/use_case/get_artworks_by_user
 import 'package:tryproject/features/artwork/domain/use_case/update_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
 import 'package:tryproject/features/auth/domain/entity/auth_entity.dart';
-import 'package:tryproject/features/auth/domain/use_case/GetCurrentUserUseCase.dart';
+import 'package:tryproject/features/auth/domain/use_case/GetUserByIdUseCase.dart';
 import 'package:tryproject/features/profiles/presentation/view_model/upload_edit/crud_bloc.dart';
 import 'package:tryproject/features/purchases/domain/entity/purchase_entity.dart';
 import 'package:tryproject/features/saved_artwork/domain/entity/save_artwork_entity.dart';

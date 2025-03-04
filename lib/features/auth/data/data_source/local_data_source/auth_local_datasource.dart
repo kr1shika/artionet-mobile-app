@@ -60,4 +60,10 @@ class AuthLocalDatasource implements IAuthDataSource {
     // TODO: implement deleteUser
     throw UnimplementedError();
   }
+  
+  @override
+  Future<List<AuthEntity>> getArtists() {
+    // TODO: implement getArtists
+    throw UnimplementedError();
+  }
 }

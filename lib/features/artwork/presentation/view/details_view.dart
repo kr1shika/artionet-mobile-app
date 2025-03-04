@@ -7,7 +7,7 @@ class DetailView extends StatefulWidget {
   final String artworkId;
   final String buyerId;
   final bool? isLiked;
-  final bool showAppBar; // Flag to determine if AppBar should be shown
+  final bool showAppBar;
 
   const DetailView({
     super.key,
@@ -23,6 +23,26 @@ class DetailView extends StatefulWidget {
 
 class _DetailViewState extends State<DetailView> {
   bool isFavorite = false;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+
+  //   // Initialize isFavorite based on the passed isLiked parameter
+  //   if (widget.isLiked != null) {
+  //     isFavorite = widget.isLiked!;
+  //   }
+
+  //   // Fetch artwork details and check liked status
+  //   context.read<ArtworkBloc>().add(FetchArtworkById(widget.artworkId));
+  //   if (widget.isLiked == null) {
+  //     context.read<ArtworkBloc>().add(CheckArtworkStatusEvent(
+  //           artId: widget.artworkId,
+  //           buyerId: widget.buyerId,
+
+  //         ));
+  //   }
+  // }
 
   @override
   void initState() {

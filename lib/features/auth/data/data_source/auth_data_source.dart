@@ -14,4 +14,6 @@ abstract interface class IAuthDataSource {
   Future<AuthEntity> updateProfile(AuthEntity artist);
 
   Future<void> deleteUser(String userId);
+
+  Future<List<AuthEntity>> getArtists();
 }

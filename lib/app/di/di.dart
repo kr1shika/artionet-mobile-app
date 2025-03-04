@@ -24,7 +24,7 @@ import 'package:tryproject/features/auth/data/data_source/local_data_source/auth
 import 'package:tryproject/features/auth/data/data_source/remote_data_source/auth_remote_datasource.dart';
 import 'package:tryproject/features/auth/data/repository/auth_local_repository/auth_local_repository.dart';
 import 'package:tryproject/features/auth/data/repository/auth_remote_repository/auth_remote_repository.dart';
-import 'package:tryproject/features/auth/domain/use_case/GetCurrentUserUseCase.dart';
+import 'package:tryproject/features/auth/domain/use_case/GetUserByIdUseCase.dart';
 import 'package:tryproject/features/auth/domain/use_case/delete_account_usecase.dart';
 import 'package:tryproject/features/auth/domain/use_case/login_usecase.dart';
 import 'package:tryproject/features/auth/domain/use_case/register_user_usecase.dart';
@@ -319,6 +319,7 @@ _initArtworkDependencies() async {
         removeSavedArtworkUsecase: getIt<RemoveSavedArtworkUsecase>(),
         checkArtworkStatusUsecase: getIt<CheckArtworkStatusUsecase>(),
         searchArtworksUsecase: getIt<SearchArtworksUsecase>(),
+        getUserByIdUsecase: getIt<GetUserByIdUsecase>(),
       ));
 }
 

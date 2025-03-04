@@ -77,4 +77,8 @@ class AuthApiModel extends Equatable {
         followers,
         profilepic,
       ];
+
+  static Future<List<AuthEntity>> toEntityList(List<AuthApiModel> data) async {
+    return data.map((model) => model.toEntity()).toList();
+  }
 }

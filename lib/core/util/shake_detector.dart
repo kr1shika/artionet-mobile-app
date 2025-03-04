@@ -8,7 +8,7 @@ class ShakeDetector extends StatefulWidget {
   final Widget child;
   final VoidCallback onShake;
 
-  const ShakeDetector({Key? key, required this.child, required this.onShake}) : super(key: key);
+  const ShakeDetector({super.key, required this.child, required this.onShake});
 
   @override
   _ShakeDetectorState createState() => _ShakeDetectorState();
@@ -44,7 +44,7 @@ class _ShakeDetectorState extends State<ShakeDetector> {
 
       if (acceleration > shakeThreshold) {
         DateTime now = DateTime.now();
-        if (_lastShakeTime == null || now.difference(_lastShakeTime!) > Duration(milliseconds: debounceDuration)) {
+        if (_lastShakeTime == null || now.difference(_lastShakeTime!) > const Duration(milliseconds: debounceDuration)) {
           _lastShakeTime = now;
           widget.onShake();
         }

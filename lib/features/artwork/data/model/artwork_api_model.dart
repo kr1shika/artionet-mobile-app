@@ -21,7 +21,7 @@ class ArtworkApiModel extends Equatable {
 
   ArtworkApiModel({
     this.id,
-    required this.artistId,
+    this.artistId,
     required this.title,
     required this.dimensions,
     required this.images,
