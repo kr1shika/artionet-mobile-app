@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 import 'package:tryproject/features/profiles/presentation/view_model/profile_bloc.dart';
 import 'package:tryproject/features/user-notification/domain/entity/notification_entity.dart';
+
+class ThemeProvider with ChangeNotifier {
+  bool _isDarkMode = false;
+
+  bool get isDarkMode => _isDarkMode;
+
+  void toggleTheme() {
+    _isDarkMode = !_isDarkMode;
+    notifyListeners();
+  }
+}
 
 class NotificationsView extends StatefulWidget {
   final String userId;
@@ -13,13 +26,25 @@ class NotificationsView extends StatefulWidget {
 }
 
 class NotificationsViewState extends State<NotificationsView> {
+  static const double forwardTiltThreshold = 3.0; // Adjust as needed
+
   @override
   void initState() {
     super.initState();
-    // Fetch notifications when the widget is initialized
+    _listenToGyroscope();
     context
         .read<ProfileBloc>()
         .add(FetchNotificationsByUserId(userId: widget.userId));
+  }
+
+  void _listenToGyroscope() {
+    gyroscopeEvents.listen((GyroscopeEvent event) {
+      if (event.y > forwardTiltThreshold) {
+        final themeProvider =
+            Provider.of<ThemeProvider>(context, listen: false);
+        themeProvider.toggleTheme();
+      }
+    });
   }
 
   Map<String, List<NotificationEntity>> _categorizeNotifications(
@@ -90,6 +115,10 @@ class NotificationsViewState extends State<NotificationsView> {
                   //   child:
                   // ),
                   // // List of notifications
+                  const Text(
+                    "Tilt forward to change theme",
+                    style: TextStyle(fontSize: 18),
+                  ),
                   Expanded(
                     child: ListView(
                       children: [

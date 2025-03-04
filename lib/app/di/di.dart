@@ -26,10 +26,12 @@ import 'package:tryproject/features/auth/data/repository/auth_local_repository/a
 import 'package:tryproject/features/auth/data/repository/auth_remote_repository/auth_remote_repository.dart';
 import 'package:tryproject/features/auth/domain/use_case/GetUserByIdUseCase.dart';
 import 'package:tryproject/features/auth/domain/use_case/delete_account_usecase.dart';
+import 'package:tryproject/features/auth/domain/use_case/getartists_usecase.dart';
 import 'package:tryproject/features/auth/domain/use_case/login_usecase.dart';
 import 'package:tryproject/features/auth/domain/use_case/register_user_usecase.dart';
 import 'package:tryproject/features/auth/domain/use_case/update_profile_usecase.dart';
 import 'package:tryproject/features/auth/domain/use_case/upload_image.dart';
+import 'package:tryproject/features/auth/presentation/view_model/artist/artist_bloc.dart';
 import 'package:tryproject/features/auth/presentation/view_model/login/login_bloc.dart';
 import 'package:tryproject/features/auth/presentation/view_model/signup/register_bloc.dart';
 import 'package:tryproject/features/home/presentation/view_model/home_cubit.dart';
@@ -76,6 +78,7 @@ Future<void> initDependencies() async {
   await _initArtworkCrudDependencies();
   await _initSaveArtsDependencies();
   await _initNotificationDependencies();
+  await _initArtistsDependencies();
 }
 
 _initApiService() {
@@ -129,6 +132,17 @@ _initArtworkCrudDependencies() async {
         updateProfileUseCase: getIt<UpdateProfileUseCase>(),
         deleteUserByIdUseCase: getIt<DeleteUserByIdUseCase>(),
       ));
+}
+
+_initArtistsDependencies() async {
+  getIt.registerLazySingleton<GetartistsUsecase>(
+    () => GetartistsUsecase(
+      authRepository: getIt<AuthRemoteRepository>(),
+    ),
+  );
+
+  getIt.registerFactory<ArtistBloc>(
+      () => ArtistBloc(getartistsUsecase: getIt<GetartistsUsecase>()));
 }
 
 _initProfileDependencies() async {
