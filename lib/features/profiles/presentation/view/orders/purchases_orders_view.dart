@@ -106,7 +106,7 @@ class PurchasesOrdersViewState extends State<PurchasesOrdersView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(left: 22.0, top: 8.0, bottom: 8.0),
           child: Text(title,
               style:
                   const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
@@ -117,45 +117,123 @@ class PurchasesOrdersViewState extends State<PurchasesOrdersView> {
           itemCount: items.length,
           itemBuilder: (context, index) {
             final item = items[index];
-            return Card(
-              margin: const EdgeInsets.all(8),
-              child: Column(
-                children: [
-                  item.imageUrl != null
-                      ? Image.network(
-                          item.imageUrl!,
-                          height: 150,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        )
-                      : Container(
-                          height: 150,
-                          color: Colors.grey[300],
-                          child: const Icon(
-                            Icons.image_not_supported,
-                            size: 50,
-                            color: Colors.grey,
-                          ),
-                        ),
-                  ListTile(
-                    title: Text(item.title ?? 'Unknown Art'),
-                    subtitle: Text('Status: ${item.status}'),
-                    trailing: isSales && item.status != 'Completed'
-                        ? ElevatedButton(
-                            onPressed: () {
-                              if (item.purchaseId != null) {
-                                _showStatusUpdateDialog(
-                                    context, item.purchaseId!);
-                              }
-                            },
-                            child: const Text('Update Status'),
-                          )
-                        : Text('\$${item.totalAmount}',
-                            style:
-                                const TextStyle(fontWeight: FontWeight.bold)),
+
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                // Check if the screen width is greater than 600 (tablet size)
+                final isTablet = constraints.maxWidth > 600;
+
+                return Card(
+                  margin: EdgeInsets.only(
+                    left: isTablet ? 70 : 20,
+                    right: isTablet ? 70 : 20,
+                    top: isTablet ? 0 : 0,
+                    bottom: isTablet ? 30 : 20,
                   ),
-                ],
-              ),
+                  child: Padding(
+                    padding: EdgeInsets.all(isTablet ? 0 : 0),
+                    child: isTablet
+                        ? Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: item.imageUrl != null
+                                    ? Image.network(
+                                        item.imageUrl!,
+                                        height: isTablet ? 200 : 150,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Container(
+                                        height: 150,
+                                        color: Colors.grey[300],
+                                        child: const Icon(
+                                          Icons.image_not_supported,
+                                          size: 50,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                              ),
+                              SizedBox(width: isTablet ? 30 : 10),
+                              Expanded(
+                                flex: 3,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      item.title ?? 'Unknown Art',
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text('Status: ${item.status}'),
+                                    const SizedBox(height: 8),
+                                    if (isSales && item.status != 'Completed')
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          if (item.purchaseId != null) {
+                                            _showStatusUpdateDialog(
+                                                context, item.purchaseId!);
+                                          }
+                                        },
+                                        child: const Text('Update Status'),
+                                      )
+                                    else
+                                      Text(
+                                        '\$${item.totalAmount}',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )
+                        : Column(
+                            children: [
+                              item.imageUrl != null
+                                  ? Image.network(
+                                      item.imageUrl!,
+                                      height: 150,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Container(
+                                      height: 150,
+                                      color: Colors.grey[300],
+                                      child: const Icon(
+                                        Icons.image_not_supported,
+                                        size: 50,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                              ListTile(
+                                title: Text(item.title ?? 'Unknown Art'),
+                                subtitle: Text('Status: ${item.status}'),
+                                trailing: isSales && item.status != 'Completed'
+                                    ? ElevatedButton(
+                                        onPressed: () {
+                                          if (item.purchaseId != null) {
+                                            _showStatusUpdateDialog(
+                                                context, item.purchaseId!);
+                                          }
+                                        },
+                                        child: const Text('Update Status'),
+                                      )
+                                    : Text(
+                                        '\$${item.totalAmount}',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                              ),
+                            ],
+                          ),
+                  ),
+                );
+              },
             );
           },
         ),

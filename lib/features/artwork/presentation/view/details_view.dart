@@ -77,83 +77,196 @@ class _DetailViewState extends State<DetailView> {
 
           return Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Artwork Image
-                artwork.images != null
-                    ? Image.network(artwork.images!, fit: BoxFit.cover)
-                    : const Icon(Icons.image_not_supported, size: 100),
-                const SizedBox(height: 10),
-                // Title and Like Button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        artwork.title,
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        isFavorite ? Icons.favorite : Icons.favorite_border,
-                        color: isFavorite ? Colors.red : Colors.grey,
-                      ),
-                      onPressed: () {
-                        final artworkBloc = context.read<ArtworkBloc>();
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                bool isTablet =
+                    constraints.maxWidth > 600; // Check for tablet width
 
-                        // Update the local state immediately
-                        setState(() {
-                          isFavorite = !isFavorite;
-                        });
+                return isTablet
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        // mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Artwork Image on the left
+                          Expanded(
+                            flex: 6,
+                            child: artwork.images != null
+                                ? Image.network(artwork.images!,
+                                    fit: BoxFit.cover)
+                                : const Icon(Icons.image_not_supported,
+                                    size: 100),
+                          ),
+                          const SizedBox(width: 40),
+                          // Artwork Info on the right, vertically centered
+                          Expanded(
+                            flex: 3,
+                            child: Column(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.center, // Center vertically
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Title and Like Button
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.start, // Align left
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        artwork.title,
+                                        style: const TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        isFavorite
+                                            ? Icons.favorite
+                                            : Icons.favorite_border,
+                                        color: isFavorite
+                                            ? Colors.red
+                                            : Colors.grey,
+                                      ),
+                                      onPressed: () {
+                                        final artworkBloc =
+                                            context.read<ArtworkBloc>();
 
-                        if (isFavorite) {
-                          // Like the artwork
-                          artworkBloc.add(SaveArtworkEvent(
-                            artId: widget.artworkId,
-                            buyerId: widget.buyerId,
-                          ));
-                        } else {
-                          // Unlike the artwork
-                          artworkBloc.add(RemoveSavedArtworkEvent(
-                            artId: widget.artworkId,
-                            buyerId: widget.buyerId,
-                          ));
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                // Medium and Price
-                Text('Medium: ${artwork.medium_used}'),
-                Text('Price: ${artwork.price}'),
-                const SizedBox(height: 20),
-                // Purchase Button
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      context.read<ArtworkBloc>().add(
-                            NavigateToPurchase(
-                              context: context,
-                              destination:
-                                  PurchaseView(artworkId: widget.artworkId),
+                                        // Update the local state immediately
+                                        setState(() {
+                                          isFavorite = !isFavorite;
+                                        });
+
+                                        if (isFavorite) {
+                                          // Like the artwork
+                                          artworkBloc.add(SaveArtworkEvent(
+                                            artId: widget.artworkId,
+                                            buyerId: widget.buyerId,
+                                          ));
+                                        } else {
+                                          // Unlike the artwork
+                                          artworkBloc
+                                              .add(RemoveSavedArtworkEvent(
+                                            artId: widget.artworkId,
+                                            buyerId: widget.buyerId,
+                                          ));
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
+                                // Medium and Price
+                                Text('Medium: ${artwork.medium_used}'),
+                                Text('Price: ${artwork.price}'),
+                                const SizedBox(height: 20),
+                                // Purchase Button aligned to the left
+                                ElevatedButton(
+                                  onPressed: () {
+                                    context.read<ArtworkBloc>().add(
+                                          NavigateToPurchase(
+                                            context: context,
+                                            destination: PurchaseView(
+                                                artworkId: widget.artworkId),
+                                          ),
+                                        );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 40, vertical: 12),
+                                    textStyle: const TextStyle(fontSize: 18),
+                                  ),
+                                  child: const Text('Purchase'),
+                                ),
+                              ],
                             ),
-                          );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 40, vertical: 12),
-                      textStyle: const TextStyle(fontSize: 18),
-                    ),
-                    child: const Text('Purchase'),
-                  ),
-                ),
-              ],
+                          ),
+                        ],
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Artwork Image
+                          artwork.images != null
+                              ? Image.network(artwork.images!,
+                                  fit: BoxFit.cover)
+                              : const Icon(Icons.image_not_supported,
+                                  size: 100),
+                          const SizedBox(height: 10),
+                          // Title and Like Button
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  artwork.title,
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  isFavorite
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: isFavorite ? Colors.red : Colors.grey,
+                                ),
+                                onPressed: () {
+                                  final artworkBloc =
+                                      context.read<ArtworkBloc>();
+
+                                  // Update the local state immediately
+                                  setState(() {
+                                    isFavorite = !isFavorite;
+                                  });
+
+                                  if (isFavorite) {
+                                    // Like the artwork
+                                    artworkBloc.add(SaveArtworkEvent(
+                                      artId: widget.artworkId,
+                                      buyerId: widget.buyerId,
+                                    ));
+                                  } else {
+                                    // Unlike the artwork
+                                    artworkBloc.add(RemoveSavedArtworkEvent(
+                                      artId: widget.artworkId,
+                                      buyerId: widget.buyerId,
+                                    ));
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          // Medium and Price
+                          Text('Medium: ${artwork.medium_used}'),
+                          Text('Price: ${artwork.price}'),
+                          const SizedBox(height: 20),
+                          // Purchase Button
+                          Center(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                context.read<ArtworkBloc>().add(
+                                      NavigateToPurchase(
+                                        context: context,
+                                        destination: PurchaseView(
+                                            artworkId: widget.artworkId),
+                                      ),
+                                    );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 40, vertical: 12),
+                                textStyle: const TextStyle(fontSize: 18),
+                              ),
+                              child: const Text('Purchase'),
+                            ),
+                          ),
+                        ],
+                      );
+              },
             ),
           );
         },

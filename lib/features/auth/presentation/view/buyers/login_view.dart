@@ -50,7 +50,7 @@ class _LoginViewState extends State<LoginView> {
                       "Login to Artionet",
                       style: TextStyle(
                         fontFamily: 'IM_Fell_DW_Pica_SC',
-                        fontSize: 33,
+                        fontSize: 28,
                         color: Colors.black,
                       ),
                     ),
@@ -58,7 +58,7 @@ class _LoginViewState extends State<LoginView> {
                       "welcome back",
                       style: TextStyle(
                         fontFamily: 'IM_Fell_DW_Pica_SC',
-                        fontSize: 22,
+                        fontSize: 18,
                         color: Colors.black,
                       ),
                     ),
@@ -98,7 +98,7 @@ class _LoginViewState extends State<LoginView> {
                                 ),
                                 style: const TextStyle(
                                   fontFamily: 'IM_FELL_English_SC',
-                                  fontSize: 20,
+                                  fontSize: 19,
                                   fontWeight: FontWeight.w600,
                                   color: Color.fromARGB(255, 61, 57, 57),
                                 ),
@@ -136,7 +136,7 @@ class _LoginViewState extends State<LoginView> {
                                 ),
                                 style: const TextStyle(
                                   fontFamily: 'IM_FELL_English_SC',
-                                  fontSize: 20,
+                                  fontSize: 19,
                                   fontWeight: FontWeight.w600,
                                   color: Color.fromARGB(255, 27, 29, 30),
                                 ),
@@ -171,7 +171,7 @@ class _LoginViewState extends State<LoginView> {
                               'PROCEED',
                               style: TextStyle(
                                   fontFamily: 'IM_FELL_Great_Primer',
-                                  fontSize: 18),
+                                  fontSize: 17),
                             ),
                           ),
                           const SizedBox(height: 6),

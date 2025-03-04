@@ -104,5 +104,18 @@ ThemeData getApplicationTheme({required bool isDarkMode}) {
             : ThemeConstant.darkPrimaryColor,
       ),
     ),
+    cardTheme: CardTheme(
+      color: isDarkMode ? const Color(0xFF171717) : Colors.white,
+      elevation: 4, // Controls the shadow depth
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5), // Rounded corners
+        side: const BorderSide(
+          color: Color(0xFFE1E1D5),
+          width: 0.4, // Border width
+        ),
+      ),
+      // margin: const EdgeInsets.symmetric(
+      //     horizontal: 20, vertical: 10), // Default margins
+    ),
   );
 }
