@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:tryproject/app/constants/theme_constant.dart';
 import 'package:tryproject/core/app_theme/ThemeProvider.dart';
+import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -200,105 +204,110 @@ class HomeScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 27),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                    padding: const EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          // color: state.isDarkMode
-                                          //     ? Colors.white
-                                          //     : Colors.black38,
-                                          width: 1),
-                                      borderRadius: BorderRadius.circular(1),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        LayoutBuilder(
-                                          builder: (context, constraints) {
-                                            final screenWidth =
-                                                MediaQuery.of(context)
-                                                    .size
-                                                    .width;
+                            // BlocBuilder to Display Artworks Below Search Input
+                            BlocBuilder<ArtworkBloc, ArtworkState>(
+                              builder: (context, state) {
+                                if (state.isLoading) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                } else if (state.errorMessage != null) {
+                                  return const Center(
+                                      child: Text("No artwork available"));
+                                } else {
+                                  List<dynamic> displayedArtworks = [];
 
-                                            final imageWidth = screenWidth > 600
-                                                ? 230.0
-                                                : 150.0;
-                                            final imageHeight =
-                                                screenWidth > 600
-                                                    ? 240.0
-                                                    : 170.0;
+                                  if (state.artworks.isNotEmpty) {
+                                    final random = Random();
+                                    displayedArtworks = (state.artworks
+                                          ..shuffle())
+                                        .take(2)
+                                        .toList();
+                                  }
 
-                                            return Image.asset(
-                                              'assets/images/ham.jpg',
-                                              height: imageHeight,
-                                              width: imageWidth,
-                                              fit: BoxFit.cover,
-                                            );
-                                          },
-                                        ),
-                                        const SizedBox(height: 10),
-                                        const Text(
-                                          '"Artwork 1", 2024',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontStyle: FontStyle.italic,
-                                            // color: state.isDarkMode
-                                            //     ? Colors.white
-                                            //     : Colors.black,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ],
-                                    )),
-                                const SizedBox(width: 18),
-                                Container(
-                                  padding: const EdgeInsets.all(5),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        // color: state.isDarkMode
-                                        //     ? Colors.white
-                                        //     : Colors.black38,
-                                        width: 1),
-                                    borderRadius: BorderRadius.circular(1),
-                                  ),
-                                  child: Column(
+                                  return Wrap(
+                                    alignment: WrapAlignment.center,
                                     children: [
-                                      LayoutBuilder(
-                                        builder: (context, constraints) {
-                                          final screenWidth =
-                                              MediaQuery.of(context).size.width;
+                                      for (int i = 0; i < 2; i++)
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0),
+                                          child: Column(
+                                            children: [
+                                              LayoutBuilder(
+                                                builder:
+                                                    (context, constraints) {
+                                                  final screenWidth =
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width;
+                                                  final imageHeight =
+                                                      screenWidth > 600
+                                                          ? 170.0
+                                                          : 120.0;
+                                                  final imageWidth =
+                                                      screenWidth > 600
+                                                          ? 300.0
+                                                          : 170.0;
 
-                                          final imageHeight =
-                                              screenWidth > 600 ? 240.0 : 170.0;
-                                          final imageWidth =
-                                              screenWidth > 600 ? 230.0 : 150.0;
+                                                  // Ensure artwork has an image before displaying
+                                                  final imageUrl = displayedArtworks
+                                                          .isNotEmpty
+                                                      ? displayedArtworks[i]
+                                                              .images ??
+                                                          'assets/images/placeholder.png'
+                                                      : (i == 0
+                                                          ? 'assets/images/hel.png'
+                                                          : 'assets/images/helen.png');
 
-                                          return Image.asset(
-                                            'assets/images/art1.png',
-                                            height: imageHeight,
-                                            width: imageWidth,
-                                            fit: BoxFit.cover,
-                                          );
-                                        },
-                                      ),
-                                      const SizedBox(height: 8),
-                                      const Text(
-                                        '"Gotern Mortensen", 2024',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontStyle: FontStyle.italic,
-                                          // color: state.isDarkMode
-                                          //     ? Colors.white
-                                          //     : Colors.black,
+                                                  return imageUrl
+                                                          .startsWith('http')
+                                                      ? Image.network(
+                                                          imageUrl,
+                                                          height: imageHeight,
+                                                          width: imageWidth,
+                                                          fit: BoxFit.cover,
+                                                        )
+                                                      : Image.asset(
+                                                          imageUrl,
+                                                          height: imageHeight,
+                                                          width: imageWidth,
+                                                          fit: BoxFit.cover,
+                                                        );
+                                                },
+                                              ),
+                                              const SizedBox(height: 8),
+                                              Text(
+                                                displayedArtworks.isNotEmpty
+                                                    ? '"${displayedArtworks[i].title}"'
+                                                    : '"Deities of Nepal II"',
+                                                style: TextStyle(
+                                                  fontFamily: 'IM_Fell_DW_Pica',
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width >
+                                                              600
+                                                          ? 15.0
+                                                          : 11.0,
+                                                  fontStyle: FontStyle.italic,
+                                                ),
+                                              ),
+                                              Text(
+                                                displayedArtworks.isNotEmpty
+                                                    ? 'Price: ${displayedArtworks[i].price}'
+                                                    : 'Price: N/A',
+                                                style: const TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.black54,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                        textAlign: TextAlign.center,
-                                      ),
                                     ],
-                                  ),
-                                ),
-                              ],
+                                  );
+                                }
+                              },
                             ),
                             const SizedBox(height: 8),
                             Text(

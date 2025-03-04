@@ -41,7 +41,7 @@ class PurchaseApiModel extends Equatable {
 
     // If the image URL is not a full URL, prepend the server base URL (if required)
     if (imageUrl != null && !imageUrl.startsWith('http')) {
-      imageUrl = 'http://10.0.2.2:5055/$imageUrl';
+      imageUrl = 'http://192.168.1.71:5055/$imageUrl';
     }
 
     return PurchaseApiModel(

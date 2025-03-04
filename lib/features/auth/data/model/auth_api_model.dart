@@ -33,7 +33,7 @@ class AuthApiModel extends Equatable {
   factory AuthApiModel.fromJson(Map<String, dynamic> json) {
     String? profilePicUrl = json['profilepic'];
     if (profilePicUrl != null && !profilePicUrl.startsWith('http')) {
-      profilePicUrl = 'http://10.0.2.2:5055/$profilePicUrl';
+      profilePicUrl = 'http://192.168.1.71:5055/$profilePicUrl';
     }
     return _$AuthApiModelFromJson(json)..profilepic = profilePicUrl;
   }

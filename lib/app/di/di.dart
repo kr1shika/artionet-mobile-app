@@ -270,10 +270,10 @@ _initArtworkDependencies() async {
   // usecase
   getIt.registerLazySingleton<GetAllArtworkUsecase>(
     () => GetAllArtworkUsecase(
-      remoteArtworkRepository: getIt<ArtworkRemoteRepository>(),
-      localArtworkRepository: getIt<ArtworkLocalRepository>(),
-      networkInfo: getIt<NetworkInfo>(),
-    ),
+        artworkRepository: getIt<ArtworkRemoteRepository>()),
+    // remoteArtworkRepository: getIt<ArtworkRemoteRepository>(),
+    // localArtworkRepository: getIt<ArtworkLocalRepository>(),
+    // networkInfo: getIt<NetworkInfo>()
   );
 
   getIt.registerLazySingleton<GetArtworkByIdUsecase>(

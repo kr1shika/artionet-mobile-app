@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sensors_plus/sensors_plus.dart'; // Correct package import
 import 'package:tryproject/app/di/di.dart';
 import 'package:tryproject/app/shared_prefs/token_shared_prefs.dart';
 import 'package:tryproject/core/common/snackbar/my_snackbar.dart';
@@ -21,10 +22,34 @@ class _SearchViewState extends State<SearchView> {
   final Set<String> likedArtworks = {};
   String? userId;
 
+  // Sensor variables
+  late Stream<AccelerometerEvent> _accelerometerStream;
+  bool _shakingDetected = false; // Declare _shakingDetected
+
   @override
   void initState() {
     super.initState();
-    _loadUserId(); // ✅ Fetch userId when the widget initializes
+    _loadUserId();
+    _accelerometerStream = accelerometerEvents; // Corrected stream reference
+    _accelerometerStream.listen((AccelerometerEvent event) {
+      if (mounted) {
+        // Ensure widget is still mounted before calling setState
+        if (event.x > 12 || event.y > 12 || event.z > 12) {
+          // Threshold for shake detection
+          if (!_shakingDetected) {
+            setState(() {
+              _shakingDetected = true;
+            });
+            // Triggering the FetchAllArtworks event to refresh the artworks
+            context.read<ArtworkBloc>().add(FetchAllArtworks());
+          }
+        } else {
+          setState(() {
+            _shakingDetected = false;
+          });
+        }
+      }
+    });
   }
 
   Future<void> _loadUserId() async {
@@ -38,10 +63,14 @@ class _SearchViewState extends State<SearchView> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // backgroundColor: const Color(0xFFFFFFF7),
         centerTitle: true,
         title: selectedArtworkId == null
             ? Image.asset(
@@ -91,7 +120,6 @@ class _SearchViewState extends State<SearchView> {
                       icon: const Icon(Icons.search),
                       onPressed: () {
                         if (_searchFormKey.currentState!.validate()) {
-                          // Dispatch the SearchArtworksEvent with the query
                           context.read<ArtworkBloc>().add(
                                 SearchArtworksEvent(searchController.text),
                               );
@@ -115,7 +143,6 @@ class _SearchViewState extends State<SearchView> {
                       } else if (state.errorMessage != null) {
                         return const Center(
                           child: Text(
-                            // state.errorMessage!,
                             "No artwork available",
                             style: TextStyle(
                                 color: Color.fromARGB(255, 4, 0, 7),
