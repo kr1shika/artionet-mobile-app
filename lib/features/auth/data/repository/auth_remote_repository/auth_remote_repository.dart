@@ -51,4 +51,34 @@ class AuthRemoteRepository implements IAuthRepository {
       return Left(ApiFailure(message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, AuthEntity>> updateProfile(AuthEntity artist) async {
+    try {
+      final updatedUser = await _authRemoteDatasource.updateProfile(artist);
+      return Right(updatedUser);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteUser(String userId) async {
+    try {
+      await _authRemoteDatasource.deleteUser(userId);
+      return const Right(null);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<AuthEntity>>> getArtists() async {
+    try {
+      final artists = await _authRemoteDatasource.getArtists();
+      return Right(artists);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
+  }
 }

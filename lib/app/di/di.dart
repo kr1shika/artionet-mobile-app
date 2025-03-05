@@ -1,11 +1,15 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tryproject/app/shared_prefs/token_shared_prefs.dart';
+import 'package:tryproject/core/common/internet_checker/internet_checker.dart';
 import 'package:tryproject/core/network/api_service.dart';
 import 'package:tryproject/core/network/hive_service.dart';
+import 'package:tryproject/features/artwork/data/data_source/artwork_local_data_source.dart';
 import 'package:tryproject/features/artwork/data/data_source/artwork_remote_datasource.dart';
+import 'package:tryproject/features/artwork/data/repository/artwork_local_repository.dart';
 import 'package:tryproject/features/artwork/data/repository/artwork_remote_repository.dart';
 import 'package:tryproject/features/artwork/domain/use_case/create_artwork_usecase.dart';
 import 'package:tryproject/features/artwork/domain/use_case/deleteArtworkByIdUsecase.dart';
@@ -20,15 +24,20 @@ import 'package:tryproject/features/auth/data/data_source/local_data_source/auth
 import 'package:tryproject/features/auth/data/data_source/remote_data_source/auth_remote_datasource.dart';
 import 'package:tryproject/features/auth/data/repository/auth_local_repository/auth_local_repository.dart';
 import 'package:tryproject/features/auth/data/repository/auth_remote_repository/auth_remote_repository.dart';
+import 'package:tryproject/features/auth/domain/use_case/GetUserByIdUseCase.dart';
+import 'package:tryproject/features/auth/domain/use_case/delete_account_usecase.dart';
+import 'package:tryproject/features/auth/domain/use_case/getartists_usecase.dart';
 import 'package:tryproject/features/auth/domain/use_case/login_usecase.dart';
 import 'package:tryproject/features/auth/domain/use_case/register_user_usecase.dart';
+import 'package:tryproject/features/auth/domain/use_case/update_profile_usecase.dart';
 import 'package:tryproject/features/auth/domain/use_case/upload_image.dart';
+import 'package:tryproject/features/auth/presentation/view_model/artist/artist_bloc.dart';
 import 'package:tryproject/features/auth/presentation/view_model/login/login_bloc.dart';
 import 'package:tryproject/features/auth/presentation/view_model/signup/register_bloc.dart';
 import 'package:tryproject/features/home/presentation/view_model/home_cubit.dart';
 import 'package:tryproject/features/onboard/presentation/view_model/buyer_onboard/onboard_cubit.dart';
 import 'package:tryproject/features/profiles/presentation/view_model/profile_bloc.dart';
-import 'package:tryproject/features/profiles/presentation/view_model/upload_edit/artwork_crud_bloc.dart';
+import 'package:tryproject/features/profiles/presentation/view_model/upload_edit/crud_bloc.dart';
 import 'package:tryproject/features/purchases/data/data_source/purchase_remote_datasource.dart';
 import 'package:tryproject/features/purchases/data/repository/purchase_remote_repository.dart';
 import 'package:tryproject/features/purchases/domain/use_case/GetPurchasesByUserIdUsecase.dart';
@@ -56,19 +65,20 @@ Future<void> initDependencies() async {
   // await _initLightSensor();
   // await _initThemeBloc();
   await _initSharedPrefs();
-
+  await _initConnectivity();
+  await _initNetworkInfo();
   await _initHomeDependencies();
   await _initRegisterDependencies();
   await _initLoginDependencies();
   await _initSplashScreenDependencies();
   await _initOnboardDependencies();
-  // await _initArtistRegisterDependencies();
   await _initArtworkDependencies();
   await _initPurchaseDependencies();
   await _initProfileDependencies();
   await _initArtworkCrudDependencies();
   await _initSaveArtsDependencies();
   await _initNotificationDependencies();
+  await _initArtistsDependencies();
 }
 
 _initApiService() {
@@ -89,6 +99,18 @@ Future<void> _initSharedPrefs() async {
       () => TokenSharedPrefs(getIt<SharedPreferences>()));
 }
 
+_initConnectivity() {
+  getIt.registerLazySingleton<Connectivity>(() => Connectivity());
+}
+
+_initNetworkInfo() {
+  getIt.registerLazySingleton<NetworkInfoImpl>(
+      () => NetworkInfoImpl(getIt<Connectivity>()));
+
+  getIt.registerLazySingleton<NetworkInfo>(
+      () => NetworkInfoImpl(getIt<Connectivity>()));
+}
+
 // _initLightSensor() {
 //   getIt.registerLazySingleton<LightSensorRepository>(
 //       () => LightSensorRepositoryImpl());
@@ -106,7 +128,23 @@ _initArtworkCrudDependencies() async {
         createArtworkUsecase: getIt<CreateArtworkUsecase>(),
         uploadArtworkimageusecase: getIt<UploadArtworkUsecase>(),
         updateArtworkUsecase: getIt<UpdateArtworkUsecase>(),
+        uploadImageUsecase: getIt<UploadImageUsecase>(),
+        updateProfileUseCase: getIt<UpdateProfileUseCase>(),
+        deleteUserByIdUseCase: getIt<DeleteUserByIdUseCase>(),
       ));
+}
+
+_initArtistsDependencies() async {
+  getIt.registerLazySingleton<GetartistsUsecase>(
+    () => GetartistsUsecase(
+      authRepository: getIt<AuthRemoteRepository>(),
+    ),
+  );
+
+  getIt.registerFactory<ArtistBloc>(() => ArtistBloc(
+      getartistsUsecase: getIt<GetartistsUsecase>(),
+      getUserByIdUsecase: getIt<GetUserByIdUsecase>(),
+      getArtworksByUseridUsecase: getIt<GetArtworksByUseridUsecase>()));
 }
 
 _initProfileDependencies() async {
@@ -120,7 +158,26 @@ _initProfileDependencies() async {
         updateArtworkUsecase: getIt<UpdateArtworkUsecase>(),
         getNotificationsByUserIdUsecase:
             getIt<GetNotificationsByUserIdUsecase>(),
+        getUserByIdUsecase: getIt<GetUserByIdUsecase>(),
       ));
+
+  getIt.registerLazySingleton<GetUserByIdUsecase>(
+    () => GetUserByIdUsecase(
+      authRepository: getIt<AuthRemoteRepository>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<UpdateProfileUseCase>(
+    () => UpdateProfileUseCase(
+      getIt<AuthRemoteRepository>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<DeleteUserByIdUseCase>(
+    () => DeleteUserByIdUseCase(
+      getIt<AuthRemoteRepository>(),
+    ),
+  );
 }
 
 _initNotificationDependencies() async {
@@ -215,6 +272,13 @@ _initArtworkDependencies() async {
   getIt.registerFactory<ArtworkRemoteDatasource>(
       () => ArtworkRemoteDatasource(dio: getIt<Dio>()));
 
+  getIt.registerLazySingleton(
+    () => ArtworkLocalDataSource(getIt<HiveService>()),
+  );
+
+  getIt.registerLazySingleton(
+      () => ArtworkLocalRepository(getIt<ArtworkLocalDataSource>()));
+
   // repository
   getIt.registerLazySingleton(() => ArtworkRemoteRepository(
       remoteDataSource: getIt<ArtworkRemoteDatasource>()));
@@ -223,6 +287,9 @@ _initArtworkDependencies() async {
   getIt.registerLazySingleton<GetAllArtworkUsecase>(
     () => GetAllArtworkUsecase(
         artworkRepository: getIt<ArtworkRemoteRepository>()),
+    // remoteArtworkRepository: getIt<ArtworkRemoteRepository>(),
+    // localArtworkRepository: getIt<ArtworkLocalRepository>(),
+    // networkInfo: getIt<NetworkInfo>()
   );
 
   getIt.registerLazySingleton<GetArtworkByIdUsecase>(
@@ -268,6 +335,8 @@ _initArtworkDependencies() async {
         removeSavedArtworkUsecase: getIt<RemoveSavedArtworkUsecase>(),
         checkArtworkStatusUsecase: getIt<CheckArtworkStatusUsecase>(),
         searchArtworksUsecase: getIt<SearchArtworksUsecase>(),
+        getUserByIdUsecase: getIt<GetUserByIdUsecase>(),
+        artistBloc: getIt<ArtistBloc>(),
       ));
 }
 

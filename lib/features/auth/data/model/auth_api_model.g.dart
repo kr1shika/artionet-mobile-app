@@ -11,11 +11,14 @@ AuthApiModel _$AuthApiModelFromJson(Map<String, dynamic> json) => AuthApiModel(
       full_name: json['full_name'] as String,
       contact_no: json['contact_no'] as String,
       password: json['password'] as String?,
-      role: json['role'] as String,
+      role: json['role'] as String?,
       profilepic: json['profilepic'] as String?,
       artistname: json['artistname'] as String?,
       desc: json['desc'] as String?,
       email: json['email'] as String,
+      followers: (json['followers'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$AuthApiModelToJson(AuthApiModel instance) =>
@@ -29,4 +32,5 @@ Map<String, dynamic> _$AuthApiModelToJson(AuthApiModel instance) =>
       'artistname': instance.artistname,
       'desc': instance.desc,
       'email': instance.email,
+      'followers': instance.followers,
     };

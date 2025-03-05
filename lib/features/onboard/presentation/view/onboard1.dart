@@ -142,7 +142,7 @@ class _OnboardScreensState extends State<OnboardScreens> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'IM_FELL_DW_Pica',
-              fontSize: 25,
+              fontSize: 20,
               color: Colors.black,
             ),
           ),
@@ -173,7 +173,7 @@ class _OnboardScreensState extends State<OnboardScreens> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'IM_FELL_DW_Pica',
-              fontSize: 25,
+              fontSize: 20,
               color: Colors.black,
             ),
           ),
@@ -192,15 +192,15 @@ class _OnboardScreensState extends State<OnboardScreens> {
             children: [
               Image.asset(
                 'assets/images/logo.png',
-                width: 115,
-                height: 115,
+                width: 100,
+                height: 100,
               ),
               const SizedBox(height: 2),
               const Text(
                 "Artionet",
                 style: TextStyle(
                   fontFamily: 'IM_FELL_DW_Pica_SC',
-                  fontSize: 35,
+                  fontSize: 25,
                   color: Colors.black,
                 ),
               ),

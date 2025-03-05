@@ -3,7 +3,8 @@ class ApiEndpoints {
 
   static const Duration connectionTimeout = Duration(seconds: 1000);
   static const Duration receiveTimeout = Duration(seconds: 1000);
-  static const String baseUrl = "http://10.0.2.2:5055/api/";
+  // static const String baseUrl = "http://10.0.2.2:5055/api/";
+  static const String baseUrl = "http://192.168.1.71:5055/api/";
 
   // For iphone
   // static const String baseUrl = "http://localhost:3000/api/v1/";
@@ -12,6 +13,10 @@ class ApiEndpoints {
   static const String register = "user/register";
   static const String login = "user/login";
   static const String uploadImage = "user/uploadImage";
+  static const String getUserById = "user/";
+  static const String updateProfile = "user/update";
+  static const String deleteUser = "user/delete";
+  static const String getArtists = "user/getArtists";
 
 //  ______-art work
   static const String getArtworks = "artwork/findall";

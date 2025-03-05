@@ -40,6 +40,34 @@ class ArtworkEntity extends Equatable {
         creatorsNote = '_empy',
         isLiked = null;
 
+  ArtworkEntity copyWith({
+    String? artworkId,
+    String? title,
+    String? dimensions,
+    String? price,
+    String? medium_used,
+    String? images,
+    String? archive,
+    bool? isLiked,
+    String? artistId,
+    String? categories,
+    String? creatorsNote,
+  }) {
+    return ArtworkEntity(
+      artworkId: artworkId ?? this.artworkId,
+      title: title ?? this.title,
+      dimensions: dimensions ?? this.dimensions,
+      price: price ?? this.price,
+      medium_used: medium_used ?? this.medium_used,
+      images: images ?? this.images,
+      archive: archive ?? this.archive,
+      isLiked: isLiked ?? this.isLiked,
+      artistId: artistId ?? this.artistId,
+      categories: categories ?? this.categories,
+      creatorsNote: creatorsNote ?? this.creatorsNote,
+    );
+  }
+
   @override
   List<Object?> get props => [
         artworkId,

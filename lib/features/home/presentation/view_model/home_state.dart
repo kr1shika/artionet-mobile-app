@@ -5,9 +5,9 @@ import 'package:tryproject/app/di/di.dart';
 import 'package:tryproject/features/artwork/presentation/view/search_view.dart';
 import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
 import 'package:tryproject/features/home/presentation/view/buyer/pages/dashboard_view.dart';
-import 'package:tryproject/features/profiles/presentation/view/artistProfileView.dart';
 import 'package:tryproject/features/profiles/presentation/view/notificationView.dart';
 import 'package:tryproject/features/profiles/presentation/view/orders/purchases_orders_view.dart';
+import 'package:tryproject/features/profiles/presentation/view/profileView.dart';
 import 'package:tryproject/features/profiles/presentation/view_model/profile_bloc.dart';
 import 'package:tryproject/features/purchases/presentation/view_model/purchase_bloc.dart';
 
@@ -37,7 +37,10 @@ class HomeState extends Equatable {
     return HomeState(
       selectedIndex: selectedIndex ?? this.selectedIndex,
       views: [
-        const HomeScreen(),
+        BlocProvider(
+          create: (context) => getIt<ArtworkBloc>(),
+          child: const HomeScreen(),
+        ),
         BlocProvider(
           create: (context) => getIt<ArtworkBloc>(),
           child: const SearchView(),

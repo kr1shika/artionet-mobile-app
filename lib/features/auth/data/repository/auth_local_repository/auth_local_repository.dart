@@ -49,4 +49,22 @@ class AuthLocalRepository implements IAuthRepository {
     // TODO: implement uploadProfilePicture
     throw UnimplementedError();
   }
+
+  @override
+  Future<Either<Failure, AuthEntity>> updateProfile(AuthEntity artist) {
+    // TODO: implement updateProfile
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteUser(String userId) {
+    // TODO: implement deleteUser
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<Either<Failure, List<AuthEntity>>> getArtists() {
+    // TODO: implement getArtists
+    throw UnimplementedError();
+  }
 }

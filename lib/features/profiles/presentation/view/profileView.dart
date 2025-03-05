@@ -5,8 +5,10 @@ import 'package:tryproject/app/shared_prefs/token_shared_prefs.dart';
 import 'package:tryproject/features/artwork/presentation/view/details_view.dart';
 import 'package:tryproject/features/artwork/presentation/view/upload_artwork_view.dart';
 import 'package:tryproject/features/profiles/presentation/view/artwork-crud/artwork_details.dart';
+import 'package:tryproject/features/profiles/presentation/view/edit_profile_form.dart';
 import 'package:tryproject/features/profiles/presentation/view_model/profile_bloc.dart'
     as profile;
+import 'package:tryproject/features/profiles/presentation/view_model/upload_edit/crud_bloc.dart';
 
 class CustomerProfileView extends StatefulWidget {
   final String userId;
@@ -34,11 +36,12 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
   void initState() {
     super.initState();
     _loadUserId();
-    final profileBloc = context.read<profile.ProfileBloc>();
 
+    final profileBloc = context.read<profile.ProfileBloc>();
     // Fetch uploaded and saved artworks when the profile screen loads
     profileBloc.add(profile.FetchArtworkByUserID(userId: widget.userId));
     profileBloc.add(profile.GetCollection(buyerId: widget.userId));
+    profileBloc.add(profile.FetchUserById(widget.userId));
   }
 
   void _closeDetailView() {
@@ -51,14 +54,10 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white, // Adjust color if needed
-        elevation: 0, // Removes shadow for a clean look
-        title: const Text(
-          "Profile",
-          style: TextStyle(color: Colors.black, fontSize: 20),
-        ),
+        elevation: 0,
         centerTitle: true,
-        actions: [_buildSettingsMenu()], // Add the settings button here
+        actions: [_buildEditProfileButton()],
+        toolbarHeight: 34,
       ),
       body: SafeArea(
         child: selectedArtworkId == null
@@ -66,22 +65,45 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                 length: 2,
                 child: Column(
                   children: [
-                    const SizedBox(height: 10),
-                    ClipOval(
-                      child: Image.asset(
-                        'assets/images/krishika.jpg',
-                        height: 120,
-                        width: 120,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      "@kr1shika",
-                      style: TextStyle(
-                        fontFamily: 'IM_FELL_Great_Primer',
-                        fontSize: 26,
-                      ),
+                    BlocBuilder<profile.ProfileBloc, profile.ProfileState>(
+                      builder: (context, state) {
+                        if (state.isLoading) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                        if (state.selectedUser == null) {
+                          return const Center(child: Text("User not found"));
+                        }
+                        return Column(
+                          children: [
+                            ClipOval(
+                              child: Image.network(
+                                state.selectedUser!.profilepic ??
+                                    'assets/images/default.jpg',
+                                height: 120,
+                                width: 120,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              state.selectedUser!.full_name,
+                              style: const TextStyle(
+                                fontFamily: 'IM_FELL_Great_Primer',
+                                fontSize: 26,
+                              ),
+                            ),
+                            const SizedBox(height: 3),
+                            state.selectedUser!.followers != null &&
+                                    state.selectedUser!.followers!.isNotEmpty
+                                ? Text(
+                                    "Followers: ${state.selectedUser!.followers!.length}",
+                                    style: const TextStyle(fontSize: 16),
+                                  )
+                                : const SizedBox.shrink(),
+                          ],
+                        );
+                      },
                     ),
                     const SizedBox(height: 3),
                     ElevatedButton(
@@ -136,7 +158,6 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                               ),
                             );
                           }
-
                           return TabBarView(
                             children: [
                               _buildUploadedArtworks(state),
@@ -157,40 +178,33 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
     );
   }
 
-  /// Settings Button in App Bar
-  Widget _buildSettingsMenu() {
-    return PopupMenuButton<String>(
-      icon: const Icon(Icons.settings, size: 28, color: Colors.black),
-      onSelected: (String value) {
-        if (value == 'Update Profile') {
-          _updateProfile();
-        } else if (value == 'Delete Profile') {
-          _deleteProfile();
-        }
-      },
-      itemBuilder: (BuildContext context) => [
-        const PopupMenuItem<String>(
-          value: 'Update Profile',
-          child: Text('Update Profile'),
-        ),
-        const PopupMenuItem<String>(
-          value: 'Delete Profile',
-          child: Text('Delete Profile'),
-        ),
-      ],
+  Widget _buildEditProfileButton() {
+    return IconButton(
+      icon: const Icon(Icons.edit, size: 28, color: Colors.black),
+      onPressed: _updateProfile,
     );
   }
 
-  /// Function to handle updating profile
   void _updateProfile() {
-    print("Navigate to Update Profile Screen");
-    // TODO: Implement navigation to profile update screen
-  }
+    final profileState = context.read<profile.ProfileBloc>().state;
+    if (profileState.selectedUser == null) return;
 
-  /// Function to handle deleting profile
-  void _deleteProfile() {
-    print("Trigger Delete Profile Action");
-    // TODO: Implement delete profile functionality
+    final artworkCrudBloc =
+        getIt<ArtworkCrudBloc>(); // Get from dependency injection
+
+    context.read<profile.ProfileBloc>().add(
+          profile.NavigateToEdit(
+            context: context,
+            destination: EditProfileForm(
+              userId: profileState.selectedUser!.userId ?? '',
+              fullName: profileState.selectedUser!.full_name,
+              email: profileState.selectedUser!.email ?? '',
+              contactNo: profileState.selectedUser!.contact_no ?? '',
+              profilePic: profileState.selectedUser!.profilepic,
+              artworkCrudBloc: artworkCrudBloc, // Pass it here
+            ),
+          ),
+        );
   }
 
   /// Builds the "Your Artworks" tab
@@ -287,7 +301,6 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                 ),
               );
         } else {
-          // For the "Your Artworks" tab, update selectedArtworkId
           setState(() {
             selectedArtworkId = artworkId;
           });

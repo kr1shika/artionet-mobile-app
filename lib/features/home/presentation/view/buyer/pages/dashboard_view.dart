@@ -1,7 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:tryproject/app/constants/theme_constant.dart';
 import 'package:tryproject/core/app_theme/ThemeProvider.dart';
+import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
+import 'package:tryproject/features/home/presentation/view/buyer/pages/artists_view.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -25,8 +30,8 @@ class HomeScreen extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'IM_Fell_DW_Pica_SC',
                         fontSize: MediaQuery.of(context).size.width > 600
-                            ? 44.0
-                            : 33.0,
+                            ? 40.0
+                            : 28.0,
                         // color: state.isDarkMode ? Colors.white : Colors.black,
                       ),
                     ),
@@ -145,6 +150,8 @@ class HomeScreen extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            const SizedBox(height: 15),
+
                             Text(
                               'Discover artworks, artists, art news, and ongoing exhibitions with Artionet.',
                               style: TextStyle(
@@ -152,7 +159,7 @@ class HomeScreen extends StatelessWidget {
                                 fontSize:
                                     MediaQuery.of(context).size.width > 600
                                         ? 25.0
-                                        : 18.0,
+                                        : 15.0,
                                 // color: state.isDarkMode
                                 //     ? Colors.white
                                 //     : Colors.black,
@@ -167,151 +174,139 @@ class HomeScreen extends StatelessWidget {
                               fit: BoxFit.cover,
                             ),
                             const SizedBox(height: 20),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width > 600
-                                  ? 550.0
-                                  : 400.0,
-                              child: TextFormField(
-                                decoration: InputDecoration(
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 9.0, horizontal: 20.0),
-                                  hintText: "Search for artists/Arts ",
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(14.0),
-                                    // filled: true,
-                                    // fillColor: state.isDarkMode
-                                    //     ? Colors.grey[800]
-                                    //     : const Color(0xFFFFFFF7),
-                                  ),
-                                  // textAlign: TextAlign.center,
-                                  hintStyle: TextStyle(
-                                    fontFamily: 'IM_FELL_English_SC',
-                                    fontSize:
-                                        MediaQuery.of(context).size.width > 600
-                                            ? 20.0
-                                            : 17.0,
-                                    fontWeight: FontWeight.w600,
-                                    // color: state.isDarkMode
-                                    //     ? Colors.white
-                                    //     : const Color.fromARGB(
-                                    //         255, 158, 157, 157),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 27),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                    padding: const EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          // color: state.isDarkMode
-                                          //     ? Colors.white
-                                          //     : Colors.black38,
-                                          width: 1),
-                                      borderRadius: BorderRadius.circular(1),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        LayoutBuilder(
-                                          builder: (context, constraints) {
-                                            final screenWidth =
-                                                MediaQuery.of(context)
-                                                    .size
-                                                    .width;
+                            // ElevatedButton(
+                            //   onPressed: () {},
+                            //   style: ElevatedButton.styleFrom(
+                            //     padding: const EdgeInsets.symmetric(
+                            //         horizontal: 10, vertical: 0),
+                            //     textStyle: TextStyle(
+                            //       fontSize:
+                            //           MediaQuery.of(context).size.width > 600
+                            //               ? 20.0
+                            //               : 12.0,
+                            //       fontFamily: 'IM_FELL_English_SC',
+                            //       fontWeight: FontWeight.w600,
+                            //     ),
+                            //   ),
+                            //   child: const Text("Artists"),
+                            // ),
+                            // BlocBuilder to Display Artworks Below Search Input
+                            BlocBuilder<ArtworkBloc, ArtworkState>(
+                              builder: (context, state) {
+                                if (state.isLoading) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                } else if (state.errorMessage != null) {
+                                  return const Center(
+                                      child: Text("No artwork available"));
+                                } else {
+                                  List<dynamic> displayedArtworks = [];
 
-                                            final imageWidth = screenWidth > 600
-                                                ? 230.0
-                                                : 150.0;
-                                            final imageHeight =
-                                                screenWidth > 600
-                                                    ? 240.0
-                                                    : 170.0;
-
-                                            return Image.asset(
-                                              'assets/images/ham.jpg',
-                                              height: imageHeight,
-                                              width: imageWidth,
-                                              fit: BoxFit.cover,
-                                            );
-                                          },
-                                        ),
-                                        const SizedBox(height: 10),
-                                        const Text(
-                                          '"Artwork 1", 2024',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontStyle: FontStyle.italic,
-                                            // color: state.isDarkMode
-                                            //     ? Colors.white
-                                            //     : Colors.black,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ],
-                                    )),
-                                const SizedBox(width: 18),
-                                Container(
-                                  padding: const EdgeInsets.all(5),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        // color: state.isDarkMode
-                                        //     ? Colors.white
-                                        //     : Colors.black38,
-                                        width: 1),
-                                    borderRadius: BorderRadius.circular(1),
-                                  ),
-                                  child: Column(
+                                  if (state.artworks.isNotEmpty) {
+                                    final random = Random();
+                                    displayedArtworks = (state.artworks
+                                          ..shuffle())
+                                        .take(2)
+                                        .toList();
+                                  }
+                                  return Wrap(
+                                    alignment: WrapAlignment.center,
                                     children: [
-                                      LayoutBuilder(
-                                        builder: (context, constraints) {
-                                          final screenWidth =
-                                              MediaQuery.of(context).size.width;
+                                      for (int i = 0; i < 2; i++)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 10.0, right: 10.0),
+                                          child: Column(
+                                            children: [
+                                              LayoutBuilder(
+                                                builder:
+                                                    (context, constraints) {
+                                                  final screenWidth =
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width;
+                                                  final imageHeight =
+                                                      screenWidth > 600
+                                                          ? 170.0
+                                                          : 120.0;
+                                                  final imageWidth =
+                                                      screenWidth > 600
+                                                          ? 300.0
+                                                          : 140.0;
 
-                                          final imageHeight =
-                                              screenWidth > 600 ? 240.0 : 170.0;
-                                          final imageWidth =
-                                              screenWidth > 600 ? 230.0 : 150.0;
+                                                  // Ensure artwork has an image before displaying
+                                                  final imageUrl = displayedArtworks
+                                                          .isNotEmpty
+                                                      ? displayedArtworks[i]
+                                                              .images ??
+                                                          'assets/images/placeholder.png'
+                                                      : (i == 0
+                                                          ? 'assets/images/hel.png'
+                                                          : 'assets/images/helen.png');
 
-                                          return Image.asset(
-                                            'assets/images/art1.png',
-                                            height: imageHeight,
-                                            width: imageWidth,
-                                            fit: BoxFit.cover,
-                                          );
-                                        },
-                                      ),
-                                      const SizedBox(height: 8),
-                                      const Text(
-                                        '"Gotern Mortensen", 2024',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontStyle: FontStyle.italic,
-                                          // color: state.isDarkMode
-                                          //     ? Colors.white
-                                          //     : Colors.black,
+                                                  return imageUrl
+                                                          .startsWith('http')
+                                                      ? Image.network(
+                                                          imageUrl,
+                                                          height: imageHeight,
+                                                          width: imageWidth,
+                                                          fit: BoxFit.cover,
+                                                        )
+                                                      : Image.asset(
+                                                          imageUrl,
+                                                          height: imageHeight,
+                                                          width: imageWidth,
+                                                          fit: BoxFit.cover,
+                                                        );
+                                                },
+                                              ),
+                                              const SizedBox(height: 8),
+                                              Text(
+                                                displayedArtworks.isNotEmpty
+                                                    ? '"${displayedArtworks[i].title}"'
+                                                    : '"Deities of Nepal II"',
+                                                style: TextStyle(
+                                                  fontFamily: 'IM_Fell_DW_Pica',
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width >
+                                                              600
+                                                          ? 15.0
+                                                          : 11.0,
+                                                  fontStyle: FontStyle.italic,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                        textAlign: TextAlign.center,
-                                      ),
                                     ],
-                                  ),
-                                ),
-                              ],
+                                  );
+                                }
+                              },
                             ),
                             const SizedBox(height: 8),
-                            Text(
-                              "view more",
-                              style: TextStyle(
-                                fontFamily: 'IM_Fell_DW_Pica_SC',
-                                fontSize:
-                                    MediaQuery.of(context).size.width > 600
-                                        ? 22.0
-                                        : 17.0,
-                                // color: state.isDarkMode
-                                //     ? Colors.white
-                                //     : Colors.black,
+                            GestureDetector(
+                              onTap: () {
+                                BlocProvider.of<ArtworkBloc>(context).add(
+                                  NavigateToArtists(
+                                    context: context,
+                                    destination: const ArtistsView(),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                "view Artists",
+                                style: TextStyle(
+                                  fontFamily: 'IM_Fell_DW_Pica_SC',
+                                  fontSize:
+                                      MediaQuery.of(context).size.width > 600
+                                          ? 20.0
+                                          : 14.0,
+                                  // color: state.isDarkMode
+                                  //     ? Colors.white
+                                  //     : Colors.black,
+                                ),
                               ),
                             ),
                             const Divider(

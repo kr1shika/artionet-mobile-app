@@ -36,7 +36,6 @@ class AuthLocalDatasource implements IAuthDataSource {
     try {
       // Convert AuthEntity to AuthHiveModel
       final authHiveModel = AuthHiveModel.fromEntity(user);
-
       await _hiveService.register(authHiveModel);
       return Future.value();
     } catch (e) {
@@ -53,6 +52,18 @@ class AuthLocalDatasource implements IAuthDataSource {
   @override
   Future<AuthEntity> updateProfile(AuthEntity artist) {
     // TODO: implement updateProfile
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> deleteUser(String userId) {
+    // TODO: implement deleteUser
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<List<AuthEntity>> getArtists() {
+    // TODO: implement getArtists
     throw UnimplementedError();
   }
 }

@@ -73,7 +73,7 @@ class _RegisterViewState extends State<RegisterView> {
                       "Sign up to artionet",
                       style: TextStyle(
                         fontFamily: 'IM_Fell_DW_Pica_SC',
-                        fontSize: 33,
+                        fontSize: 25,
                         color: Colors.black,
                       ),
                     ),
@@ -294,11 +294,9 @@ class _RegisterViewState extends State<RegisterView> {
                               'SIGN UP',
                               style: TextStyle(
                                   fontFamily: 'IM_FELL_Great_Primer',
-                                  fontSize: 18),
+                                  fontSize: 12),
                             ),
                           ),
-                          const SizedBox(height: 6),
-                          const SizedBox(height: 6),
                           ElevatedButton(
                             key: const ValueKey('_loginBloc'),
                             onPressed: () {
@@ -323,7 +321,7 @@ class _RegisterViewState extends State<RegisterView> {
                               style: TextStyle(
                                 fontFamily: 'Inknut_Antiqua',
                                 color: Colors.black,
-                                fontSize: 15,
+                                fontSize: 10,
                               ),
                             ),
                           ),

@@ -174,6 +174,7 @@ class ArtworkRemoteDatasource implements IArtworkDataSource {
     }
   }
 
+  @override
   Future<List<ArtworkEntity>> searchArtworks(String query) async {
   try {
     var response = await _dio.get("${ApiEndpoints.searchArtworks}?query=$query");
@@ -189,5 +190,11 @@ class ArtworkRemoteDatasource implements IArtworkDataSource {
     throw Exception(e.toString());
   }
 }
+
+  @override
+  Future<void> saveAllArtworks(List<ArtworkEntity> artworks) {
+    // TODO: implement saveAllArtworks
+    throw UnimplementedError();
+  }
 
 }

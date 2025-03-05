@@ -1,6 +1,5 @@
 part of 'profile_bloc.dart';
 
-@immutable
 class ProfileState extends Equatable {
   final bool isLoading;
   final bool isSuccess;
@@ -9,11 +8,16 @@ class ProfileState extends Equatable {
 
   final List<ArtworkEntity> artworks;
   final ArtworkEntity? selectedArtwork;
+  final AuthEntity? selectedUser;
+  final AuthEntity? userProfile;
 
   final String errorMessage;
   final List<NotificationEntity> notifications;
+  final String? uploadedImageName;
 
   const ProfileState({
+    this.userProfile,
+    this.selectedUser,
     required this.isLoading,
     required this.purchases,
     required this.errorMessage,
@@ -22,36 +26,46 @@ class ProfileState extends Equatable {
     this.selectedArtwork,
     required this.collection,
     required this.notifications,
+    this.uploadedImageName,
   });
 
   // Initial state of the ProfileBloc
   factory ProfileState.initial() {
     return const ProfileState(
-        isLoading: false,
-        purchases: [],
-        errorMessage: '',
-        isSuccess: false,
-        artworks: [],
-        selectedArtwork: null,
-        notifications: [],
-        collection: []);
+      isLoading: false,
+      purchases: [],
+      errorMessage: '',
+      isSuccess: false,
+      artworks: [],
+      selectedArtwork: null,
+      selectedUser: null,
+      notifications: [],
+      collection: [],
+      userProfile: null,
+      uploadedImageName: null,
+    );
   }
 
-  // CopyWith method to update the state
   ProfileState copyWith({
     bool? isLoading,
     List<PurchaseEntity>? purchases,
     List<ArtworkEntity>? artworks,
+    AuthEntity? selectedUser,
     String? errorMessage,
     bool? isSuccess,
+    AuthEntity? userProfile,
     ArtworkEntity? selectedArtwork,
     List<SaveArtworkEntity>? collection,
     List<NotificationEntity>? notifications,
+    String? uploadedImageName,
   }) {
     return ProfileState(
+      uploadedImageName: uploadedImageName ?? this.uploadedImageName,
       isLoading: isLoading ?? this.isLoading,
       purchases: purchases ?? this.purchases,
       artworks: artworks ?? this.artworks,
+      userProfile: userProfile ?? this.userProfile,
+      selectedUser: selectedUser ?? this.selectedUser,
       errorMessage: errorMessage ?? this.errorMessage,
       isSuccess: isSuccess ?? this.isSuccess,
       selectedArtwork: selectedArtwork ?? this.selectedArtwork,
@@ -62,6 +76,7 @@ class ProfileState extends Equatable {
 
   @override
   List<Object?> get props => [
+        userProfile,
         isLoading,
         purchases,
         errorMessage,
@@ -69,6 +84,8 @@ class ProfileState extends Equatable {
         artworks,
         selectedArtwork,
         collection,
-        notifications
+        notifications,
+        selectedUser,
+        uploadedImageName
       ];
 }

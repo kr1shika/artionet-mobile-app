@@ -18,10 +18,10 @@ class AuthHiveModel extends Equatable {
   final String contact_no;
 
   @HiveField(3)
-  final String password;
+  final String? password;
 
   @HiveField(4)
-  final String role;
+  final String? role;
 
   @HiveField(5)
   final String? profilepic;
@@ -38,10 +38,10 @@ class AuthHiveModel extends Equatable {
   AuthHiveModel(
       {String? userId,
       required this.full_name,
-      required this.role,
+       this.role,
       required this.email,
       required this.contact_no,
-      required this.password,
+       this.password,
       this.artistname,
       this.desc,
       this.profilepic})
