@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tryproject/app/shared_prefs/token_shared_prefs.dart';
-import 'package:tryproject/core/common/internet_checker/internet_checker.dart';
 import 'package:tryproject/core/network/api_service.dart';
 import 'package:tryproject/core/network/hive_service.dart';
 import 'package:tryproject/features/artwork/data/data_source/artwork_local_data_source.dart';
@@ -26,7 +25,7 @@ import 'package:tryproject/features/auth/data/repository/auth_local_repository/a
 import 'package:tryproject/features/auth/data/repository/auth_remote_repository/auth_remote_repository.dart';
 import 'package:tryproject/features/auth/domain/use_case/GetUserByIdUseCase.dart';
 import 'package:tryproject/features/auth/domain/use_case/delete_account_usecase.dart';
-import 'package:tryproject/features/auth/domain/use_case/getartists_usecase.dart';
+import 'package:tryproject/features/auth/domain/use_case/get_artists_usecase.dart';
 import 'package:tryproject/features/auth/domain/use_case/login_usecase.dart';
 import 'package:tryproject/features/auth/domain/use_case/register_user_usecase.dart';
 import 'package:tryproject/features/auth/domain/use_case/update_profile_usecase.dart';
@@ -66,7 +65,7 @@ Future<void> initDependencies() async {
   // await _initThemeBloc();
   await _initSharedPrefs();
   await _initConnectivity();
-  await _initNetworkInfo();
+  // await _initNetworkInfo();
   await _initHomeDependencies();
   await _initRegisterDependencies();
   await _initLoginDependencies();
@@ -103,13 +102,13 @@ _initConnectivity() {
   getIt.registerLazySingleton<Connectivity>(() => Connectivity());
 }
 
-_initNetworkInfo() {
-  getIt.registerLazySingleton<NetworkInfoImpl>(
-      () => NetworkInfoImpl(getIt<Connectivity>()));
+// _initNetworkInfo() {
+//   getIt.registerLazySingleton<NetworkInfoImpl>(
+//       () => NetworkInfoImpl(getIt<Connectivity>()));
 
-  getIt.registerLazySingleton<NetworkInfo>(
-      () => NetworkInfoImpl(getIt<Connectivity>()));
-}
+//   getIt.registerLazySingleton<NetworkInfo>(
+//       () => NetworkInfoImpl(getIt<Connectivity>()));
+// }
 
 // _initLightSensor() {
 //   getIt.registerLazySingleton<LightSensorRepository>(

@@ -4,7 +4,9 @@ import 'package:tryproject/features/artwork/domain/entity/artwork_entity.dart';
 import 'package:tryproject/features/artwork/domain/use_case/get_artworks_by_userId.dart';
 import 'package:tryproject/features/auth/domain/entity/auth_entity.dart';
 import 'package:tryproject/features/auth/domain/use_case/GetUserByIdUseCase.dart';
-import 'package:tryproject/features/auth/domain/use_case/getartists_usecase.dart';
+import 'package:tryproject/features/auth/domain/use_case/get_artists_usecase.dart';
+
+// import 'package:tryproject/features/auth/domain/use_case/getartists_usecase.dart';
 
 part 'artist_event.dart';
 part 'artist_state.dart';

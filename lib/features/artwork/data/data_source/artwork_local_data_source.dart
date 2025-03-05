@@ -1,118 +1,82 @@
 import 'dart:io';
 
-import 'package:hive_flutter/adapters.dart';
+import 'package:hive/hive.dart';
+import 'package:tryproject/app/constants/hive_table_constant.dart';
 import 'package:tryproject/core/network/hive_service.dart';
-import 'package:tryproject/core/util/img_downloader.dart';
 import 'package:tryproject/features/artwork/data/data_source/artwork_datasource.dart';
 import 'package:tryproject/features/artwork/data/model/artwork_hive_model.dart';
 import 'package:tryproject/features/artwork/domain/entity/artwork_entity.dart';
 
 class ArtworkLocalDataSource implements IArtworkDataSource {
-  final HiveService _hiveService;
-  ArtworkLocalDataSource(this._hiveService);
+  final HiveService hiveService;
 
-  @override
-  Future<void> saveAllArtworks(List<ArtworkEntity> artworks) async {
-    try {
-      // Convert ArtworkEntity to ArtworkHiveModel and handle images
-      List<ArtworkHiveModel> hiveModels = await Future.wait(
-        artworks.map((artwork) async {
-          String? imagePath = artwork.images != null
-              ? await downloadAndSaveImage(artwork.images!)
-              : null;
-          return ArtworkHiveModel(
-            id: artwork.artworkId,
-            title: artwork.title,
-            dimensions: artwork.dimensions,
-            price: artwork.price,
-            medium_used: artwork.medium_used,
-            images: imagePath,
-            archive: artwork.archive,
-            isLiked: artwork.isLiked,
-            artistId: artwork.artistId,
-            categories: artwork.categories,
-            creatorsNote: artwork.creatorsNote,
-          );
-        }).toList(),
-      );
-
-      // Save to Hive
-      var box = await Hive.openBox<ArtworkHiveModel>('artworkBox');
-      await box.addAll(hiveModels);
-    } catch (e) {
-      throw Exception('Error saving artworks to Hive: $e');
-    }
-  }
-
-  @override
-  Future<ArtworkEntity> createNewArtwork(ArtworkEntity artwork) {
-    // TODO: implement createNewArtwork
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> deleteArtworkbyId(String id) {
-    // TODO: implement deleteArtworkbyId
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<ArtworkEntity> getArtworkById(String id) {
-    // TODO: implement getArtworkById
-    throw UnimplementedError();
-  }
+  ArtworkLocalDataSource(this.hiveService);
 
   @override
   Future<List<ArtworkEntity>> getArtworks() async {
     try {
-      // Fetch all artworks from Hive
-      var box = await Hive.openBox<ArtworkHiveModel>('artworkBox');
-      List<ArtworkHiveModel> hiveModels = box.values.toList();
-
-      // Convert hive models to artwork entities
-      List<ArtworkEntity> artworks = hiveModels.map((hiveModel) {
-        return ArtworkEntity(
-          artworkId: hiveModel.id,
-          title: hiveModel.title ?? '',
-          dimensions: hiveModel.dimensions,
-          price: hiveModel.price,
-          medium_used: hiveModel.medium_used,
-          images: hiveModel.images,
-          archive: hiveModel.archive,
-          isLiked: hiveModel.isLiked,
-          artistId: hiveModel.artistId,
-          categories: hiveModel.categories,
-          creatorsNote: hiveModel.creatorsNote,
-        );
-      }).toList();
-
+      final box =
+          await Hive.openBox<ArtworkHiveModel>(HiveTableConstant.artworkBox);
+      final artworks = box.values.map((model) => model.toEntity()).toList();
       return artworks;
     } catch (e) {
-      throw Exception('Error fetching artworks from Hive: $e');
+      throw Exception('Failed to fetch artworks from Hive: $e');
     }
   }
 
   @override
-  Future<List<ArtworkEntity>> getArtworksbyUserId(String id) {
-    // TODO: implement getArtworksbyUserId
-    throw UnimplementedError();
+  Future<void> saveAllArtworks(List<ArtworkEntity> artworks) async {
+    try {
+      final box =
+          await Hive.openBox<ArtworkHiveModel>(HiveTableConstant.artworkBox);
+      await box.clear();
+      await box.addAll(artworks
+          .map((entity) => ArtworkHiveModel.fromEntity(entity))
+          .toList());
+    } catch (e) {
+      throw Exception('Failed to save artworks to Hive: $e');
+    }
   }
 
   @override
-  Future<List<ArtworkEntity>> searchArtworks(String query) {
-    // TODO: implement searchArtworks
-    throw UnimplementedError();
+  Future<ArtworkEntity> getArtworkById(String id) async {
+    throw UnimplementedError(
+        'getArtworkById is not implemented in local data source');
   }
 
   @override
-  Future<ArtworkEntity> updateArtwork(ArtworkEntity artwork) {
-    // TODO: implement updateArtwork
-    throw UnimplementedError();
+  Future<ArtworkEntity> createNewArtwork(ArtworkEntity artwork) async {
+    throw UnimplementedError(
+        'createNewArtwork is not implemented in local data source');
   }
 
   @override
-  Future<String> uploadArtImage(File file) {
-    // TODO: implement uploadArtImage
-    throw UnimplementedError();
+  Future<String> uploadArtImage(File file) async {
+    throw UnimplementedError(
+        'uploadArtImage is not implemented in local data source');
+  }
+
+  @override
+  Future<List<ArtworkEntity>> getArtworksbyUserId(String id) async {
+    throw UnimplementedError(
+        'getArtworksbyUserId is not implemented in local data source');
+  }
+
+  @override
+  Future<void> deleteArtworkbyId(String id) async {
+    throw UnimplementedError(
+        'deleteArtworkbyId is not implemented in local data source');
+  }
+
+  @override
+  Future<ArtworkEntity> updateArtwork(ArtworkEntity artwork) async {
+    throw UnimplementedError(
+        'updateArtwork is not implemented in local data source');
+  }
+
+  @override
+  Future<List<ArtworkEntity>> searchArtworks(String query) async {
+    throw UnimplementedError(
+        'searchArtworks is not implemented in local data source');
   }
 }
