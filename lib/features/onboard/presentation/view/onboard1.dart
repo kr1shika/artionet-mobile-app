@@ -192,8 +192,8 @@ class _OnboardScreensState extends State<OnboardScreens> {
             children: [
               Image.asset(
                 'assets/images/logo.png',
-                width: 115,
-                height: 115,
+                width: 100,
+                height: 100,
               ),
               const SizedBox(height: 2),
               const Text(

@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:tryproject/app/constants/theme_constant.dart';
 import 'package:tryproject/core/app_theme/ThemeProvider.dart';
 import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
+import 'package:tryproject/features/home/presentation/view/buyer/pages/artists_view.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -171,38 +172,28 @@ class HomeScreen extends StatelessWidget {
                               fit: BoxFit.cover,
                             ),
                             const SizedBox(height: 20),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width > 600
-                                  ? 550.0
-                                  : 400.0,
-                              child: TextFormField(
-                                decoration: InputDecoration(
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 9.0, horizontal: 20.0),
-                                  hintText: "Search for artists/Arts ",
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(14.0),
-                                    // filled: true,
-                                    // fillColor: state.isDarkMode
-                                    //     ? Colors.grey[800]
-                                    //     : const Color(0xFFFFFFF7),
-                                  ),
-                                  // textAlign: TextAlign.center,
-                                  hintStyle: TextStyle(
-                                    fontFamily: 'IM_FELL_English_SC',
-                                    fontSize:
-                                        MediaQuery.of(context).size.width > 600
-                                            ? 20.0
-                                            : 17.0,
-                                    fontWeight: FontWeight.w600,
-                                    // color: state.isDarkMode
-                                    //     ? Colors.white
-                                    //     : const Color.fromARGB(
-                                    //         255, 158, 157, 157),
-                                  ),
-                                ),
-                              ),
-                            ),
+                            ElevatedButton(
+                    onPressed: () {
+                      BlocProvider.of<ArtworkBloc>(context).add(
+                        NavigateToArtists(
+                          context: context,
+                          destination: ArtistsView(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 12),
+                      textStyle: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width > 600
+                            ? 20.0
+                            : 17.0,
+                        fontFamily: 'IM_FELL_English_SC',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    child: const Text("Artists"),
+                  ),
                             const SizedBox(height: 27),
                             // BlocBuilder to Display Artworks Below Search Input
                             BlocBuilder<ArtworkBloc, ArtworkState>(

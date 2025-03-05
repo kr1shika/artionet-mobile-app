@@ -141,8 +141,10 @@ _initArtistsDependencies() async {
     ),
   );
 
-  getIt.registerFactory<ArtistBloc>(
-      () => ArtistBloc(getartistsUsecase: getIt<GetartistsUsecase>()));
+  getIt.registerFactory<ArtistBloc>(() => ArtistBloc(
+      getartistsUsecase: getIt<GetartistsUsecase>(),
+      getUserByIdUsecase: getIt<GetUserByIdUsecase>(),
+      getArtworksByUseridUsecase: getIt<GetArtworksByUseridUsecase>()));
 }
 
 _initProfileDependencies() async {
@@ -334,6 +336,7 @@ _initArtworkDependencies() async {
         checkArtworkStatusUsecase: getIt<CheckArtworkStatusUsecase>(),
         searchArtworksUsecase: getIt<SearchArtworksUsecase>(),
         getUserByIdUsecase: getIt<GetUserByIdUsecase>(),
+        artistBloc: getIt<ArtistBloc>(),
       ));
 }
 

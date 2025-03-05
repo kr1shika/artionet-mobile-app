@@ -8,3 +8,19 @@ abstract class ArtistEvent extends Equatable {
 }
 
 class FetchAllArtists extends ArtistEvent {}
+
+class FetchUserById extends ArtistEvent {
+  final String userId;
+  const FetchUserById(this.userId);
+
+  @override
+  List<Object> get props => [userId];
+}
+
+class FetchArtworksByUserId extends ArtistEvent {
+  final String userId;
+  const FetchArtworksByUserId(this.userId);
+
+  @override
+  List<Object> get props => [userId];
+}

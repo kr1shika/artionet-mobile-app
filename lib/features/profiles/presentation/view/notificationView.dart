@@ -1,20 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:sensors_plus/sensors_plus.dart';
+import 'package:tryproject/core/app_theme/ThemeProvider.dart';
 import 'package:tryproject/features/profiles/presentation/view_model/profile_bloc.dart';
 import 'package:tryproject/features/user-notification/domain/entity/notification_entity.dart';
-
-class ThemeProvider with ChangeNotifier {
-  bool _isDarkMode = false;
-
-  bool get isDarkMode => _isDarkMode;
-
-  void toggleTheme() {
-    _isDarkMode = !_isDarkMode;
-    notifyListeners();
-  }
-}
 
 class NotificationsView extends StatefulWidget {
   final String userId;
@@ -26,25 +18,41 @@ class NotificationsView extends StatefulWidget {
 }
 
 class NotificationsViewState extends State<NotificationsView> {
-  static const double forwardTiltThreshold = 3.0; // Adjust as needed
+  static const double forwardTiltThreshold = 3.0;
+  static const Duration cooldownDuration = Duration(seconds: 10);
+  StreamSubscription? _gyroscopeSubscription;
+  DateTime? _lastToggleTime;
 
   @override
   void initState() {
     super.initState();
-    _listenToGyroscope();
+    _startListening();
     context
         .read<ProfileBloc>()
         .add(FetchNotificationsByUserId(userId: widget.userId));
   }
 
-  void _listenToGyroscope() {
-    gyroscopeEvents.listen((GyroscopeEvent event) {
-      if (event.y > forwardTiltThreshold) {
-        final themeProvider =
-            Provider.of<ThemeProvider>(context, listen: false);
-        themeProvider.toggleTheme();
+  void _startListening() {
+    _gyroscopeSubscription = gyroscopeEvents.listen((GyroscopeEvent event) {
+      if (!mounted) return;
+      final now = DateTime.now();
+
+      if (_lastToggleTime == null ||
+          now.difference(_lastToggleTime!) > cooldownDuration) {
+        if (event.y > forwardTiltThreshold) {
+          final themeProvider =
+              Provider.of<ThemeProvider>(context, listen: false);
+          themeProvider.toggleTheme();
+          _lastToggleTime = now;
+        }
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _gyroscopeSubscription?.cancel(); // Stop listening when leaving page
+    super.dispose();
   }
 
   Map<String, List<NotificationEntity>> _categorizeNotifications(
@@ -67,83 +75,80 @@ class NotificationsViewState extends State<NotificationsView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        title: Image.asset(
-          'assets/images/logo.png',
-          height: 42,
-          fit: BoxFit.contain,
-        ),
-      ),
-      body: SafeArea(
-        child: BlocBuilder<ProfileBloc, ProfileState>(
-          builder: (context, state) {
-            if (state.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state.errorMessage.isNotEmpty) {
-              return Center(
-                  child: Text(
-                state.errorMessage,
-                style: const TextStyle(
-                  color: Colors.red,
-                  fontSize: 16,
-                ),
-              ));
-            } else if (state.notifications.isEmpty) {
-              return const Center(
-                child: Text(
-                  "No notifications yet!",
-                  style: TextStyle(
-                    fontFamily: 'IM_FELL_Great_Primer',
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
-                ),
-              );
-            } else {
-              // Categorize notifications
-              final categorizedNotifications =
-                  _categorizeNotifications(state.notifications);
-
-              return Column(
-                children: [
-                  // Fixed "Notifications" title
-                  // const Padding(
-                  //   padding: EdgeInsets.symmetric(vertical: 16),
-                  //   child:
-                  // ),
-                  // // List of notifications
-                  const Text(
-                    "Tilt forward to change theme",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  Expanded(
-                    child: ListView(
-                      children: [
-                        // Recent Notifications Section
-                        if (categorizedNotifications['Recent']!.isNotEmpty)
-                          _buildNotificationSection(context, 'Recent',
-                              categorizedNotifications['Recent']!),
-                        // Last 20 Days Section
-                        if (categorizedNotifications['Last 20 Days']!
-                            .isNotEmpty)
-                          _buildNotificationSection(context, 'Last 20 Days',
-                              categorizedNotifications['Last 20 Days']!),
-                      ],
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            centerTitle: true,
+            title: Image.asset(
+              'assets/images/logo.png',
+              height: 42,
+              fit: BoxFit.contain,
+            ),
+          ),
+          body: SafeArea(
+            child: BlocBuilder<ProfileBloc, ProfileState>(
+              builder: (context, state) {
+                if (state.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state.errorMessage.isNotEmpty) {
+                  return Center(
+                    child: Text(
+                      state.errorMessage,
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontSize: 16,
+                      ),
                     ),
-                  ),
-                ],
-              );
-            }
-          },
-        ),
-      ),
+                  );
+                } else if (state.notifications.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      "No notifications yet!",
+                      style: TextStyle(
+                        fontFamily: 'IM_FELL_Great_Primer',
+                        fontSize: 16,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  );
+                } else {
+                  final categorizedNotifications =
+                      _categorizeNotifications(state.notifications);
+                  return Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        child: Text(
+                          "Tilt forward to change theme",
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView(
+                          children: [
+                            if (categorizedNotifications['Recent']!.isNotEmpty)
+                              _buildNotificationSection(context, 'Recent',
+                                  categorizedNotifications['Recent']!),
+                            if (categorizedNotifications['Last 20 Days']!
+                                .isNotEmpty)
+                              _buildNotificationSection(context, 'Last 20 Days',
+                                  categorizedNotifications['Last 20 Days']!),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                }
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 
-  // Helper method to build a notification section
   Widget _buildNotificationSection(BuildContext context, String sectionTitle,
       List<NotificationEntity> notifications) {
     return Column(
@@ -204,7 +209,6 @@ class NotificationsViewState extends State<NotificationsView> {
     );
   }
 
-  // Helper method to format DateTime
   String _formatDateTime(DateTime dateTime) {
     return "${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour}:${dateTime.minute}";
   }
