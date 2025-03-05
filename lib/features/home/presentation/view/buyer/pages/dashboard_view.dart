@@ -30,8 +30,8 @@ class HomeScreen extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'IM_Fell_DW_Pica_SC',
                         fontSize: MediaQuery.of(context).size.width > 600
-                            ? 44.0
-                            : 33.0,
+                            ? 40.0
+                            : 28.0,
                         // color: state.isDarkMode ? Colors.white : Colors.black,
                       ),
                     ),
@@ -150,6 +150,8 @@ class HomeScreen extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            const SizedBox(height: 15),
+
                             Text(
                               'Discover artworks, artists, art news, and ongoing exhibitions with Artionet.',
                               style: TextStyle(
@@ -157,7 +159,7 @@ class HomeScreen extends StatelessWidget {
                                 fontSize:
                                     MediaQuery.of(context).size.width > 600
                                         ? 25.0
-                                        : 18.0,
+                                        : 15.0,
                                 // color: state.isDarkMode
                                 //     ? Colors.white
                                 //     : Colors.black,
@@ -172,29 +174,22 @@ class HomeScreen extends StatelessWidget {
                               fit: BoxFit.cover,
                             ),
                             const SizedBox(height: 20),
-                            ElevatedButton(
-                    onPressed: () {
-                      BlocProvider.of<ArtworkBloc>(context).add(
-                        NavigateToArtists(
-                          context: context,
-                          destination: ArtistsView(),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 12),
-                      textStyle: TextStyle(
-                        fontSize: MediaQuery.of(context).size.width > 600
-                            ? 20.0
-                            : 17.0,
-                        fontFamily: 'IM_FELL_English_SC',
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    child: const Text("Artists"),
-                  ),
-                            const SizedBox(height: 27),
+                            // ElevatedButton(
+                            //   onPressed: () {},
+                            //   style: ElevatedButton.styleFrom(
+                            //     padding: const EdgeInsets.symmetric(
+                            //         horizontal: 10, vertical: 0),
+                            //     textStyle: TextStyle(
+                            //       fontSize:
+                            //           MediaQuery.of(context).size.width > 600
+                            //               ? 20.0
+                            //               : 12.0,
+                            //       fontFamily: 'IM_FELL_English_SC',
+                            //       fontWeight: FontWeight.w600,
+                            //     ),
+                            //   ),
+                            //   child: const Text("Artists"),
+                            // ),
                             // BlocBuilder to Display Artworks Below Search Input
                             BlocBuilder<ArtworkBloc, ArtworkState>(
                               builder: (context, state) {
@@ -214,14 +209,13 @@ class HomeScreen extends StatelessWidget {
                                         .take(2)
                                         .toList();
                                   }
-
                                   return Wrap(
                                     alignment: WrapAlignment.center,
                                     children: [
                                       for (int i = 0; i < 2; i++)
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8.0),
+                                          padding: const EdgeInsets.only(
+                                              left: 10.0, right: 10.0),
                                           child: Column(
                                             children: [
                                               LayoutBuilder(
@@ -238,7 +232,7 @@ class HomeScreen extends StatelessWidget {
                                                   final imageWidth =
                                                       screenWidth > 600
                                                           ? 300.0
-                                                          : 170.0;
+                                                          : 140.0;
 
                                                   // Ensure artwork has an image before displaying
                                                   final imageUrl = displayedArtworks
@@ -283,15 +277,6 @@ class HomeScreen extends StatelessWidget {
                                                   fontStyle: FontStyle.italic,
                                                 ),
                                               ),
-                                              Text(
-                                                displayedArtworks.isNotEmpty
-                                                    ? 'Price: ${displayedArtworks[i].price}'
-                                                    : 'Price: N/A',
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.black54,
-                                                ),
-                                              ),
                                             ],
                                           ),
                                         ),
@@ -301,17 +286,27 @@ class HomeScreen extends StatelessWidget {
                               },
                             ),
                             const SizedBox(height: 8),
-                            Text(
-                              "view more",
-                              style: TextStyle(
-                                fontFamily: 'IM_Fell_DW_Pica_SC',
-                                fontSize:
-                                    MediaQuery.of(context).size.width > 600
-                                        ? 22.0
-                                        : 17.0,
-                                // color: state.isDarkMode
-                                //     ? Colors.white
-                                //     : Colors.black,
+                            GestureDetector(
+                              onTap: () {
+                                BlocProvider.of<ArtworkBloc>(context).add(
+                                  NavigateToArtists(
+                                    context: context,
+                                    destination: const ArtistsView(),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                "view Artists",
+                                style: TextStyle(
+                                  fontFamily: 'IM_Fell_DW_Pica_SC',
+                                  fontSize:
+                                      MediaQuery.of(context).size.width > 600
+                                          ? 20.0
+                                          : 14.0,
+                                  // color: state.isDarkMode
+                                  //     ? Colors.white
+                                  //     : Colors.black,
+                                ),
                               ),
                             ),
                             const Divider(

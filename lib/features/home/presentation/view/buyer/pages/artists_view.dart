@@ -77,13 +77,13 @@ class _ArtistsViewState extends State<ArtistsView> {
                                   color: Colors.grey.withOpacity(0.3),
                                   width: 1,
                                 ),
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(2),
                               ),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   CircleAvatar(
-                                    radius: 50,
+                                    radius: 60,
                                     backgroundImage: artist.profilepic != null
                                         ? NetworkImage(artist.profilepic!)
                                         : null,
@@ -91,21 +91,21 @@ class _ArtistsViewState extends State<ArtistsView> {
                                         ? const Icon(Icons.person, size: 40)
                                         : null,
                                   ),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 5),
                                   Text(
                                     artist.full_name ?? 'Unknown Artist',
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                                      fontSize: 15,
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
-                                  const SizedBox(height: 5),
+                                  const SizedBox(height: 0),
                                   Text(
                                     artist.email ?? 'No email provided',
                                     style: const TextStyle(
                                       color: Colors.grey,
-                                      fontSize: 14,
+                                      fontSize: 12,
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
@@ -118,56 +118,87 @@ class _ArtistsViewState extends State<ArtistsView> {
                     ),
                   if (selectedArtistId != null)
                     Expanded(
-                      child: Column(
-                        children: [
-                          // Back button to return to the artists grid
-                          IconButton(
-                            icon: const Icon(Icons.arrow_back),
-                            onPressed: () {
-                              setState(() {
-                                selectedArtistId = null;
-                              });
+                      child: GestureDetector(
+                        onTap: () {
+                          // Close the artworks container when tapped
+                          setState(() {
+                            selectedArtistId = null;
+                          });
+                        },
+                        child: Container(
+                          color: Colors
+                              .transparent, // Make the background transparent
+                          child: BlocBuilder<ArtistBloc, ArtistState>(
+                            builder: (context, state) {
+                              if (state.isLoading) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              } else if (state.errorMessage != null) {
+                                return Center(
+                                  child: Text(
+                                    state.errorMessage!,
+                                    style: const TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                );
+                              } else if (state.artworks.isEmpty) {
+                                return const Center(
+                                    child: Text(
+                                        'No artworks found for this artist.'));
+                              } else {
+                                return GridView.builder(
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2, // Two artworks per row
+                                    crossAxisSpacing: 10,
+                                    mainAxisSpacing: 10,
+                                    childAspectRatio:
+                                        0.7, // Adjust height proportionally
+                                  ),
+                                  itemCount: state.artworks.length,
+                                  itemBuilder: (context, index) {
+                                    final artwork = state.artworks[index];
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(0),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Expanded(
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(1),
+                                              child: artwork.images != null
+                                                  ? Image.network(
+                                                      artwork.images!,
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                  : const Icon(Icons.image,
+                                                      size: 50),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(5.0),
+                                            child: Text(
+                                              artwork.title ?? 'Untitled',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
+                              }
                             },
                           ),
-                          Expanded(
-                            child: BlocBuilder<ArtistBloc, ArtistState>(
-                              builder: (context, state) {
-                                if (state.isLoading) {
-                                  return const Center(
-                                      child: CircularProgressIndicator());
-                                } else if (state.errorMessage != null) {
-                                  return Center(
-                                    child: Text(
-                                      state.errorMessage!,
-                                      style: const TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  );
-                                } else if (state.artworks.isEmpty) {
-                                  return const Center(
-                                      child: Text(
-                                          'No artworks found for this artist.'));
-                                } else {
-                                  return ListView.builder(
-                                    itemCount: state.artworks.length,
-                                    itemBuilder: (context, index) {
-                                      final artwork = state.artworks[index];
-                                      return ListTile(
-                                        title:
-                                            Text(artwork.title ?? 'Untitled'),
-                                        leading: artwork.images != null
-                                            ? Image.network(artwork.images!)
-                                            : const Icon(Icons.image),
-                                      );
-                                    },
-                                  );
-                                }
-                              },
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                 ],
