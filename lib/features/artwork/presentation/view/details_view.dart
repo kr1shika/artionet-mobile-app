@@ -179,6 +179,7 @@ class _DetailViewState extends State<DetailView> {
                                 // Medium and Price
                                 Text('Medium: ${artwork.medium_used}'),
                                 Text('Price: ${artwork.price}'),
+                                Text('NOTE: ${artwork.creatorsNote}'),
                                 const SizedBox(height: 20),
                                 // Purchase Button aligned to the left
                                 ElevatedButton(

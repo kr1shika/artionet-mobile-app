@@ -4,6 +4,7 @@ import 'package:sensors_plus/sensors_plus.dart';
 import 'package:tryproject/app/di/di.dart';
 import 'package:tryproject/app/shared_prefs/token_shared_prefs.dart';
 import 'package:tryproject/core/common/snackbar/my_snackbar.dart';
+import 'package:tryproject/features/artwork/domain/entity/artwork_entity.dart';
 import 'package:tryproject/features/artwork/presentation/view/details_view.dart';
 import 'package:tryproject/features/artwork/presentation/view_model/artwork_bloc.dart';
 import 'package:tryproject/features/home/presentation/view_model/home_cubit.dart';
@@ -24,7 +25,38 @@ class _SearchViewState extends State<SearchView> {
 
   // Sensor variables
   late Stream<AccelerometerEvent> _accelerometerStream;
-  bool _shakingDetected = false; // Declare _shakingDetected
+  bool _shakingDetected = false;
+
+  // Dummy data to display when the server is down
+  final List<ArtworkEntity> dummyArtworks = [
+    const ArtworkEntity(
+      artworkId: '1',
+      title: 'Tando',
+      price: '150.0',
+      images: 'https://via.placeholder.com/150',
+      dimensions: '',
+      medium_used: '',
+      categories: '',
+    ),
+    const ArtworkEntity(
+      artworkId: '2',
+      title: 'Lavestalu',
+      price: '200.0',
+      images: 'assets/images/blank.jpg',
+      dimensions: '',
+      medium_used: '',
+      categories: '',
+    ),
+    const ArtworkEntity(
+      artworkId: '3',
+      title: 'Parasole',
+      price: '120.0',
+      images: 'assets/images/blank.jpg',
+      dimensions: '',
+      medium_used: '',
+      categories: '',
+    ),
+  ];
 
   @override
   void initState() {
@@ -33,9 +65,7 @@ class _SearchViewState extends State<SearchView> {
     _accelerometerStream = accelerometerEvents;
     _accelerometerStream.listen((AccelerometerEvent event) {
       if (mounted) {
-        // Ensure widget is still mounted before calling setState
         if (event.x > 12 || event.y > 12 || event.z > 12) {
-          // Threshold for shake detection
           if (!_shakingDetected) {
             setState(() {
               _shakingDetected = true;
@@ -52,13 +82,12 @@ class _SearchViewState extends State<SearchView> {
   }
 
   Future<void> _loadUserId() async {
-    final tokenSharedPrefs =
-        getIt<TokenSharedPrefs>(); // ✅ Get instance from DI
-    String? storedUserId = tokenSharedPrefs.getUserId(); // ✅ Retrieve userId
+    final tokenSharedPrefs = getIt<TokenSharedPrefs>();
+    String? storedUserId = tokenSharedPrefs.getUserId();
     setState(() {
       userId = storedUserId;
     });
-    print(" User ID: $userId"); // ✅ Debugging
+    print("User ID: $userId");
   }
 
   @override
@@ -140,24 +169,14 @@ class _SearchViewState extends State<SearchView> {
                       if (state.isLoading) {
                         return const Center(child: CircularProgressIndicator());
                       } else if (state.errorMessage != null) {
-                        return const Center(
-                          child: Text(
-                            "No artwork available",
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 4, 0, 7),
-                                fontSize: 16),
-                            textAlign: TextAlign.center,
-                          ),
-                        );
+                        return _buildArtworkGrid(context, dummyArtworks);
                       } else if (state.artworks.isEmpty) {
                         return const Center(child: Text('No artworks found.'));
                       } else {
                         return LayoutBuilder(
                           builder: (context, constraints) {
-                            // Check if the screen width is more than 600px for tablet-like layout
                             int crossAxisCount =
                                 constraints.maxWidth > 600 ? 3 : 2;
-
                             return GridView.builder(
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
@@ -201,8 +220,7 @@ class _SearchViewState extends State<SearchView> {
                                                     artwork.images!,
                                                     width: double.infinity,
                                                     fit: BoxFit.cover,
-                                                    height:
-                                                        150, // Set a specific height
+                                                    height: 150,
                                                   )
                                                 : const Icon(
                                                     Icons.image_not_supported,
@@ -312,6 +330,128 @@ class _SearchViewState extends State<SearchView> {
           ),
         ),
       ),
+    );
+  }
+
+  // Extracted method to build the GridView for artworks
+  Widget _buildArtworkGrid(BuildContext context, List<ArtworkEntity> artworks) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        int crossAxisCount = constraints.maxWidth > 600 ? 3 : 2;
+
+        return GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio: 0.9,
+          ),
+          itemCount: artworks.length,
+          itemBuilder: (context, index) {
+            final artwork = artworks[index];
+            final isLiked = likedArtworks
+                .contains(artwork.artworkId); // Use class-level likedArtworks
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  selectedArtworkId = artwork.artworkId;
+                });
+                BlocProvider.of<ArtworkBloc>(context).add(
+                  FetchArtworkById(artwork.artworkId ?? ''),
+                );
+              },
+              child: Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(1),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(1),
+                          topRight: Radius.circular(1),
+                        ),
+                        child: artwork.images != null
+                            ? Image.network(
+                                artwork.images!,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                                height: 150,
+                              )
+                            : const Icon(
+                                Icons.image_not_supported,
+                                size: 100,
+                              ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  artwork.title,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  'Price: ${artwork.price}',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Color.fromARGB(255, 24, 24, 24),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              isLiked ? Icons.favorite : Icons.favorite_border,
+                              color: isLiked ? Colors.red : Colors.grey,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                if (isLiked) {
+                                  likedArtworks.remove(artwork.artworkId);
+                                  context.read<ArtworkBloc>().add(
+                                        RemoveSavedArtworkEvent(
+                                          artId: artwork.artworkId!,
+                                          buyerId: userId ?? '',
+                                        ),
+                                      );
+                                } else {
+                                  likedArtworks.add(artwork.artworkId!);
+                                  context.read<ArtworkBloc>().add(
+                                        SaveArtworkEvent(
+                                          artId: artwork.artworkId!,
+                                          buyerId: userId ?? '',
+                                        ),
+                                      );
+                                }
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

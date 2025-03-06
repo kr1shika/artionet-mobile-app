@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get_it/get_it.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:tryproject/features/auth/presentation/view/buyers/login_view.dart';
 import 'package:tryproject/features/auth/presentation/view_model/login/login_bloc.dart';
 
-class MockLoginBloc extends MockBLoc<LoginEvent, LoginState>
-    implements LoginBloc {}
+// class MockLoginBloc extends MockBLoc<LoginEvent, LoginState>
+//     implements LoginBloc {}
+class MockLoginBloc extends Mock implements LoginBloc {}
 
 void main() {
   late MockLoginBloc loginBloc;
+  final sl = GetIt.instance;
 
   setUp(() {
     loginBloc = MockLoginBloc();
+    sl.reset();
   });
 
   Widget loadLoginView() {
@@ -26,7 +31,7 @@ void main() {
   testWidgets('description', (tester) async {
     await tester.pumpWidget(loadLoginView());
     await tester.pumpAndSettle();
-    final result = find.widgetWithText(ElevatedButton, 'Login');
+    final result = find.widgetWithText(ElevatedButton, 'Proceed');
     expect(result, findsOneWidget);
   });
 

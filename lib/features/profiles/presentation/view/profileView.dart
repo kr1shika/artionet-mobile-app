@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tryproject/app/di/di.dart';
 import 'package:tryproject/app/shared_prefs/token_shared_prefs.dart';
+import 'package:tryproject/app/widget/fall_back.dart'; // FallbackWidget
+import 'package:tryproject/app/widget/loading.dart';
 import 'package:tryproject/features/artwork/presentation/view/details_view.dart';
 import 'package:tryproject/features/artwork/presentation/view/upload_artwork_view.dart';
 import 'package:tryproject/features/profiles/presentation/view/artwork-crud/artwork_details.dart';
@@ -22,6 +24,7 @@ class CustomerProfileView extends StatefulWidget {
 class CustomerProfileViewState extends State<CustomerProfileView> {
   String? selectedArtworkId;
   String? userId;
+  DateTime? _loadingStartTime; // Track when loading starts
 
   Future<void> _loadUserId() async {
     final tokenSharedPrefs = getIt<TokenSharedPrefs>();
@@ -29,7 +32,7 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
     setState(() {
       userId = storedUserId;
     });
-    print(" CUstomer view page User ID: $userId");
+    print("Customer view page User ID: $userId");
   }
 
   @override
@@ -38,7 +41,9 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
     _loadUserId();
 
     final profileBloc = context.read<profile.ProfileBloc>();
-    // Fetch uploaded and saved artworks when the profile screen loads
+    setState(() {
+      _loadingStartTime = DateTime.now(); // Start timing
+    });
     profileBloc.add(profile.FetchArtworkByUserID(userId: widget.userId));
     profileBloc.add(profile.GetCollection(buyerId: widget.userId));
     profileBloc.add(profile.FetchUserById(widget.userId));
@@ -68,22 +73,38 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                     BlocBuilder<profile.ProfileBloc, profile.ProfileState>(
                       builder: (context, state) {
                         if (state.isLoading) {
-                          return const Center(
-                              child: CircularProgressIndicator());
+                          return const LoadingWidget(); // Use custom LoadingWidget
                         }
                         if (state.selectedUser == null) {
-                          return const Center(child: Text("User not found"));
+                          return const Center(child: Text("Krishika"));
                         }
                         return Column(
                           children: [
                             ClipOval(
-                              child: Image.network(
-                                state.selectedUser!.profilepic ??
-                                    'assets/images/default.jpg',
-                                height: 120,
-                                width: 120,
-                                fit: BoxFit.cover,
-                              ),
+                              child: state.errorMessage.isNotEmpty ||
+                                      state.selectedUser!.profilepic == null
+                                  ? Image.asset(
+                                      'assets/images/blank.jpg',
+                                      height: 120,
+                                      width: 120,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Image.network(
+                                      state.selectedUser!.profilepic ??
+                                          'assets/images/default.jpg',
+                                      height: 120,
+                                      width: 120,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Image.asset(
+                                          'assets/images/blank.jpg',
+                                          height: 120,
+                                          width: 120,
+                                          fit: BoxFit.cover,
+                                        );
+                                      },
+                                    ),
                             ),
                             const SizedBox(height: 8),
                             Text(
@@ -117,11 +138,9 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 1),
-                        backgroundColor: const Color.fromARGB(73, 27, 29, 30),
-                        foregroundColor: const Color(0xFFFFFFF7),
+                            horizontal: 10, vertical: 0),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(5),
                         ),
                       ),
                       child: const Text(
@@ -134,8 +153,8 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                     ),
                     const SizedBox(height: 4),
                     const TabBar(
-                      labelColor: Colors.black,
-                      unselectedLabelColor: Colors.grey,
+                      labelColor: Colors.grey,
+                      unselectedLabelColor: Color(0xFF62625F),
                       indicatorColor: Colors.black,
                       tabs: [
                         Tab(text: "Your Artworks"),
@@ -146,17 +165,17 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                       child: BlocBuilder<profile.ProfileBloc,
                           profile.ProfileState>(
                         builder: (context, state) {
-                          if (state.isLoading) {
-                            return const Center(
-                                child: CircularProgressIndicator());
+                          if (state.isLoading && _loadingStartTime != null) {
+                            final elapsed = DateTime.now()
+                                .difference(_loadingStartTime!)
+                                .inSeconds;
+                            if (elapsed > 10) {
+                              // Show fallback after 10 seconds
+                              return const FallbackWidget();
+                            }
+                            return const LoadingWidget(); // Use custom LoadingWidget
                           } else if (state.errorMessage.isNotEmpty) {
-                            return Center(
-                              child: Text(
-                                state.errorMessage,
-                                style: const TextStyle(
-                                    color: Colors.red, fontSize: 16),
-                              ),
-                            );
+                            return const FallbackWidget();
                           }
                           return TabBarView(
                             children: [
@@ -180,7 +199,7 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
 
   Widget _buildEditProfileButton() {
     return IconButton(
-      icon: const Icon(Icons.edit, size: 28, color: Colors.black),
+      icon: const Icon(Icons.edit, size: 28),
       onPressed: _updateProfile,
     );
   }
@@ -189,8 +208,7 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
     final profileState = context.read<profile.ProfileBloc>().state;
     if (profileState.selectedUser == null) return;
 
-    final artworkCrudBloc =
-        getIt<ArtworkCrudBloc>(); // Get from dependency injection
+    final artworkCrudBloc = getIt<ArtworkCrudBloc>();
 
     context.read<profile.ProfileBloc>().add(
           profile.NavigateToEdit(
@@ -201,7 +219,7 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
               email: profileState.selectedUser!.email ?? '',
               contactNo: profileState.selectedUser!.contact_no ?? '',
               profilePic: profileState.selectedUser!.profilepic,
-              artworkCrudBloc: artworkCrudBloc, // Pass it here
+              artworkCrudBloc: artworkCrudBloc,
             ),
           ),
         );
@@ -238,7 +256,7 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
           artwork.images,
           artwork.title ?? 'Unknown Art',
           artwork.archive ?? 'Unknown',
-          isSavedTab: false, // This is for the "Your Artworks" tab
+          isSavedTab: false,
         );
       },
     );

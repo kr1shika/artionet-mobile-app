@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:sensors_plus/sensors_plus.dart';
+import 'package:tryproject/app/widget/loading.dart';
 import 'package:tryproject/core/app_theme/ThemeProvider.dart';
 import 'package:tryproject/features/profiles/presentation/view_model/profile_bloc.dart';
 import 'package:tryproject/features/user-notification/domain/entity/notification_entity.dart';
@@ -91,7 +92,7 @@ class NotificationsViewState extends State<NotificationsView> {
             child: BlocBuilder<ProfileBloc, ProfileState>(
               builder: (context, state) {
                 if (state.isLoading) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const LoadingWidget(); // Use custom LoadingWidget
                 } else if (state.errorMessage.isNotEmpty) {
                   return Center(
                     child: Text(

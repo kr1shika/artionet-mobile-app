@@ -88,6 +88,7 @@ flutter:
     - assets/images/ham.jpg
     - assets/images/splash1.gif
     - assets/images/krishika.jpg
+    - assets/images/blank.jpg
 
   fonts:
     - family: IM_Fell_Double_Pica
