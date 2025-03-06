@@ -9,15 +9,16 @@ class FallbackWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          const SizedBox(height: 36),
           Image.asset(
             'assets/images/server_down.png',
-            height: 100,
+            height: 110,
             width: 150,
             fit: BoxFit.cover,
           ),
           const SizedBox(height: 16),
           const Text(
-            'The server is down, go create art instead.',
+            'No data found, go create art instead.',
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey,

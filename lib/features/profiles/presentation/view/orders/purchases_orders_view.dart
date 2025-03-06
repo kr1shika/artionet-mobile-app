@@ -2,6 +2,59 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tryproject/features/purchases/presentation/view_model/purchase_bloc.dart';
 
+// Fallback Widget
+class FallbackWidget extends StatelessWidget {
+  const FallbackWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/images/server_down.png',
+            height: 110,
+            width: 150,
+            fit: BoxFit.cover,
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Go create art instead.',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey,
+              fontFamily: 'IM_FELL_Great_Primer',
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Loading Widget
+class LoadingWidget extends StatelessWidget {
+  const LoadingWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(height: 16),
+          CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
+          ),
+          SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+}
+
 class PurchasesOrdersView extends StatefulWidget {
   final String userId;
   final String artistId;
@@ -50,8 +103,19 @@ class PurchasesOrdersViewState extends State<PurchasesOrdersView> {
                 Expanded(
                   child: BlocBuilder<PurchaseBloc, PurchaseState>(
                     builder: (context, state) {
-                      if (state.isLoading) {
-                        return const Center(child: CircularProgressIndicator());
+                      // Show loading widget when data is being fetched
+                      if (state.isLoading &&
+                          (state.purchases == null ||
+                              state.artistSales == null)) {
+                        return const LoadingWidget();
+                      }
+
+                      // Show fallback widget when no data is available
+                      if ((state.purchases == null ||
+                              state.purchases!.isEmpty) &&
+                          (state.artistSales == null ||
+                              state.artistSales!.isEmpty)) {
+                        return const FallbackWidget();
                       }
 
                       return TabBarView(
@@ -78,6 +142,10 @@ class PurchasesOrdersViewState extends State<PurchasesOrdersView> {
     final historyPurchases =
         state.purchases?.where((p) => p.status == 'Completed').toList() ?? [];
 
+    if (activePurchases.isEmpty && historyPurchases.isEmpty) {
+      return const FallbackWidget();
+    }
+
     return Column(
       children: [
         _buildSectionedList("Active", activePurchases, false),
@@ -91,6 +159,10 @@ class PurchasesOrdersViewState extends State<PurchasesOrdersView> {
         state.artistSales?.where((s) => s.status != 'Completed').toList() ?? [];
     final historySales =
         state.artistSales?.where((s) => s.status == 'Completed').toList() ?? [];
+
+    if (activeSales.isEmpty && historySales.isEmpty) {
+      return const FallbackWidget();
+    }
 
     return Column(
       children: [
@@ -120,7 +192,6 @@ class PurchasesOrdersViewState extends State<PurchasesOrdersView> {
 
             return LayoutBuilder(
               builder: (context, constraints) {
-                // Check if the screen width is greater than 600 (tablet size)
                 final isTablet = constraints.maxWidth > 600;
 
                 return Card(

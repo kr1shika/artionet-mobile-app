@@ -361,7 +361,7 @@ class CustomerProfileViewState extends State<CustomerProfileView> {
                   Text(
                     title,
                     style: const TextStyle(
-                      fontSize: 18,
+                      fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

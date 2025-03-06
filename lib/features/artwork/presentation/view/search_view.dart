@@ -32,8 +32,8 @@ class _SearchViewState extends State<SearchView> {
     const ArtworkEntity(
       artworkId: '1',
       title: 'Tando',
-      price: '150.0',
-      images: 'https://via.placeholder.com/150',
+      price: '30000.0',
+      images: 'assets/images/blank.jpg',
       dimensions: '',
       medium_used: '',
       categories: '',

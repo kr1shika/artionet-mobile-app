@@ -98,7 +98,7 @@ class _LoginViewState extends State<LoginView> {
                                 ),
                                 style: const TextStyle(
                                   fontFamily: 'IM_FELL_English_SC',
-                                  fontSize: 19,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.w600,
                                   color: Color.fromARGB(255, 61, 57, 57),
                                 ),
@@ -136,7 +136,7 @@ class _LoginViewState extends State<LoginView> {
                                 ),
                                 style: const TextStyle(
                                   fontFamily: 'IM_FELL_English_SC',
-                                  fontSize: 19,
+                                  fontSize: 25,
                                   fontWeight: FontWeight.w600,
                                   color: Color.fromARGB(255, 27, 29, 30),
                                 ),
@@ -171,7 +171,7 @@ class _LoginViewState extends State<LoginView> {
                               'PROCEED',
                               style: TextStyle(
                                   fontFamily: 'IM_FELL_Great_Primer',
-                                  fontSize: 12),
+                                  fontSize: 15),
                             ),
                           ),
                           const SizedBox(height: 6),
@@ -204,7 +204,7 @@ class _LoginViewState extends State<LoginView> {
                               style: TextStyle(
                                 fontFamily: 'Inknut_Antiqua',
                                 color: Colors.black,
-                                fontSize: 11,
+                                fontSize: 12,
                               ),
                             ),
                           ),
