@@ -31,7 +31,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final DeleteArtworkByIdUseCase _deleteArtworkByIdUseCase;
   final GetSavedCollectionUsecase _getSavedCollectionUsecase;
   final ArtworkBloc _artworkBloc;
-  
+
   final UpdateArtworkUsecase _updateArtworkUsecase;
   final GetNotificationsByUserIdUsecase _getNotificationsByUserIdUsecase;
   final GetUserByIdUsecase _getUserByIdUsecase;
@@ -61,6 +61,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<FetchArtworkById>(_onFetchArtworkById);
     on<FetchUserById>(_onFetchUserById);
     on<DeleteArtworkById>(_onDeleteArtworkById);
+    on<UpdateArtworkEvent>(_onUpdateArtworkEvent); // <-- ADD THIS
+
     on<FetchNotificationsByUserId>(_onFetchNotificationsByUserId);
 
     on<NavigateToUpload>((event, emit) {

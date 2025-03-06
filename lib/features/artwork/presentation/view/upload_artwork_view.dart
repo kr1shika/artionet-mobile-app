@@ -26,7 +26,6 @@ class _UploadPageState extends State<UploadPage> {
   final _creatorsNoteController = TextEditingController();
 
   File? _image;
-  String? _uploadedImageName;
 
   String? userId;
 
@@ -79,9 +78,7 @@ class _UploadPageState extends State<UploadPage> {
       body: BlocListener<ArtworkCrudBloc, ArtworkCrudState>(
         listener: (context, state) {
           if (state.isSuccess && state.imageName != null) {
-            setState(() {
-              _uploadedImageName = state.imageName;
-            });
+            setState(() {});
           }
         },
         child: SingleChildScrollView(

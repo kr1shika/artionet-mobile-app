@@ -8,6 +8,59 @@ import 'package:tryproject/core/app_theme/ThemeProvider.dart';
 import 'package:tryproject/features/profiles/presentation/view_model/profile_bloc.dart';
 import 'package:tryproject/features/user-notification/domain/entity/notification_entity.dart';
 
+// Fallback Widget
+class FallbackWidget extends StatelessWidget {
+  const FallbackWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/images/server_down.png',
+            height: 110,
+            width: 150,
+            fit: BoxFit.cover,
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Go create art instead.',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey,
+              fontFamily: 'IM_FELL_Great_Primer',
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Loading Widget
+class LoadingWidget extends StatelessWidget {
+  const LoadingWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(height: 16),
+          CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
+          ),
+          SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+}
+
 class NotificationsView extends StatefulWidget {
   final String userId;
 
@@ -51,7 +104,7 @@ class NotificationsViewState extends State<NotificationsView> {
 
   @override
   void dispose() {
-    _gyroscopeSubscription?.cancel(); // Stop listening when leaving page
+    _gyroscopeSubscription?.cancel();
     super.dispose();
   }
 
@@ -90,9 +143,18 @@ class NotificationsViewState extends State<NotificationsView> {
           body: SafeArea(
             child: BlocBuilder<ProfileBloc, ProfileState>(
               builder: (context, state) {
+                // Show loading widget when data is being fetched
                 if (state.isLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state.errorMessage.isNotEmpty) {
+                  return const LoadingWidget();
+                }
+                // Handle "no notifications" case as empty data rather than error
+                else if (state.errorMessage
+                        .contains("No notifications found") ||
+                    state.notifications.isEmpty) {
+                  return const FallbackWidget();
+                }
+                // Show actual errors that aren't "no notifications"
+                else if (state.errorMessage.isNotEmpty) {
                   return Center(
                     child: Text(
                       state.errorMessage,
@@ -102,20 +164,15 @@ class NotificationsViewState extends State<NotificationsView> {
                       ),
                     ),
                   );
-                } else if (state.notifications.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      "No notifications yet!",
-                      style: TextStyle(
-                        fontFamily: 'IM_FELL_Great_Primer',
-                        fontSize: 16,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  );
-                } else {
+                }
+                // Show notifications list when data is available
+                else {
                   final categorizedNotifications =
                       _categorizeNotifications(state.notifications);
+                  final hasNotifications =
+                      categorizedNotifications['Recent']!.isNotEmpty ||
+                          categorizedNotifications['Last 20 Days']!.isNotEmpty;
+
                   return Column(
                     children: [
                       const Padding(
@@ -126,17 +183,23 @@ class NotificationsViewState extends State<NotificationsView> {
                         ),
                       ),
                       Expanded(
-                        child: ListView(
-                          children: [
-                            if (categorizedNotifications['Recent']!.isNotEmpty)
-                              _buildNotificationSection(context, 'Recent',
-                                  categorizedNotifications['Recent']!),
-                            if (categorizedNotifications['Last 20 Days']!
-                                .isNotEmpty)
-                              _buildNotificationSection(context, 'Last 20 Days',
-                                  categorizedNotifications['Last 20 Days']!),
-                          ],
-                        ),
+                        child: hasNotifications
+                            ? ListView(
+                                children: [
+                                  if (categorizedNotifications['Recent']!
+                                      .isNotEmpty)
+                                    _buildNotificationSection(context, 'Recent',
+                                        categorizedNotifications['Recent']!),
+                                  if (categorizedNotifications['Last 20 Days']!
+                                      .isNotEmpty)
+                                    _buildNotificationSection(
+                                        context,
+                                        'Last 20 Days',
+                                        categorizedNotifications[
+                                            'Last 20 Days']!),
+                                ],
+                              )
+                            : const FallbackWidget(),
                       ),
                     ],
                   );

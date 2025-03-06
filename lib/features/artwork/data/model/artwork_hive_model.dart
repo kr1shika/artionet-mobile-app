@@ -1,9 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:tryproject/app/constants/hive_table_constant.dart';
 import 'package:tryproject/features/artwork/domain/entity/artwork_entity.dart';
 import 'package:uuid/uuid.dart';
-
-import '../../../../app/constants/hive_table_constant.dart';
 
 part 'artwork_hive_model.g.dart';
 
@@ -14,35 +13,44 @@ class ArtworkHiveModel extends Equatable {
 
   @HiveField(1)
   final String? title;
+
   @HiveField(2)
   final String dimensions;
+
   @HiveField(3)
   final String price;
+
   @HiveField(4)
   final String medium_used;
+
   @HiveField(5)
-  late String? images;
+  String? images; // Removed 'late' as it’s nullable and initialized in constructor
+
   @HiveField(6)
   final String? archive;
+
   @HiveField(7)
   final bool? isLiked;
+
   @HiveField(8)
   final String? artistId;
+
   @HiveField(9)
   final String categories;
+
   @HiveField(10)
   final String? creatorsNote;
 
   ArtworkHiveModel({
     String? id,
-    required this.title,
+    this.title,
     required this.dimensions,
     required this.price,
     required this.medium_used,
     this.images,
-    required this.archive,
+    this.archive,
     this.isLiked,
-    required this.artistId,
+    this.artistId,
     required this.categories,
     this.creatorsNote,
   }) : id = id ?? const Uuid().v4();
@@ -78,21 +86,21 @@ class ArtworkHiveModel extends Equatable {
 
   ArtworkEntity toEntity() {
     return ArtworkEntity(
-        title: title ?? '',
-        artworkId: id,
-        dimensions: dimensions,
-        price: price,
-        medium_used: medium_used,
-        images: images ?? '',
-        archive: archive,
-        isLiked: isLiked,
-        artistId: artistId,
-        categories: categories,
-        creatorsNote: creatorsNote);
+      artworkId: id,
+      title: title ?? '',
+      dimensions: dimensions,
+      price: price,
+      medium_used: medium_used,
+      images: images ?? '',
+      archive: archive,
+      isLiked: isLiked,
+      artistId: artistId,
+      categories: categories,
+      creatorsNote: creatorsNote,
+    );
   }
 
   @override
-  // TODO: implement props
   List<Object?> get props => [
         id,
         title,
@@ -104,6 +112,6 @@ class ArtworkHiveModel extends Equatable {
         isLiked,
         artistId,
         categories,
-        creatorsNote
+        creatorsNote,
       ];
 }

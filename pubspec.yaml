@@ -58,6 +58,7 @@ dependencies:
   # light: 3.0.1
   sensors_plus: ^6.1.1
   light_sensor: ^3.0.1
+  test_cov_console: ^0.2.2
   # light: ^3.0.1
   # light: ^4.0.0
 
@@ -88,6 +89,7 @@ flutter:
     - assets/images/ham.jpg
     - assets/images/splash1.gif
     - assets/images/krishika.jpg
+    - assets/images/blank.jpg
 
   fonts:
     - family: IM_Fell_Double_Pica

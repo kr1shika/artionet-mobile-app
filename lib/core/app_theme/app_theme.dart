@@ -61,7 +61,7 @@ ThemeData getApplicationTheme({required bool isDarkMode}) {
       showUnselectedLabels: true, // Show unselected labels
       selectedLabelStyle: const TextStyle(
         fontWeight: FontWeight.bold,
-        fontSize: 14, // Customize label size
+        fontSize: 15, // Customize label size
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(

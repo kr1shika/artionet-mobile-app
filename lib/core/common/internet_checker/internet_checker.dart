@@ -1,16 +1,14 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-abstract class NetworkInfo {
-  Future<bool> get isConnected;
-}
+class ConnectivityService {
+  final Connectivity _connectivity = Connectivity();
 
-class NetworkInfoImpl implements NetworkInfo {
-  final Connectivity connectivity;
-  NetworkInfoImpl(this.connectivity);
+  Stream<List<ConnectivityResult>> monitorConnection() =>
+      _connectivity.onConnectivityChanged;
 
-  @override
-  Future<bool> get isConnected async {
-    final result = await connectivity.checkConnectivity();
-    return result != ConnectivityResult.none;
+  Future<bool> isConnected() async {
+    final connectivityResult = await _connectivity.checkConnectivity();
+    return connectivityResult.isNotEmpty &&
+        connectivityResult.every((result) => result != ConnectivityResult.none);
   }
 }
