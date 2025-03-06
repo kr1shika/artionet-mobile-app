@@ -130,7 +130,7 @@ class _RegisterViewState extends State<RegisterView> {
                                 backgroundImage: _img != null
                                     ? FileImage(_img!)
                                     : const AssetImage(
-                                            'assets/images/profile.jpg')
+                                            'assets/images/blank.jpg')
                                         as ImageProvider,
                                 // backgroundImage:
                                 //     AssetImage('assets/images/profile.jpg')

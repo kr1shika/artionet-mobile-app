@@ -83,3 +83,13 @@ class FetchUserById extends ArtworkEvent {
   @override
   List<Object> get props => [userId];
 }
+
+class UpdateArtworkEvent extends ArtworkEvent {
+  final String artId;
+  final Map<String, dynamic> updatedData;
+
+  const UpdateArtworkEvent({required this.artId, required this.updatedData});
+
+  @override
+  List<Object> get props => [artId, updatedData];
+}
