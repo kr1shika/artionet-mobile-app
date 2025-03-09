@@ -1,16 +1,18 @@
-# tryproject
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Artionet: PLatform where artist can upload their artworks and purchase other artist's work. In artionet, users can manage their account, state of their artworks and seamlessly interact with other artworks, artists and the application it self. 
+![Screenshot_1741243600](https://github.com/user-attachments/assets/800bbcb6-61db-450d-b2f9-4d92d0dbd0ae)
+![Screenshot_1741243605](https://github.com/user-attachments/assets/1478b69e-fe39-4252-8756-0cc3dd707a13)
+![Screenshot_1741243612](https://github.com/user-attachments/assets/2147d260-9f23-4ba1-abaf-daca5623da16)
+![Screenshot_1741243728](https://github.com/user-attachments/assets/d410e1f5-f436-4375-964a-6bbefd347729)
+![Screenshot_1741243716](https://github.com/user-attachments/assets/f10f20c6-c63d-46e5-b58e-159b92ccb994)
+![Screenshot_1741243774](https://github.com/user-attachments/assets/9b65a8d4-a71d-43ba-8a74-94e0b5fe41cd)
+![Screenshot_1741243779](https://github.com/user-attachments/assets/285e0658-6d34-4708-b80f-c56eb06087eb)
+![Screenshot_1741243758](https://github.com/user-attachments/assets/75ab3853-4c17-441d-9042-a595d7a92784)
+![Screenshot_1741243789](https://github.com/user-attachments/assets/46a7f353-320a-4ee1-ac94-170b6ebba026)
+![Screenshot_1741243793](https://github.com/user-attachments/assets/80c74438-2155-4de5-9cce-0996415fe9d6)
+![Screenshot_1741243767](https://github.com/user-attachments/assets/0baf663a-6141-4493-beca-effe43e3c26c)
+![Screenshot_1741243820](https://github.com/user-attachments/assets/6b7ba38b-782c-4f11-a2bc-3343965ca082)
+![Screenshot_1741243810](https://github.com/user-attachments/assets/73d3dc13-39b1-40de-9ac0-e83acec6fe27)
+![Screenshot_1741243782](https://github.com/user-attachments/assets/4acd4ac1-4164-4f06-9dc8-55fe9ba7010f)
+![Screenshot_1741243875](https://github.com/user-attachments/assets/6d571b25-187a-4821-bdec-06b870cff940)
+![Screenshot_1741243862](https://github.com/user-attachments/assets/67d1d3cd-cb8c-41c7-867b-57b8708a8535)
+![Screenshot_1741243906](https://github.com/user-attachments/assets/c1c07902-ef64-4d59-8709-6fd46770ffc6)
